@@ -95,6 +95,7 @@ BEGIN {
                                 'type_params' => { 'len' => 255 },
                             },
                         ],
+                        'derived-tables' => [ "permissions" ],
                     },
                     'clubs' =>
                     {
@@ -147,6 +148,53 @@ BEGIN {
                                     'height' => 10,
                                     'width' => 50,
                                 },
+                            },
+                        ],
+                        'derived_tables' => [ 'permissions' ],
+                    },
+                    'permissions' =>
+                    {
+                        'fields' =>
+                        [
+                            {
+                                'name' => "User_ID",
+                                'type' => "int32",
+                                'input' => 
+                                { 
+                                    'primary_key' => 1, 
+                                    'type' => "auto", 
+                                    'method' => "base-table",
+                                },
+                                'base' =>
+                                {
+                                    'table' => "users",
+                                },
+                            },
+                            {
+                                'name' => "Club_ID",
+                                'type' => "int32",
+                                'input' => 
+                                { 
+                                    'primary_key' => 1, 
+                                    'type' => "auto", 
+                                    'method' => "base-table",
+                                },
+                                'base' =>
+                                {
+                                    'table' => "clubs",
+                                },
+                            },
+                            {
+                                'name' => "Seminars",
+                                'title' => "Edit Seminars",
+                                'type' => "bool",
+                                'input' => { 'type' => "auto", 'method' => "by-value", 'value' => 0},
+                            },
+                            {
+                                'name' => "Subjects",
+                                'title' => "Edit Subjects",
+                                'type' => "bool",
+                                'input' => { 'type' => "auto", 'method' => "by-value", 'value' => 0},
                             },
                         ],
                     },
