@@ -4,6 +4,7 @@ use strict;
 
 use CGI;
 
+use Technion::Seminars::Config;
 use Technion::Seminars::Layout;
 use Technion::Seminars::SlashUrl;
 
@@ -11,8 +12,14 @@ use Gamla::TextStream::Out::File;
 
 my $q = CGI->new();
 
+sub check_url
+{
+    my $url = shift; 
+    return (($url eq "search/"), "search/");    
+}
+
 # Make sure our URL ends with a slash.
-&slash_url($q);
+&normalize_url($q, \&check_url);
 
 print $q->header();
 

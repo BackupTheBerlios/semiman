@@ -8,21 +8,34 @@ use Exporter;
 
 use vars qw(@EXPORT @ISA);
 
-@EXPORT=qw(slash_url);
+@EXPORT=qw(normalize_url);
 @ISA=qw(Exporter);
 
-sub slash_url
+use Technion::Seminars::Config;
+
+sub normalize_url
 {
+    # $q is the CGI query handler.
     my $q = shift;
-    my $myself = $q->self_url();
+    # This is a callback to check and normalize the URL
+    my $normalize_url_callback = shift;
 
-    $myself =~ m/^([^\?]*)((\?.*)?)$/;
+    my $my_url = $q->self_url();
 
+    my $site_url = $config{'http_url'}->{'url'};
+    $my_url =~ s!^$site_url!!;
+    $my_url =~ m/^([^\?]*)((\?.*)?)$/;
     my $base = $1;
     my $rest = $2;
-    if ($base !~ m/\/$/)
-    {    
-        print $q->redirect($base . "/" . $rest);
+    
+    my ($is_ok, $new_base) = $normalize_url_callback->($base);
+    if (! $is_ok)
+    {
+        print $q->redirect($site_url . $new_base . $rest);
         exit;
+    }
+    else
+    {
+        return $base;
     }
 }

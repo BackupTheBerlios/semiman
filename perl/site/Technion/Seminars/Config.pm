@@ -18,6 +18,7 @@ BEGIN {
         # The URL of the HTTP Read-only Tree
         'http_url' => 
             {
+                'url' => "http://localhost:8200/seminars/",
                 'host' => "localhost",
                 'path' => "seminars",
             },
