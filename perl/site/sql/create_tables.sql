@@ -37,7 +37,8 @@ CREATE TABLE clubs (
   Homepage varchar(255) default NULL,
   Description mediumblob,
   PRIMARY KEY  (Club_ID),
-  KEY clubs_clubname (Clubname)
+  KEY clubs_clubname (Clubname),
+  KEY clubs_name (Name)
 ) TYPE=MyISAM;
 
 #
@@ -93,7 +94,8 @@ CREATE TABLE seminars (
   ContactInfo mediumblob,
   PRIMARY KEY  (Seminar_ID),
   FULLTEXT KEY Title (Title,Description),
-  FULLTEXT KEY Lecturer (Lecturer)
+  FULLTEXT KEY Lecturer (Lecturer),
+  KEY seminars_date (Date,Time)
 ) TYPE=MyISAM;
 
 #
@@ -113,7 +115,9 @@ CREATE TABLE subjects (
   Subject_ID int(11) NOT NULL auto_increment,
   Club_ID int(11) default NULL,
   Name varchar(255) default NULL,
-  PRIMARY KEY  (Subject_ID)
+  PRIMARY KEY  (Subject_ID),
+  KEY subjects_name (Name),
+  KEY subjects_club_id (Club_ID)
 ) TYPE=MyISAM;
 
 #
