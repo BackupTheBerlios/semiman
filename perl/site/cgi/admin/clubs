@@ -401,8 +401,6 @@ my $draw_page = sub {
             }
         }
     }
-
-    
 };
 
 $layout->render($o, $draw_page);

@@ -220,6 +220,72 @@ BEGIN {
                             },
                         ],
                     },
+                    'seminars' =>
+                    {
+                        'fields' =>
+                        [
+                            {
+                                'name' => "Seminar_ID",
+                                'type' => "int32",
+                                'input' => 
+                                { 
+                                    'type' => "auto", 
+                                    'method' => "new-id", 
+                                    "primary_key" => 1
+                                },
+                                'display' => { 'type' => "hidden" },
+                            },
+                            {
+                                'name' => 'Subject_ID',
+                                'type' => "int32",
+                                'input' => 
+                                {
+                                    'type' => "dep-get",
+                                    'method' => "choose-from-query",
+                                    'query' => "SELECT Subject_ID FROM subjects WHERE Club_ID = \$PF{Club_ID}",
+                                },
+                                'display' => { 'type' => "constant" },
+                                'widget_params' =>
+                                {
+                                    'type' => "combobox",
+                                },
+                            },
+                            {
+                                'name' => "Title",
+                                'type' => "varchar",
+                                'type_params' => { 'len' => 255 },
+                            },
+                            {
+                                'name' => "Description",
+                                'type' => "varchar",
+                                'type_params' => { 'len' => 64*1024 },
+                            },
+                            {
+                                'name' => "Date",
+                                'type' => "date",
+                            },
+                            {
+                                'name' => "Time",
+                                'type' => "time",
+                            },
+                            {
+                                'name' => "Room",
+                                'type' => "varchar",
+                                'type_params' => { 'len' => 255 },
+                            },
+                            {
+                                'name' => "Lecturer",
+                                'type' => "varchar",
+                                'type_params' => { 'len' => 255 },
+                            },
+                            {
+                                'name' => "ContactInfo",
+                                'title' => "Contact Info",
+                                'type' => "varchar",
+                                'type_params' => {'len' => 64*1024 },
+                            },
+                        ],
+                    },
                 },
             },
     );

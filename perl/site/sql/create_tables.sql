@@ -80,7 +80,7 @@ CREATE TABLE seminars (
   Time time default NULL,
   Room varchar(255) default NULL,
   Lecturer varchar(255) default NULL,
-  CONTACTINFO mediumblob,
+  ContactInfo mediumblob,
   PRIMARY KEY  (Seminar_ID)
 ) TYPE=MyISAM;
 
