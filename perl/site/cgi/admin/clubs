@@ -238,13 +238,12 @@ my $draw_page = sub {
 
                         if ($admin_level eq "site")
                         {
-
-                        $draw_permissions_form->(
-                            $o,
-                            $dbh,
-                            $club_id,
-                            $clubname,
-                        );
+                            $draw_permissions_form->(
+                                $o,
+                                $dbh,
+                                $club_id,
+                                $clubname,
+                            );
                         }
                     }
                     else
@@ -260,6 +259,43 @@ my $draw_page = sub {
                                 'id-field-title' => "club ID",
                                 'dependent-tables' => [ "permissions" ],
                             );
+                        }
+                        elsif ($script eq "modify_permissions.cgi")
+                        {
+                            if ($admin_level eq "site")
+                            {
+                                my @user_ids_list;
+
+                                my $sth = $dbh->prepare(
+                                    "SELECT permissions.User_ID " .
+                                    "FROM users, permissions " .
+                                    "WHERE permissions.Club_ID = $club_id " . 
+                                        "AND permissions.User_ID = users.User_ID AND users.Super_Admin = 0"
+                                );
+                                my $rv = $sth->execute();
+
+                                while (my $row = $sth->fetchrow_arrayref())
+                                {
+                                    push @user_ids_list, $row->[0];
+                                }
+                                foreach my $user_id (@user_ids_list)
+                                {
+                                    my $value = $q->param($user_id);
+                                    if (!defined($value))
+                                    {
+                                        next;
+                                    }
+
+                                    my ($seminars, $subjects);
+                                    
+                                    ($seminars, $subjects) = (map { $_ ? 1 : 0 } (($value>=1), ($value>=2)));
+                                    my $sth = $dbh->prepare("UPDATE permissions SET Seminars=$seminars, Subjects=$subjects WHERE User_ID = $user_id AND Club_ID = $club_id");
+
+                                    my $rv = $sth->execute();
+                                }
+
+                                $o->print("\n\n<h1>OK - The Permissions Were Edited</h1>\n");
+                            }
                         }
                     }
                 }
