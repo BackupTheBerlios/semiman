@@ -207,6 +207,33 @@ sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
             </para>
         </section>
     </section>
+    <section id="scripts">
+        <title>Scripts</title>
+        <section id="admin_clubs">
+            <title>admin/clubs</title>
+            <para>
+                This is a monolithic script that handles the entire clubs 
+                hierarchy. It is used to edit clubs, their seminars, the
+                permissions of users using the clubs; to associate
+                and disassociate seminars, and so forth. 
+            </para>
+            <para>
+                The script receives a path from the CGI module, and uses 
+                it to determine what should be edited. Based on it the 
+                appropriate code is invoked to handle it.
+            </para>
+        </section>
+        <section id="admin/users">
+            <title>admin/users</title>
+            <para>
+                This script is used to edit the users, and is only available
+                to site admins. It merely serve as a stub for 
+                <classname>Technion::Seminars::MDDA:OneTable</classname> in
+                regard to the users table.
+            </para>
+        </section>
+
+    </section>
 </chapter>
 
 
