@@ -75,16 +75,16 @@ INSERT INTO permissions VALUES (5,8,0,0);
 #
 
 CREATE TABLE seminars (
-  Seminar_ID int(11) NOT NULL auto_increment,
+  Seminar_ID int(11) NOT NULL auto_increment PRIMARY KEY,
   Subject_ID int(11) default NULL,
   Title varchar(255) default NULL,
-  Description mediumblob,
+  Description mediumtext,
   Date date default NULL,
   Time time default NULL,
   Room varchar(255) default NULL,
   Lecturer varchar(255) default NULL,
   ContactInfo mediumblob,
-  PRIMARY KEY  (Seminar_ID)
+  FULLTEXT (Title,Description)
 ) TYPE=MyISAM;
 
 #
