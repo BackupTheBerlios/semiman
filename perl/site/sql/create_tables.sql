@@ -18,6 +18,9 @@ CREATE TABLE associations (
 # Dumping data for table 'associations'
 #
 
+INSERT INTO associations VALUES (1,1);
+INSERT INTO associations VALUES (4,1);
+INSERT INTO associations VALUES (5,4);
 
 #
 # Table structure for table 'clubs'
@@ -88,6 +91,9 @@ CREATE TABLE seminars (
 # Dumping data for table 'seminars'
 #
 
+INSERT INTO seminars VALUES (1,4,'Using tcpdump','A lecture about using tcpdump','2002-08-27','18:30:00','Taub 6','Guy Keren Esq.','Orr Dunkleman, Guy Keren');
+INSERT INTO seminars VALUES (4,4,'BGP','Hay Cohen will give a fascinating lecture about the Border Gateway Protocol','2002-08-30','18:30:00','Taub 6','Hay Cohen','Orr Dunkelman, Guy Keren');
+INSERT INTO seminars VALUES (5,5,'Zavitan - Design and Implementation','Roy Glasberg and Shlomi Fish would cover the design of the Zavitan Seminars Management System	','2002-09-09','16:30:00','Taub 3','Shlomi Fish & Roy Glasberg','Shlomi Fish');
 
 #
 # Table structure for table 'subjects'
@@ -108,6 +114,7 @@ INSERT INTO subjects VALUES (1,8,'Internet');
 INSERT INTO subjects VALUES (2,8,'ATM Works');
 INSERT INTO subjects VALUES (3,8,'Ethernet');
 INSERT INTO subjects VALUES (4,1,'Networking');
+INSERT INTO subjects VALUES (5,1,'Development');
 
 #
 # Table structure for table 'users'
