@@ -8,3 +8,4 @@ use vars qw(@ISA);
 
 @ISA=qw(Arad::Object);
 
+1;

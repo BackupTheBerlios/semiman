@@ -9,6 +9,8 @@ use CGI;
 
 use DBI;
 
+use Gamla::TextStream::Out::File;
+
 use Technion::Seminars::Config;
 use Technion::Seminars::Layout;
 use Technion::Seminars::SlashUrl;
@@ -16,7 +18,8 @@ use Technion::Seminars::UserMan;
 use Technion::Seminars::TypeMan;
 use Technion::Seminars::DBI;
 
-use Gamla::TextStream::Out::File;
+use Technion::Seminars::MDDA::OneTable;
+
 
 my $q = CGI->new();
 

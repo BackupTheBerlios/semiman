@@ -135,7 +135,7 @@ BEGIN {
                                 'name' => 'Homepage',
                                 'type' => "url",
                                 'type_params' => { 'len' => 30 },
-                            }
+                            },
                             {
                                 'name' => "Description",
                                 'type' => "varchar",
@@ -145,7 +145,6 @@ BEGIN {
                     }
                 },
             },
-
     );
 };
 
