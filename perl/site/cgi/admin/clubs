@@ -286,30 +286,45 @@ my $edit_seminars = sub {
                         "subjects.Club_ID = $club_id AND " .
                         "seminars.Seminar_ID = $seminar_id " .
                     $order_by_clause
-               );
+                );
                 
-               my $rv = $sth->execute();
+                my $rv = $sth->execute();
 
-               my ($row);
+                my ($row);
                
-               $row = $sth->fetchrow_arrayref();
-               if (!defined($row))
-               {
-                   $o->print("<h1>Error</h1>\n\n");
-                   $o->print(
-                       "<p>This seminar is not owned by this club or is " .
+                $row = $sth->fetchrow_arrayref();
+                if (!defined($row))
+                {
+                    $o->print("<h1>Error</h1>\n\n");
+                    $o->print(
+                        "<p>This seminar is not owned by this club or is " .
                         "non-existent.</p>\n"
                     );
                    
-                   return;
-               }
+                    return;
+                }
 
-               $o->print("<h1>Editing Seminar $seminar_id</h1>\n\n");
+                $o->print("<h1>Editing Seminar $seminar_id</h1>\n\n");
 
+                my $can_edit_seminars = (($admin_level eq "site") || $club_permissions->[0]);
 
+                my $mdda =
+                    Technion::Seminars::MDDA::OneTable->new(
+                        'seminars',
+                        $config{'database'}->{'tables'}->{'seminars'}
+                    );
 
-
-                
+                if ($can_edit_seminars)
+                {
+                    $mdda->render_edit_form(
+                        $o,
+                        "Seminar_ID",
+                        $seminar_id,
+                        'field-title' => $seminar_id,
+                        'ok-title' => "none",
+                        'no-delete-button' => 1,
+                    );                    
+                }
             }
         }
     }

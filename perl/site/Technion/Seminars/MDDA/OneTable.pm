@@ -274,6 +274,8 @@ sub render_edit_form
 
     my $user_title = $options{'field-title'} || $username;
 
+    my $cancel_delete = $options{'no-delete-button'} || 0;
+
     foreach my $title ($ok_title, $error_title)
     {
         $title =~ s/\$V/$user_title/g;
@@ -302,13 +304,14 @@ sub render_edit_form
         {
             my $display_type = $field->{'display'}->{'type'};
             my $field_name = $field->{'name'};
+            my $field_title = exists($field->{'title'}) ? $field->{'title'} : $field_name;
             if ($display_type eq "hidden")
             {
                 $o->print("<input type=\"hidden\" name=\"" . $field->{'name'} . "\" value=\"" . CGI::escapeHTML($data->{$field_name}) . "\" />\n");
             }
             elsif ($display_type eq "constant")
             {
-                $o->print("<b>$field_name</b>: " . 
+                $o->print("<b>$field_title</b>: " . 
                     CGI::escapeHTML($data->{$field_name}) . 
                     "<br />\n");
             }
@@ -317,7 +320,7 @@ sub render_edit_form
                 my $widget_params = $field->{'widget_params'};
                 my $widget_type = $widget_params->{'type'} || "";
 
-                my $heading = "<b>$field_name</b>: ";
+                my $heading = "<b>$field_title</b>: ";
 
                 if ($widget_type eq "textarea")
                 {
@@ -341,7 +344,10 @@ sub render_edit_form
             }
         }
         $o->print("\n\n<input type=\"submit\" name=\"action\" value=\"Update\" />\n");
-        $o->print("\n\n<input type=\"submit\" name=\"action\" value=\"Delete\" />\n");
+        if (! $cancel_delete)
+        {
+            $o->print("\n\n<input type=\"submit\" name=\"action\" value=\"Delete\" />\n");
+        }
         $o->print("\n\n</form>\n");
     }
     else
