@@ -273,15 +273,15 @@ my $edit_seminars = sub {
                 if (($type eq "assoc") && ($can_edit_club))
                 {
                     $o->print("<form method=\"post\" action=\"./$type/$id/disassoc.cgi\">\n" . 
-                        "<input type=\"hidden\" name=\"Subject_ID\" value=\"$subj_id\" />\n" .
-                        "<input type=\"submit\" value=\"Disassociate\" />\n" .
+                        "<p class=\"onebuttonform\">\n<input type=\"hidden\" name=\"Subject_ID\" value=\"$subj_id\" />\n" .
+                        "<input type=\"submit\" value=\"Disassociate\" />\n</p>\n" .
                         "</form>\n"
                     );
                 }
                 elsif ($type eq "owned")
                 {
                     $o->print("<form method=\"post\" action=\"./$type/$id/assoc_form.cgi\">\n" .
-                        "<input type=\"submit\" value=\"Associate\" />\n" .
+                        "<p class=\"onebuttonform\"><input type=\"submit\" value=\"Associate\" /></p>\n" .
                         "</form>\n"
                     );                    
                 }
