@@ -36,7 +36,8 @@ CREATE TABLE clubs (
   Name varchar(255) default NULL,
   Homepage varchar(255) default NULL,
   Description mediumblob,
-  PRIMARY KEY  (Club_ID)
+  PRIMARY KEY  (Club_ID),
+  KEY clubs_clubname (Clubname)
 ) TYPE=MyISAM;
 
 #
@@ -51,10 +52,11 @@ INSERT INTO clubs VALUES (8,'clubnet','Club-Net','http://comnet.technion.ac.il/'
 #
 
 CREATE TABLE permissions (
-  User_ID int(11) default NULL,
-  Club_ID int(11) default NULL,
+  User_ID int(11) NOT NULL default '0',
+  Club_ID int(11) NOT NULL default '0',
   Seminars tinyint(4) default NULL,
-  Subjects tinyint(4) default NULL
+  Subjects tinyint(4) default NULL,
+  PRIMARY KEY  (User_ID,Club_ID)
 ) TYPE=MyISAM;
 
 #
@@ -135,7 +137,8 @@ CREATE TABLE users (
   Super_Admin tinyint(4) default NULL,
   Password varchar(255) default NULL,
   Email varchar(255) default NULL,
-  PRIMARY KEY  (User_ID)
+  PRIMARY KEY  (User_ID),
+  KEY users_username (Username)
 ) TYPE=MyISAM;
 
 #

@@ -52,7 +52,7 @@ sub get_admin_level
 
     my $dbh = Technion::Seminars::DBI->new();
 
-    my $sth = $dbh->prepare("SELECT Password, Super_Admin, User_ID FROM users WHERE Username = " . $dbh->quote($user));
+    my $sth = $dbh->prepare("SELECT Password, Super_Admin, User_ID FROM users WHERE Username = " . $dbh->quote($user)); # INDEXED
     my $rv = $sth->execute();
 
     my $data = $sth->fetchrow_arrayref();
@@ -86,7 +86,7 @@ sub can_edit_club
 
     my $dbh = Technion::Seminars::DBI->new();
 
-    my $sth = $dbh->prepare("SELECT Seminars, Subjects FROM permissions WHERE User_ID = $user_id AND Club_ID = $club_id");
+    my $sth = $dbh->prepare("SELECT Seminars, Subjects FROM permissions WHERE User_ID = $user_id AND Club_ID = $club_id"); # INDEXED
     my $rv = $sth->execute();
     my $row = $sth->fetchrow_arrayref();
     return (@$row);
