@@ -58,15 +58,14 @@ my $layout =
 my $o = Gamla::TextStream::Out::File->new(\*STDOUT);
 
 my $draw_page = sub {
-    my $o = shift;    
-    
-    $o->print("<h1>$title</h1>\n\n");
+    my $o = shift;        
     
     if ($admin_level eq "site")
     {
         if ($base_url eq "admin/users/")
         {
-            $o->print("<h2><a href=\"./new\">Add New User</a></h2>");
+            $o->print("<h1>$title</h1>\n\n");
+            $o->print("<h2><a href=\"./new/\">Add a New User</a></h2>");
             $o->print("<h2>Existing Users</h2>\n");
             
             my $dbh = DBI->connect(@{$config{'database'}}{'dsn', 'user', 'password'});
@@ -81,6 +80,23 @@ my $draw_page = sub {
         }
         elsif ($base_url eq "admin/users/new/")
         {
+            $o->print("<h1>Add a New User</h1>\n\n");
+
+            $o->print("<form method=\"post\" action=\"add.cgi\">\n");
+            foreach my $field (@{$config{'database'}->{'tables'}->{'users'}->{'fields'}})
+            {
+                $o->print("<b>" .
+                    (exists($field->{'title'}) ? 
+                        $field->{'title'} : 
+                        $field->{'name'}
+                    ) . 
+                    "</b>: <input type=\"text\" name=\"" . 
+                    $field->{'name'} . 
+                    "\" /><br />\n"
+                    );
+            }
+            $o->print("\n\n<input type=\"submit\" value=\"Add\" />\n\n");
+            $o->print("</form>\n");
         }
     }
 };

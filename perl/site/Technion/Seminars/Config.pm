@@ -37,6 +37,49 @@ BEGIN {
                 'dsn' => "DBI:mysql:database=test_seminars",
                 'user' => "nobody",
                 'password' => "",
+                'tables' =>
+                {
+                    'users' =>
+                    {
+                        'fields' =>
+                        [
+                            {
+                                'name' => "User_ID",
+                                'type' => "int32",
+                                'input' => { 'type' => "auto", 'method' => "get-new-id" },
+                                'display' => { 'type' => "hidden" },
+                            },
+                            {
+                                'name' => 'Name',
+                                'type' => "varchar",
+                                'type_params' => { 'len' => 255 },
+                            },
+                            {
+                                'name' => 'Username',
+                                'type' => "varchar",
+                                'type_params' => { 'len' => 30 },
+                            },
+                            {
+                                'name' => "Super_Admin",
+                                'title' => "Super Admin Flag",
+                                'type' => "bool",
+                                'input' => { 'type' => "auto", 'method' => "by-value", 'value' => 0}
+                            },
+                            {
+                                'name' => "Password",
+                                'type' => "varchar",
+                                'type_params' => { 'len' => 255 }, 
+                                'display' => {'type' => "Password" },
+                            },
+                            {
+                                'name' => "Email",
+                                'title' => "E-Mail",
+                                'type' => "email",
+                                'type_params' => { 'len' => 255 },
+                            },
+                        ],
+                    },
+                },
             },
 
     );
