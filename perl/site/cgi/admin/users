@@ -49,9 +49,12 @@ print $q->header();
 
 my $title = "User Management";
 
+my $base_url_wo_last_component = $base_url;
+$base_url_wo_last_component =~ s/\/[^\/]*$//;
+
 my $layout = 
     Technion::Seminars::Layout->new(
-        'path' => $base_url,
+        'path' => $base_url_wo_last_component,
         'title' => $title,
         'admin_level' => $admin_level,
     );
@@ -139,20 +142,44 @@ my $draw_page = sub {
                     else
                     {
                         $value = $q->param($field->{'name'});
-                        print $value, " \n";
                         my ($status, $error_string) = ($type_man->check_value($field->{'type'}, $field->{'type_params'}, $value));
                         if ($status)
                         {
+                            $error_string =~ s/\$F/$field->{'name'}/ge;
                             die ($field->{'name'} . " could not be accepted: $error_string");
                         }
-                        if ($field->{'input_params'}->{'unique'})
+
+                        my $input_params_arr = $field->{'input_params'};
+                        if ($input_params_arr)
                         {
-                            my $sth = $dbh->prepare("SELECT count(*) FROM users WHERE " . $field->{'name'} . " = " . $dbh->quote($value));
-                            my $rv = $sth->execute();
-                            my $ary_ref = $sth->fetchrow_arrayref();
-                            if ($ary_ref->[0] > 0)
+                            foreach my $input_params ((ref($input_params_arr) eq "ARRAY") ? @$input_params_arr : ($input_params_arr))
                             {
-                                die ($field->{'name'} ." must be unique while a duplicate entry already exists!");
+                                if ($input_params->{'unique'})
+                                {
+                                    my $sth = $dbh->prepare("SELECT count(*) FROM users WHERE " . $field->{'name'} . " = " . $dbh->quote($value));
+                                    my $rv = $sth->execute();
+                                    my $ary_ref = $sth->fetchrow_arrayref();
+                                    if ($ary_ref->[0] > 0)
+                                    {
+                                        die ($field->{'name'} ." must be unique while a duplicate entry already exists!");
+                                    }
+                                }
+                                if ($input_params->{'not_match'})
+                                {
+                                    my $pattern = $input_params->{'not_match'};
+                                    if ($value =~ /$pattern/);
+                                    {
+                                        die $input_params->{'comment'};
+                                    }
+                                }
+                                if ($input_params->{'match'})
+                                {
+                                    my $pattern = $input_params->{'match'};
+                                    if ($value !~ /$pattern/)
+                                    {
+                                        die $input_params->{'comment'};
+                                    }
+                                }
                             }
                         }
                     }
@@ -162,8 +189,6 @@ my $draw_page = sub {
 
                 my $sql_insert_query = "INSERT INTO users (" . join(",", @query_fields) . ") VALUES (" . join(",", map { $dbh->quote($_) } @query_values) . ")";
 
-                print $sql_insert_query, "\n";
-                
                 my $sth = $dbh->prepare($sql_insert_query);
                 
                 my $rv = $sth->execute();
