@@ -10,7 +10,9 @@ use Technion::Seminars::SlashUrl;
 
 use Gamla::TextStream::Out::File;
 
-use POSIX;
+use POSIX qw(strftime);
+
+use Time::DaysInMonth;
 
 my $q = CGI->new();
 
@@ -18,9 +20,20 @@ sub check_url
 {
     my $url = shift;
 
-    my $verdict = ($url =~ /^day\/\d{4}\/(0[1-9]|1[0-2])\/(0[1-9]|[1-2][0-9]|3[0-1])\/$/) ? 1 : 0;
+    my $verdict = ($url =~ /^day\/(\d{4})\/(0[1-9]|1[0-2])\/(0[1-9]|[1-2][0-9]|3[0-1])\/$/) ? 1 : 0;
+
+    if ($verdict)
+    {
+
+        my ($y,$m,$d) = ($1,$2,$3);
+
+        if ($d > days_in($y, $m))
+        {
+            $verdict = 0;
+        }
+    }
     
-    return ($verdict, "day/".POSIX::strftime("%Y/%m/%d/", localtime(time())));
+    return ($verdict, strftime("day/%Y/%m/%d/", localtime(time())));
 }
 
 # Make sure our URL ends with a slash.

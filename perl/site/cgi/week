@@ -1,0 +1,106 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+use CGI;
+
+use Technion::Seminars::Config;
+use Technion::Seminars::Layout;
+use Technion::Seminars::SlashUrl;
+
+use Gamla::TextStream::Out::File;
+
+use POSIX qw(strftime);
+
+use Time::DaysInMonth;
+use Date::DayOfWeek;
+
+my $q = CGI->new();
+
+sub normalize_weekday
+{
+    my ($y,$m,$d) = @_;
+    
+    my $dow = dayofweek($d,$m,$y);
+
+    # 0 is sunday.
+    if ($d - $dow >= 1)
+    {
+        return ($y,$m,$d-$dow);
+    }
+    
+    if ($m > 1)
+    {
+        return ($y, $m-1, days_in($y, $m-1) + $d - $dow);
+    }
+    else
+    {
+        return ($y-1, 12, days_in($y-1,12) + $d - $dow);
+    }
+}
+
+sub check_url
+{
+    my $url = shift;
+
+    my ($y,$m,$d);
+
+    my $verdict = ($url =~ /^week\/(\d{4})\/(0[1-9]|1[0-2])\/(0[1-9]|[1-2][0-9]|3[0-1])\/$/) ? 1 : 0;
+
+    if ($verdict)
+    {
+        ($y,$m,$d) = ($1,$2,$3);
+
+        if ($d > days_in($y, $m))
+        {
+            $d = days_in($y, $m);
+
+            $verdict = 0;
+        }
+
+        my ($y2,$m2,$d2) = &normalize_weekday($y,$m,$d);
+        if (($y != $y2) || ($m != $m2) || ($d != $d2))
+        {
+            $verdict = 0;
+            ($y,$m,$d) = ($y2,$m2,$d2);
+        }
+    }
+    else
+    {
+        my @time_vars = localtime(time());
+
+        ($y,$m,$d) = &normalize_weekday($time_vars[5]+1900, $time_vars[4]+1, $time_vars[3]);        
+    }
+
+    
+    
+    
+    return ($verdict, sprintf("week/%04i/%02i/%02i/", $y, $m, $d));
+}
+
+# Make sure our URL ends with a slash.
+my $base_url = &normalize_url($q, \&check_url);
+
+print $q->header();
+
+my $title = "Weekly Calendar";
+
+my $layout = 
+    Technion::Seminars::Layout->new(
+        'path' => $base_url,
+        'title' => $title,
+    );
+
+my $o = Gamla::TextStream::Out::File->new(\*STDOUT);
+
+sub draw_page
+{
+    my $o = shift;
+
+    $o->print("<h1>$title</h1>\n");
+
+    $o->print("This would be the daily calendar.");
+}
+
+
+$layout->render($o, \&draw_page);
