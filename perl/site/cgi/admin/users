@@ -291,7 +291,8 @@ my $draw_page = sub {
                             "\" /><br />\n");
                     }
                 }
-                $o->print("\n\n<input type=\"submit\" value=\"Update\" />\n");
+                $o->print("\n\n<input type=\"submit\" name=\"action\" value=\"Update\" />\n");
+                $o->print("\n\n<input type=\"submit\" name=\"action\" value=\"Delete\" />\n");
                 $o->print("\n\n</form>\n");
             }
             else
@@ -314,103 +315,116 @@ my $draw_page = sub {
             {
                 $o->print("<h1>Error - User ID not found!</h1>\n\n<p>The user ID $user_id was not found on this server.</p>\n\n");
             }
-
-            my (@query_fields, @query_values);
-            my $type_man = Technion::Seminars::TypeMan::get_type_man();
-            
-            foreach my $field (@{$config{'database'}->{'tables'}->{'users'}->{'fields'}})
+            if ($q->param("action") eq "Delete")
             {
-                # This variable would be assigned the value of the field
-                my $value = "";
-                # Determine how to input the field
-                my $input = $field->{'input'} || { 'type' => "normal", };
-                 
-                if ($input->{'primary_key'})
-                {
-                    next;
-                }
-                if ($field->{'display'}->{'type'} eq "constant")
-                {
-                    next;
-                }
+                $sth = $dbh->prepare("DELETE FROM users WHERE User_ID = $user_id");
+                $rv = $sth->execute();
+                $dbh->prepare("DELETE FROM permissions WHERE User_ID = $user_id");
+                $rv = $sth->execute();
+
+                $o->print("<h1>OK</h1>\n\n<p>the user was deleted</p>\n");
+            }
+            else
+            {
+                # Updating the user fields
+
+                my (@query_fields, @query_values);
+                my $type_man = Technion::Seminars::TypeMan::get_type_man();
                 
+                foreach my $field (@{$config{'database'}->{'tables'}->{'users'}->{'fields'}})
                 {
-                    # Retrieve the value from the CGI field
-                    $value = $q->param($field->{'name'});
-                    # Check that its type agrees with it
-                    my ($status, $error_string) = ($type_man->check_value($field->{'type'}, $field->{'type_params'}, $value));
-                    # If it does not.
-                    if ($status)
+                    # This variable would be assigned the value of the field
+                    my $value = "";
+                    # Determine how to input the field
+                    my $input = $field->{'input'} || { 'type' => "normal", };
+                     
+                    if ($input->{'primary_key'})
                     {
-                        # Throw an error
-
-                        # Substitute the field name into the '$F' macro.
-                        $error_string =~ s/\$F/$field->{'name'}/ge;
-                        
-                        die ($field->{'name'} . " could not be accepted: $error_string");
+                        next;
                     }
-
-                    # Get the input constraints.
-                    my $input_params_arr = $field->{'input_params'};
-                    if ($input_params_arr)
+                    if ($field->{'display'}->{'type'} eq "constant")
                     {
-                        # Iterate over the input constraints
-                        foreach my $input_params ((ref($input_params_arr) eq "ARRAY") ? (@$input_params_arr) : ($input_params_arr))
+                        next;
+                    }
+                    
+                    {
+                        # Retrieve the value from the CGI field
+                        $value = $q->param($field->{'name'});
+                        # Check that its type agrees with it
+                        my ($status, $error_string) = ($type_man->check_value($field->{'type'}, $field->{'type_params'}, $value));
+                        # If it does not.
+                        if ($status)
                         {
-                            # Check if this field is required to be unique
-                            if ($input_params->{'unique'})
-                            {
-                                # TODO : Change the "users" table name
-                                # to an input variable
+                            # Throw an error
 
-                                # Query the database for the existence of the same value
-                                my $sth = $dbh->prepare("SELECT count(*) FROM users WHERE " . $field->{'name'} . " = " . $dbh->quote($value));
-                                my $rv = $sth->execute();
-                                my $ary_ref = $sth->fetchrow_arrayref();
-                                # If such value exists
-                                if ($ary_ref->[0] > 0)
-                                {
-                                    die ($field->{'name'} ." must be unique while a duplicate entry already exists!");
-                                }
-                            }
+                            # Substitute the field name into the '$F' macro.
+                            $error_string =~ s/\$F/$field->{'name'}/ge;
                             
-                            # This specifies that the input must not
-                            # match a regexp.
-                            if ($input_params->{'not_match'})
-                            {
-                                my $pattern = $input_params->{'not_match'};
-                                if ($value =~ /$pattern/)
-                                {
-                                    die $input_params->{'comment'};
-                                }
-                            }
+                            die ($field->{'name'} . " could not be accepted: $error_string");
+                        }
 
-                            # This specifies that the input must match
-                            # a regexp.
-                            if ($input_params->{'match'})
+                        # Get the input constraints.
+                        my $input_params_arr = $field->{'input_params'};
+                        if ($input_params_arr)
+                        {
+                            # Iterate over the input constraints
+                            foreach my $input_params ((ref($input_params_arr) eq "ARRAY") ? (@$input_params_arr) : ($input_params_arr))
                             {
-                                my $pattern = $input_params->{'match'};
-                                if ($value !~ /$pattern/)
+                                # Check if this field is required to be unique
+                                if ($input_params->{'unique'})
                                 {
-                                    die $input_params->{'comment'};
+                                    # TODO : Change the "users" table name
+                                    # to an input variable
+
+                                    # Query the database for the existence of the same value
+                                    my $sth = $dbh->prepare("SELECT count(*) FROM users WHERE " . $field->{'name'} . " = " . $dbh->quote($value));
+                                    my $rv = $sth->execute();
+                                    my $ary_ref = $sth->fetchrow_arrayref();
+                                    # If such value exists
+                                    if ($ary_ref->[0] > 0)
+                                    {
+                                        die ($field->{'name'} ." must be unique while a duplicate entry already exists!");
+                                    }
+                                }
+                                
+                                # This specifies that the input must not
+                                # match a regexp.
+                                if ($input_params->{'not_match'})
+                                {
+                                    my $pattern = $input_params->{'not_match'};
+                                    if ($value =~ /$pattern/)
+                                    {
+                                        die $input_params->{'comment'};
+                                    }
+                                }
+
+                                # This specifies that the input must match
+                                # a regexp.
+                                if ($input_params->{'match'})
+                                {
+                                    my $pattern = $input_params->{'match'};
+                                    if ($value !~ /$pattern/)
+                                    {
+                                        die $input_params->{'comment'};
+                                    }
                                 }
                             }
                         }
                     }
+
+                    # Push the field name
+                    push @query_fields, $field->{'name'};
+
+                    push @query_values, $value;
                 }
 
-                # Push the field name
-                push @query_fields, $field->{'name'};
-
-                push @query_values, $value;
+                my $edit_query = "UPDATE users SET " . join(",", map { $query_fields[$_] . "=" . $dbh->quote($query_values[$_]) } (0 .. $#query_fields)) . " WHERE User_ID = $user_id";
+                
+                $sth = $dbh->prepare($edit_query);
+                my $rv = $sth->execute();
+                
+                $o->print("<h1>OK</h1>\n\n<p>the user was updated</p>\n");
             }
-
-            my $edit_query = "UPDATE users SET " . join(",", map { $query_fields[$_] . "=" . $dbh->quote($query_values[$_]) } (0 .. $#query_fields)) . " WHERE User_ID = $user_id";
-            
-            $sth = $dbh->prepare($edit_query);
-            my $rv = $sth->execute();
-            
-            $o->print("<h1>OK</h1>\n\n<p>the user was updated</p>\n");
         }
     }
 };
