@@ -48,7 +48,25 @@ my $draw_page = sub {
 
     my $dbh = Technion::Seminars::DBI->new();
 
+    my $where_clause = "";
+
+    my @clauses;
+
+    if ($q->param("keywords"))
+    {
+        my $keywords = $q->param("keywords");
+        $keywords = substr($keywords, 0, 500);
+        push @clauses, ("MATCH(seminars.Title,seminars.Description) AGAINST (" . $dbh->quote($keywords).")");
+    }
+
+    if (scalar(@clauses))
+    {
+        $where_clause = "WHERE " . join(" AND ", (map { "($_)" } @clauses));
+    }
+
     my $query = "SELECT seminars.Seminar_ID, seminars.Title, seminars.Date FROM seminars $where_clause ORDER BY seminars.Date";
+
+    print STDERR "\$query=$query\n";
     
     my $sth = $dbh->prepare($query);
     
