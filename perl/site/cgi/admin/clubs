@@ -197,6 +197,42 @@ my $edit_subjects = sub {
     }    
 };
 
+my $edit_seminars = sub {
+    my $o = shift;
+    my $dbh = shift;
+
+    my $uc = shift;
+    my @url_components = @$uc;
+
+    my $club_id = shift;
+    my $clubname = shift;
+
+
+    if (scalar(@url_components) == 0)
+    {
+        $o->print("<h1>Editing the Seminars of $clubname</h1>\n\n");
+
+        my $sth = $dbh->prepare(
+            "SELECT seminars.Seminar_ID, seminars.Title " .
+            "FROM seminars, subjects " .
+            "WHERE seminars.Subject_ID = subjects.Subject_ID AND " .
+                "subjects.Club_ID = $club_id " .
+            "ORDER BY seminars.Date, seminars.Time"
+            );
+
+        my $rv = $sth->execute();
+
+        $o->print("<ul>\n");
+        while (my $row = $sth->fetchrow_arrayref())
+        {
+            $o->print(sprintf("<li><a href=\"./%i\">%s</a></li>", @$row));
+        }
+        $o->print("</ul>\n");
+    }
+    else
+    {
+    }
+};
 
 my $draw_page = sub {
     my $o = shift;
@@ -320,6 +356,8 @@ my $draw_page = sub {
                             }
                         }
 
+                        $o->print("\n\n<h2><a href=\"./seminars/\">Edit Seminars</a></h2>\n\n");
+
                         if ($admin_level eq "site")
                         {
                             $draw_permissions_form->(
@@ -392,6 +430,15 @@ my $draw_page = sub {
                                     $club_id, $clubname,
                                 );
                             }
+                        }
+                        elsif ($script eq "seminars")
+                        {
+                            $edit_seminars->(
+                                $o,
+                                $dbh,
+                                \@url_components,
+                                $club_id, $clubname,
+                            );
                         }
                     }
                 }
