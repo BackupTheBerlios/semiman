@@ -83,7 +83,7 @@ my $draw_page = sub {
             $o->print("<h2>Existing Users</h2>\n");
 
             my $dbh = Technion::Seminars::DBI->new();
-            my $sth = $dbh->prepare("SELECT * FROM users ORDER BY Username");
+            my $sth = $dbh->prepare("SELECT * FROM users ORDER BY Username"); # INDEXED
             my $rv = $sth->execute();
             while (my $row = $sth->fetchrow_hashref())
             {

@@ -57,7 +57,7 @@ my $draw_page = sub {
     
     my $dbh = Technion::Seminars::DBI->new();
 
-    my $sth = $dbh->prepare($query);
+    my $sth = $dbh->prepare($query); # INDEXED
     
     my $rv = $sth->execute();
     my $row = $sth->fetchrow_arrayref();

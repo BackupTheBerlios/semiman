@@ -86,10 +86,11 @@ my $draw_page = sub {
 
     my $dbh = Technion::Seminars::DBI->new();
 
-    my $sth = $dbh->prepare("SELECT seminars.Seminar_ID, seminars.Title, seminars.Date, seminars.Time" . 
-    " FROM seminars, associations" . 
-    " WHERE seminars.Date >= " . $dbh->quote(sprintf("%.4i-%.2i-%.2i", $year,$month,1)) . 
-    " AND seminars.Date <= " . $dbh->quote(sprintf("%.4i-%.2i-%.2i", $year,$month,days_in($year,$month))) . 
+    my $sth = $dbh->prepare(     # INDEXED
+        "SELECT seminars.Seminar_ID, seminars.Title, seminars.Date, seminars.Time" .
+    " FROM seminars, associations" .
+    " WHERE seminars.Date >= " . $dbh->quote(sprintf("%.4i-%.2i-%.2i", $year,$month,1)) .
+    " AND seminars.Date <= " . $dbh->quote(sprintf("%.4i-%.2i-%.2i", $year,$month,days_in($year,$month))) .
     " AND seminars.Seminar_ID = associations.Seminar_ID GROUP BY seminars.Seminar_ID ORDER BY seminars.Date, seminars.Time");
 
     my $rv = $sth->execute();

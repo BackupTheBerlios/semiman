@@ -173,7 +173,7 @@ my $draw_page = sub {
 
     print STDERR "\$query=$query\n";
     
-    my $sth = $dbh->prepare($query);
+    my $sth = $dbh->prepare($query);  # INDEXED
     
     my $rv = $sth->execute();
 

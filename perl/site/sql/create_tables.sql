@@ -11,7 +11,8 @@
 CREATE TABLE associations (
   Subject_ID int(11) NOT NULL default '0',
   Seminar_ID int(11) NOT NULL default '0',
-  PRIMARY KEY  (Subject_ID,Seminar_ID)
+  PRIMARY KEY  (Subject_ID,Seminar_ID),
+  KEY associations_seminar_id (Seminar_ID)
 ) TYPE=MyISAM;
 
 #
