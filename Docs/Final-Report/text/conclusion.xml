@@ -100,6 +100,44 @@ sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
             designing a front-end for multi-tables queries.
         </para>
     </section>
+    <section id="why_not_architecture">
+        <title>Why not an Architecture?</title>
+        <para>
+            We posted an announcement to the Linux-IL mailing list looking
+            for previous effort. We were told that an architecture called
+            OpenACP, which was based on AOLServer, Tcl, and MySQL could
+            do %90 of what we needed out of the box (and the rest could be 
+            implemented using some customization). 
+        </para>
+        <para>
+            We decided <emphasis>against</emphasis> using it, due to the
+            fact that it dictates so many requisites that were not quite
+            standard I.e: most people used Apache and not AOLServer, Perl
+            or PHP and not Tcl. MySQL is standard, but we wanted the option
+            of using a different RDBMS. 
+        </para>
+        <para>
+            Shlomi is one of the maintainers of the iglu.org.il site. The site
+            is based on a very old Zope installation, Zope being another
+            very architectural content management system. Upgrading to the 
+            new zope (and the new Squishdot) requires a large number of 
+            several manual steps, and the data used by Zope is placed in 
+            its own proprietary data file format. The only person in Israel 
+            who seems to know everything there is to know about Zope, has lost 
+            interest in maintaining the site and has become very unresponsive. 
+            The IGLUers local Zope expert also does not seem to know enough
+            to know how to replace it with something better. We regret using
+            Zope in the first place.
+        </para>
+        <para>
+            The lesson here is that basing upon content-management 
+            architectures is something that has to be considered with great
+            care. It is possible you'll get stuck with an unusable 
+            configuration. Therefore, we decided to avoid it and write our
+            own framework.
+        </para>
+    </section>
+
 </chapter>
 
 
