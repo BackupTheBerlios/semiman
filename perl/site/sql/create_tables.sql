@@ -57,7 +57,8 @@ CREATE TABLE permissions (
   Club_ID int(11) NOT NULL default '0',
   Seminars tinyint(4) default NULL,
   Subjects tinyint(4) default NULL,
-  PRIMARY KEY  (User_ID,Club_ID)
+  PRIMARY KEY  (User_ID,Club_ID),
+  KEY permissions_club_id (Club_ID)
 ) TYPE=MyISAM;
 
 #
@@ -95,7 +96,8 @@ CREATE TABLE seminars (
   PRIMARY KEY  (Seminar_ID),
   FULLTEXT KEY Title (Title,Description),
   FULLTEXT KEY Lecturer (Lecturer),
-  KEY seminars_date (Date,Time)
+  KEY seminars_date (Date,Time),
+  KEY seminars_subject_id (Subject_ID)
 ) TYPE=MyISAM;
 
 #
@@ -142,7 +144,8 @@ CREATE TABLE users (
   Password varchar(255) default NULL,
   Email varchar(255) default NULL,
   PRIMARY KEY  (User_ID),
-  KEY users_username (Username)
+  KEY users_username (Username),
+  KEY users_super_admin (Super_Admin)
 ) TYPE=MyISAM;
 
 #

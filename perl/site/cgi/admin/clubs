@@ -76,7 +76,7 @@ my $draw_permissions_form = sub {
     $o->print("<table border=\"1\">\n");
     $o->print("<tr><td>User</td><td>None</td><td>Seminars Only</td><td>Subjects</td></tr>\n");
 
-    my $sth = $dbh->prepare(
+    my $sth = $dbh->prepare( # INDEXED
         "SELECT permissions.User_ID, users.Username, " . 
         "users.Name, permissions.Seminars, permissions.Subjects " . 
         "FROM users, permissions " . 
@@ -137,7 +137,7 @@ my $edit_subjects = sub {
 
         $o->print("\n<h1>Editing Subjects</h1>\n");
 
-        my $sth = $dbh->prepare(
+        my $sth = $dbh->prepare(  # INDEXED
             "SELECT Subject_ID, Name FROM subjects WHERE Club_ID = $club_id ORDER BY Name"
         );
         my $rv = $sth->execute();
@@ -174,7 +174,10 @@ my $edit_subjects = sub {
             my $subject_id = $q->param("id");
             my $name = $q->param("name");
 
-            my $sth = $dbh->prepare("UPDATE subjects SET Name=" . $dbh->quote($name) . " WHERE SubjecT_ID = $subject_id AND Club_ID = $club_id");
+            my $sth = $dbh->prepare(      # INDEXED
+                "UPDATE subjects SET Name=" . $dbh->quote($name) . 
+                " WHERE Subject_ID = $subject_id AND Club_ID = $club_id"
+                );
 
             my $rv = $sth->execute();
 
@@ -186,7 +189,8 @@ my $edit_subjects = sub {
         {
             my $name = $q->param("name");
 
-            my $sth = $dbh->prepare("INSERT INTO subjects (Subject_ID, Club_ID, Name) VALUES (0, $club_id, " . $dbh->quote($name) . ")");
+            my $sth = $dbh->prepare(       # INDEXED
+                "INSERT INTO subjects (Subject_ID, Club_ID, Name) VALUES (0, $club_id, " . $dbh->quote($name) . ")");
 
             my $rv = $sth->execute();
 
@@ -239,7 +243,7 @@ my $edit_seminars = sub {
 
         print STDERR "\$query_str=$query_str\n";
             
-        my $sth = $dbh->prepare(
+        my $sth = $dbh->prepare(       # INDEXED
             $query_str
             );
 
@@ -313,7 +317,7 @@ my $edit_seminars = sub {
         print STDERR "\$query_str=$query_str\n";
 
         $sth = 
-            $dbh->prepare(
+            $dbh->prepare(    # INDEXED
                 $query_str
             );
 
@@ -333,7 +337,7 @@ my $edit_seminars = sub {
             {
                 my $seminar_id = shift(@url_components);
 
-                my $sth = $dbh->prepare(
+                my $sth = $dbh->prepare(   # INDEXED
                     $select_clause .
                     "FROM seminars, subjects " .
                     "WHERE seminars.Subject_ID = subjects.Subject_ID AND " .
@@ -398,13 +402,13 @@ my $edit_seminars = sub {
                         
                         if ($admin_level ne "site")
                         {
-                            $query = "SELECT subjects.Subject_ID, subjects.Name, subjects.Club_ID, clubs.Clubname " . 
-                                "FROM subjects, permissions, clubs " . 
-                                "WHERE subjects.Club_ID = permissions.Club_ID AND " . "
-                                    permissions.User_ID = 4 AND " . 
-                                    "clubs.Club_ID = subjects.Club_ID AND " . 
-                                    "permissions.Seminars = 1 " . 
-                                "ORDER BY subjects.Club_ID,  subjects.Subject_ID";
+                            $query = "SELECT subjects.Subject_ID, subjects.Name, subjects.Club_ID, clubs.Clubname " .
+                                "FROM subjects, permissions, clubs " .
+                                "WHERE subjects.Club_ID = permissions.Club_ID AND " .
+                                    "permissions.User_ID = $user_id AND " .
+                                    "clubs.Club_ID = subjects.Club_ID AND " .
+                                    "permissions.Seminars = 1 " .
+                                "ORDER BY subjects.Club_ID, subjects.Subject_ID";
                         }
                         else
                         {
@@ -413,7 +417,7 @@ my $edit_seminars = sub {
                                 "WHERE clubs.Club_ID = subjects.Club_ID " .
                                 "ORDER BY subjects.Club_ID, subjects.Subject_ID";
                         }
-                        my $sth = $dbh->prepare($query);
+                        my $sth = $dbh->prepare($query); # INDEXED
                         my $rv = $sth->execute();
 
                         my ($row);
@@ -444,7 +448,7 @@ my $edit_seminars = sub {
                                         "AND subjects.Subject_ID = $id " .
                                         "AND permissions.User_ID = $user_id";
 
-                                my $sth = $dbh->prepare($query);
+                                my $sth = $dbh->prepare($query);  # INDEXED
                                 my $rv = $sth->execute();
                                 my $verdict = $sth->fetchrow_arrayref();
                                 if (! $verdict->[0])
@@ -453,7 +457,11 @@ my $edit_seminars = sub {
                                 }
                             }
 
-                            my $sth = $dbh->prepare("INSERT INTO associations (Subject_ID, Seminar_ID) VALUES ($id, $seminar_id)");
+                            my $sth = $dbh->prepare(  # INDEXED
+                                "INSERT INTO associations " . 
+                                "(Subject_ID, Seminar_ID) " . 
+                                "VALUES ($id, $seminar_id)"
+                                );
                             my $rv = $sth->execute();
                         }
 
@@ -503,7 +511,7 @@ my $edit_seminars = sub {
                         if ($can_edit_club)
                         {
                             my $sth = 
-                                $dbh->prepare(
+                                $dbh->prepare(  # INDEXED
                                     "DELETE FROM associations " . 
                                     "WHERE Seminar_ID = $seminar_id AND " . 
                                         "Subject_ID = " . $q->param("Subject_ID")
@@ -559,7 +567,7 @@ my $draw_page = sub {
 
         $query = "SELECT Clubname, Name FROM clubs ORDER BY clubs.Name";
         
-        $sth = $dbh->prepare($query);
+        $sth = $dbh->prepare($query);   # INDEXED
         $rv = $sth->execute();
         while ($data = $sth->fetchrow_arrayref())
         {
@@ -592,7 +600,11 @@ my $draw_page = sub {
         else
         {
             my $dbh = Technion::Seminars::DBI->new();
-            my $sth = $dbh->prepare("SELECT Club_ID FROM clubs WHERE Clubname = '$clubname'");
+            my $sth =
+                $dbh->prepare( # INDEXED
+                    "SELECT Club_ID FROM clubs WHERE Clubname = '$clubname'"
+                    );
+
             my $rv = $sth->execute();
             
             my $row = $sth->fetchrow_arrayref();
@@ -666,7 +678,7 @@ my $draw_page = sub {
                             {
                                 my @user_ids_list;
 
-                                my $sth = $dbh->prepare(
+                                my $sth = $dbh->prepare(      # INDEXED
                                     "SELECT permissions.User_ID " .
                                     "FROM users, permissions " .
                                     "WHERE permissions.Club_ID = $club_id " . 
@@ -689,7 +701,13 @@ my $draw_page = sub {
                                     my ($seminars, $subjects);
                                     
                                     ($seminars, $subjects) = (map { $_ ? 1 : 0 } (($value>=1), ($value>=2)));
-                                    my $sth = $dbh->prepare("UPDATE permissions SET Seminars=$seminars, Subjects=$subjects WHERE User_ID = $user_id AND Club_ID = $club_id");
+                                    my $sth = $dbh->prepare(    # INDEXED
+                                        "UPDATE permissions " . "
+                                        SET Seminars=$seminars, " .
+                                        "Subjects=$subjects " .
+                                        "WHERE User_ID = $user_id AND " .
+                                            "Club_ID = $club_id"
+                                        );
 
                                     my $rv = $sth->execute();
                                 }
