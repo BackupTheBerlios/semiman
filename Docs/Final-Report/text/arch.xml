@@ -169,7 +169,43 @@ sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
                 </orderedlist>
             </para>
         </section>
-        
+        <section id="mdda_onetable">
+            <title>Technion::Seminars::MDDA::OneTable</title>
+            <para>
+                This class does four things:
+            </para>
+            <para>
+                <orderedlist>
+                    <listitem>
+                        Renders a form for adding a record to a table.
+                    </listitem>
+                    <listitem>
+                        Processes a form for adding a record to a table.
+                    </listitem>
+                    <listitem>
+                        Renders a form for editing an existing record in
+                        a table.
+                    </listitem>
+                    <listitem>
+                        Processes an edit form (that can optionally delete
+                        the record.
+                    </listitem>
+                </orderedlist>
+            </para>
+            <para>
+                The class is initialized with the name of the table,
+                its specification from 
+                <classname>Technion::Seminars::Config</classname>, and optional
+                values of relevant fields of the parent class. Using these,
+                it constructs or processes the forms for the table.
+            </para>
+            <para>
+                To render the form, the class loops over the fields and
+                renders a control for each field. To process the form, the 
+                class loops over the fields, keeps record of their inputted
+                values, and feeds the values to the database.
+            </para>
+        </section>
     </section>
 </chapter>
 
