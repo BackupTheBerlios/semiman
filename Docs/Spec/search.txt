@@ -1,0 +1,22 @@
+* By date-range : start date - end date.
+
+* By Club/Subject
+
+* By keywords from title/description
+
+* By lecturer
+
+Implementation:
+---------------
+
+date range: SQL's >= and <= operators
+
+subject: SQL's IN operator
+
+keywords: (((Title LIKE '%keyword1%') AND (Title LIKE '%keyword2%')) OR
+          ((Description LIKE '%keyword1%') AND (Description LIKE '%keyword2%')))
+
+lecturer: (LOWER(Lecturer)) LIKE '%$lecturer_string%')
+
+Note: It is MySQL specific, but we can use MATCH for Full-Text Search.
+
