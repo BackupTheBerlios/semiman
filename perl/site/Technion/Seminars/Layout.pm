@@ -127,40 +127,61 @@ sub render
         ($browser_compat ? " width=\"20%\"" : "") .
         ">\n");
 
+    $o->print("<ul class=\"navbarmain\">\n");
+
     my $put_link = sub {
         my $path = shift;
         my $text = shift;
-        $o->print("<a href=\"" . $self->linkto($path) . "\" class=\"navbar\">" .
+        $o->print("<li><a href=\"" . $self->linkto($path) . "\" class=\"navbar\">" .
             $text .
-            "</a><br />\n"
+            "</a></li>\n"
         );
+    };
+
+    my $promote = sub {
+        $o->print("<li><ul class=\"navbarnested\">\n");
+    };
+
+    my $demote = sub {
+        $o->print("</ul></li>\n");
+    };
+
+    my $separator = sub {
+        $o->print("<li><br /></li>\n");
     };
     
     $put_link->([], "Main");
-    $o->print("<br />\n");
+    $separator->();
     $put_link->(["day"], "Daily Calendar");
     $put_link->(["week"], "Weekly Calendar");
     $put_link->(["month"], "Monthly Calendar");
-    $o->print("<br />\n");
+    $separator->();
     $put_link->(["search"], "Search");
-    $o->print("<br />\n");
+    $separator->();
     $put_link->(["club"], "The Clubs");
-    $o->print("<br />\n");
+    $separator->();
     if ($admin_level eq "readonly")
     {
         $o->print("<a href=\"". ($config{'https_url'}->{'url'} . "admin/") . "\">Admin</a><br />\n");
     }
     else
     {
-        $o->print("<b>Admin</b><br />\n");
-        $o->print("<br />\n");
+        $o->print("</ul>\n<h3 class=\"navbar\">Admin</h3>\n<ul class=\"navbarmain\">\n");
+        $separator->();
         $put_link->(["admin", "clubs"], "Clubs");
+        if (($path[0] eq "admin") && ($path[1] eq "clubs") && (scalar(@path) >= 3))
+        {
+            $promote->();
+            $put_link->([ @path[0 .. 2] ], $path[2]);
+            $demote->();
+        }
         if ($admin_level eq "site")
         {
             $put_link->(["admin", "users"], "Users");
         }
         $put_link->(["admin", "logout.cgi"], "Log out");
     }
+    $o->print("</ul>\n");
     $o->print("</td>\n");
     $o->print("<td valign=\"top\" class=\"main\">\n");
     if (!ref($contents))

@@ -1,2 +1,5 @@
 a:hover { color : red }
 td.navbar { background-color : #fea ; width : 20% }
+ul.navbarmain { list-style-type: none ; padding-left : 0em }
+ul.navbarnested { list-style-type : none ; padding-left : 2em }
+h3.navbar { font-size: medium ; font-weight : bold }
