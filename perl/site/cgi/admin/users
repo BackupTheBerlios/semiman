@@ -13,6 +13,7 @@ use Technion::Seminars::Config;
 use Technion::Seminars::Layout;
 use Technion::Seminars::SlashUrl;
 use Technion::Seminars::UserMan;
+use Technion::Seminars::TypeMan;
 
 use Gamla::TextStream::Out::File;
 
@@ -149,7 +150,7 @@ my $draw_page = sub {
                             my $ary_ref = $sth->fetchrow_arrayref();
                             if ($ary_ref->[0] > 0)
                             {
-                                die ($field->{'name'} " must be unique and there is already a duplicate entry!";
+                                die ($field->{'name'} ." must be unique while a duplicate entry already exists!");
                             }
                         }
                     }
