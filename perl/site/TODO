@@ -2,3 +2,7 @@
 SQL database.
 
 * Make sure the boolean Super_Admin gets a checkbox.
+
+* Deal with cases of a user deleting himself or turning
+himself into a non site admin.
+

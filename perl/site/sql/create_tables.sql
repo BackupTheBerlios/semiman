@@ -24,6 +24,7 @@ CREATE TABLE associations (
 
 CREATE TABLE clubs (
   Club_ID int(11) NOT NULL default '0',
+  Clubname varchar(30) default NULL,
   Name varchar(255) default NULL,
   Homepage varchar(255) default NULL,
   Description mediumblob,
@@ -94,7 +95,7 @@ CREATE TABLE subjects (
 #
 
 CREATE TABLE users (
-  User_ID int(11) NOT NULL AUTO_INCREMENT default '0',
+  User_ID int(11) NOT NULL auto_increment,
   Name varchar(255) default NULL,
   Username varchar(30) default NULL,
   Super_Admin tinyint(4) default NULL,
@@ -107,5 +108,6 @@ CREATE TABLE users (
 # Dumping data for table 'users'
 #
 
-INSERT INTO users VALUES (1,'Shlomi Fish','shlomif',1,'Hello','shlomif@vipe.technion.ac.il');
+INSERT INTO users VALUES (1,'Shlomi Fish Esq.','shlomif',1,'Hello','shlomif@vipe.technion.ac.il');
+INSERT INTO users VALUES (2,'Roy Glasberg','roi',1,'roi','roy@roy.org');
 

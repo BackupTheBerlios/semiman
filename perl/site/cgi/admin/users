@@ -73,7 +73,7 @@ my $draw_page = sub {
             # Output a list of users with links
             
             $o->print("<h1>$title</h1>\n\n");
-            $o->print("<h2><a href=\"./new/\">Add a New User</a></h2>");
+            $o->print("<h2><a href=\"./new/\">Add a New User</a></h2>\n");
             $o->print("<h2>Existing Users</h2>\n");
 
             my $dbh = Technion::Seminars::DBI->new();

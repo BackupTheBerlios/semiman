@@ -62,8 +62,60 @@ my $layout =
 
 my $o = Gamla::TextStream::Out::File->new(\*STDOUT);
 
-my $draw_page = sub {
 
+my $draw_page = sub {
+    my $o = shift;
+
+    if ($admin_level eq "readonly")
+    {
+        return;
+    }
+
+    my @url_components = split(/\//, $base_url);
+
+    my $admin = shift(@url_components);
+    my $clubs = shift(@url_components);
+    
+    if (scalar(@url_components) == 0)
+    {
+        # The root of the sub-site
+
+        $o->print("<h1>Clubs Administration</h1>\n\n");
+
+        my $dbh = Technion::Seminars::DBI->new();
+        my ($sth, $rv, $data);
+
+        if ($admin_level eq "site")
+        {
+            $o->print("<h2><a href=\"./new/\">Add a New Club</a></h2>\n");
+            $o->print("<h2>Existing Clubs</h2>\n");
+        }
+
+        my ($query);
+
+        if ($admin_level eq "site")
+        {
+            $query = "SELECT clubs.* FROM clubs ORDER BY clubs.Name";
+        }
+        else
+        {
+            $sth = $dbh->prepare("SELECT User_ID FROM users WHERE Username = " . $dbh->quote($user));
+            $rv = $sth->execute();
+            $data = $sth->fetchrow_arrayref();
+            
+            my $user_id = $data->[0];
+            
+            $query = "SELECT clubs.* FROM clubs, permissions WHERE ((clubs.Club_ID = permissions.Club_ID) AND (permissions.User_ID = $user_id)) ORDER BY clubs.Name";
+        }
+        $sth = $dbh->prepare($query);
+        $rv = $sth->execute();
+        while ($data = $sth->fetchrow_hashref())
+        {
+            $o->print("<a href=\"./" . $data->{"clubs.Clubname"} . "/\">" .
+                CGI::escapeHTML($data->{"clubs.Name"}) . 
+                "</a><br />\n");                
+        }
+    }
 
     
 };
