@@ -48,7 +48,7 @@ my $draw_page = sub {
 
     my $dbh = Technion::Seminars::DBI->new();
 
-    my $query = "SELECT seminars.Seminar_ID, seminars.Title, seminars.Date FROM seminars ORDER BY seminars.Date";
+    my $query = "SELECT seminars.Seminar_ID, seminars.Title, seminars.Date FROM seminars $where_clause ORDER BY seminars.Date";
     
     my $sth = $dbh->prepare($query);
     

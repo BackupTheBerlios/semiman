@@ -47,6 +47,7 @@ my $draw_page = sub {
     my $o = shift;
     
     my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time());   
+    $year += 1900;
 
     $o->print("<h1>$title</h1>\n");
 
@@ -74,7 +75,6 @@ my $draw_page = sub {
         $o->print("<td align=\"left\"><select name=\"$which" . "_year\">\n");
 
         
-        $year += 1900;
         foreach my $y (2002 .. ($year+10))
         {
             if ($y == $year)
