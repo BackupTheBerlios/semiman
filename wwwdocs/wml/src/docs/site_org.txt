@@ -1,0 +1,33 @@
+Read-Only:
+----------
+
+/calendar
+    /month/[year]/[month]
+    /week/[year]/[month]/[start day]
+    /day/[year]/[month]/[day]
+
+/search -> Form
+
+/club/[club id]
+
+Club-Admin:
+-----------
+
+/admin/clubs/[club id]
+    /subjects          -> Subjects List
+        /[subject id] -> A specific subject
+    /seminars/           -> 
+        [seminar name]      -> Edit Seminar
+        /new               -> New Seminar
+
+Site Admin:
+-----------
+
+/admin
+    /clubs
+        /[club-id]
+        /new
+    /users
+        /[user-id]
+        /new
+

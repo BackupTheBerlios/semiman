@@ -1,0 +1,17 @@
+#include '../template.wml'
+
+<subject "Project Documents" />
+
+<p>
+<a href="spec.txt">The Project's Specification</a>
+</p>
+
+<p>
+<a href="site_org.txt">The Site's Organization Tree</a>
+</p>
+
+<p>
+<a href="requirements.txt">Project's Requirements</a> - 
+some ideas of code we'll need.
+</p>
+
