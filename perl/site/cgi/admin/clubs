@@ -105,7 +105,7 @@ my $draw_page = sub {
 
         if ($admin_level eq "site")
         {
-            $query = "SELECT clubs.* FROM clubs ORDER BY clubs.Name";
+            $query = "SELECT Clubname, Name FROM clubs ORDER BY clubs.Name";
         }
         else
         {
@@ -115,14 +115,14 @@ my $draw_page = sub {
             
             my $user_id = $data->[0];
             
-            $query = "SELECT clubs.* FROM clubs, permissions WHERE ((clubs.Club_ID = permissions.Club_ID) AND (permissions.User_ID = $user_id)) ORDER BY clubs.Name";
+            $query = "SELECT Clubs.Clubname, Clubs.Name FROM clubs, permissions WHERE ((clubs.Club_ID = permissions.Club_ID) AND (permissions.User_ID = $user_id)) ORDER BY clubs.Name";
         }
         $sth = $dbh->prepare($query);
         $rv = $sth->execute();
-        while ($data = $sth->fetchrow_hashref())
+        while ($data = $sth->fetchrow_arrayref())
         {
-            $o->print("<a href=\"./" . $data->{"clubs.Clubname"} . "/\">" .
-                CGI::escapeHTML($data->{"clubs.Name"}) . 
+            $o->print("<a href=\"./" . $data->[0] . "/\">" .
+                CGI::escapeHTML($data->[1]) . 
                 "</a><br />\n");                
         }
     }
@@ -142,7 +142,7 @@ my $draw_page = sub {
                 else
                 {
                     # Let's process the form request.
-                    $mdda->perform_add_operation($o, $q, "The club was added");
+                    $mdda->perform_add_operation($q, $o, "The club was added");
                     
                 }
             }
