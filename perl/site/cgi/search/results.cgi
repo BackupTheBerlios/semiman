@@ -138,6 +138,35 @@ my $draw_page = sub {
         SKIP_SUBJECTS_PARAM:
     }
 
+    my $get_date = sub {
+        my $prefix = shift;
+
+        my $year = $q->param($prefix . "_year");
+        my $month = $q->param($prefix . "_month");
+        my $mday = $q->param($prefix . "_mday");
+        
+        $year = substr($year, 0, 4) + 0;
+        $month = substr($month, 0, 2) + 0;
+        $mday = substr($mday, 0, 2) + 0;
+        
+        return sprintf("%.4d-%.2d-%.2d", $year, $month, $mday);
+    };
+    
+    my $start_year = $q->param("start_year");
+    if ($start_year && ($start_year ne "none"))
+    {
+        my $start_date = $get_date->("start");
+        push @clauses, "seminars.Date >= " . $dbh->quote($start_date);
+    }
+
+    my $end_year = $q->param("end_year");
+    if ($end_year && ($end_year ne "none"))
+    {
+        my $end_date = $get_date->("end");
+        push @clauses, "seminars.Date <= " . $dbh->quote($end_date);
+    }
+    
+
     if (scalar(@clauses))
     {
         $where_clause = "WHERE " . join(" AND ", (map { "($_)" } @clauses));

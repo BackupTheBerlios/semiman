@@ -69,7 +69,7 @@ my $draw_page = sub {
 
         $o->print("<td align=\"left\"><select name=\"$which" . "_month\">");
 
-        $o->print(join("\n", map { "<option value=\"$_\" " . (($mon == $_) ? "selected=\"1\"" : ""). ">" . $monthes_names[$_-1] .  "</option>" } (1 .. 12) ));
+        $o->print(join("\n", map { "<option value=\"$_\" " . (($mon+1 == $_) ? "selected=\"1\"" : ""). ">" . $monthes_names[$_-1] .  "</option>" } (1 .. 12) ));
         $o->print("</select></td>\n");
 
         $o->print("<td align=\"left\"><select name=\"$which" . "_year\">\n");
