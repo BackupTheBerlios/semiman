@@ -62,13 +62,15 @@
 <tr>
 <td valign="top" class="navbar" style="width:20%"> <!-- width="20%"> -->
 <a href="$(ROOT)/">Main</a><br />
-<a href="$(ROOT)/download.html">Downloads</a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="$(ROOT)/don_woods.html">Don Woods' Solver</a><br />
+<a href="$(ROOT)/docs/">Documents</a><br />
+<a href="$(ROOT)/download/">Downloads</a><br />
 <a href="$(ROOT)/links.html">Links</a><br />
-<a href="$(ROOT)/features.html">List of Features</a><br />
+
+# <a href="$(ROOT)/features.html">List of Features</a><br />
 <br />
-<a href="$(ROOT)/book.html">The Book</a><br />
-<a href="$(ROOT)/old-news.html">Old News Items</a><br />
+<a href="$(ROOT)/berlios/">BerliOS Project</a><br />
+# <a href="$(ROOT)/book.html">The Book</a><br />
+# <a href="$(ROOT)/old-news.html">Old News Items</a><br />
 
 <define-tag validhtml>
 <br /><br /><br /><br />
@@ -91,7 +93,7 @@
 </p>
 </define-tag>
 
-<ifeq "$(FILENAME)" "index.html" "<validhtml />" "" />
+# <ifeq "$(FILENAME)" "index.html" "<validhtml />" "" />
 
 </td>
 <td valign="top" class="main">

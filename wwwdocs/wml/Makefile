@@ -9,14 +9,14 @@ ifdef BERLIOS
 	ifdef VIPE
 		D = $(HOME)/progs/fcs/berlios-site
 	else
-		D = /var/www/html/fc-solve-berlios
+		D = /var/www/html/seminars-static--berlios
 	endif
 	WML_FLAGS = -DBERLIOS=BERLIOS
 else
 	ifdef VIPE
 		D = $(HOME)/public_html/freecell-solver/
 	else
-		D = /var/www/html/fc-solve
+		D = /var/www/html/seminars-static
 	endif
 	WML_FLAGS = 
 endif
@@ -36,9 +36,9 @@ ARC_DOCS = $(D)/README $(D)/USAGE $(D)/ChangeLog $(D)/TODO $(D)/AUTHORS
 INCLUDES_PROTO = std/logo.wml
 INCLUDES = $(addprefix src/,$(INCLUDES_PROTO))
 
-SUBDIRS = $(D)/win32_build $(D)/win32_build/bootstrap $(D)/win32_build/dynamic $(D)/win32_build/static
+SUBDIRS = $(D)/docs $(D)/download
 
-IMAGES += $(addprefix $(D)/win32_build/,bootstrap/curl.exe bootstrap/build.bat static/zip.exe static/unzip.exe dynamic/fcs.zip)
+IMAGES += $(addprefix $(D)/win32_build/,bootstrap/build.bat)
 
 all : $(SUBDIRS) $(HTMLS) $(IMAGES) $(RAW_SUBDIRS) $(ARC_DOCS)
 
