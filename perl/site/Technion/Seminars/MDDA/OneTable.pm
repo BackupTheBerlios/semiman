@@ -348,141 +348,154 @@ sub perform_edit_operation
 
     my $dependent_tables = $options{'dependent-tables'} || [];
 
+    eval {
 
-    my $dbh = Technion::Seminars::DBI->new();
-    my $user_id = $q->param("$id_field");
-    my $sth = $dbh->prepare("SELECT count(*) FROM $table_name WHERE $id_field = $user_id");
-    my $rv = $sth->execute();
 
-    my $data;
+        my $dbh = Technion::Seminars::DBI->new();
+        my $user_id = $q->param("$id_field");
+        my $sth = $dbh->prepare("SELECT count(*) FROM $table_name WHERE $id_field = $user_id");
+        my $rv = $sth->execute();
 
-    $data = $sth->fetchrow_arrayref();
+        my $data;
 
-    if ($data->[0] == "0")
-    {
-        $o->print("<h1>Error - A $record_title with this $id_field_title not found!</h1>\n\n<p>The $id_field_title $user_id was not found on this server.</p>\n\n");
-    }
-    if ($q->param("action") eq "Delete")
-    {
-        $sth = $dbh->prepare("DELETE FROM $table_name WHERE $id_field = $user_id");
-        $rv = $sth->execute();
-        foreach my $table (@$dependent_tables)
+        $data = $sth->fetchrow_arrayref();
+
+        if ($data->[0] == "0")
         {
-            my ($table_id_field, $table);
-            if (ref($table) eq "")
-            {
-                $table_id_field = $id_field;
-                $table_name = $table;
-            }
-            else
-            {
-                $table_id_field = exists($table->{'id'}) || $id_field;
-                $table_name = $table->{'name'};
-            }
-            $dbh->prepare("DELETE FROM $table_name WHERE $table_id_field = $user_id");
-            $rv = $sth->execute();
+            $o->print("<h1>Error - A $record_title with this $id_field_title not found!</h1>\n\n<p>The $id_field_title $user_id was not found on this server.</p>\n\n");
         }
-
-        $o->print("<h1>OK</h1>\n\n<p>the $record_title was deleted</p>\n");
-    }
-    else
-    {
-        # Updating the user fields
-
-        my (@query_fields, @query_values);
-        my $type_man = Technion::Seminars::TypeMan::get_type_man();
-        
-        foreach my $field (@{$table_spec->{'fields'}})
+        if ($q->param("action") eq "Delete")
         {
-            # This variable would be assigned the value of the field
-            my $value = "";
-            # Determine how to input the field
-            my $input = $field->{'input'} || { 'type' => "normal", };
-             
-            if ($input->{'primary_key'})
+            $sth = $dbh->prepare("DELETE FROM $table_name WHERE $id_field = $user_id");
+            $rv = $sth->execute();
+            foreach my $table (@$dependent_tables)
             {
-                next;
-            }
-            if ($field->{'display'}->{'type'} eq "constant")
-            {
-                next;
-            }
-            
-            {
-                # Retrieve the value from the CGI field
-                $value = $q->param($field->{'name'});
-                # Check that its type agrees with it
-                my ($status, $error_string) = ($type_man->check_value($field->{'type'}, $field->{'type_params'}, $value));
-                # If it does not.
-                if ($status)
+                my ($table_id_field, $table);
+                if (ref($table) eq "")
                 {
-                    # Throw an error
-
-                    # Substitute the field name into the '$F' macro.
-                    $error_string =~ s/\$F/$field->{'name'}/ge;
-                    
-                    die ($field->{'name'} . " could not be accepted: $error_string");
+                    $table_id_field = $id_field;
+                    $table_name = $table;
                 }
-
-                # Get the input constraints.
-                my $input_params_arr = $field->{'input_params'};
-                if ($input_params_arr)
+                else
                 {
-                    # Iterate over the input constraints
-                    foreach my $input_params ((ref($input_params_arr) eq "ARRAY") ? (@$input_params_arr) : ($input_params_arr))
-                    {
-                        # Check if this field is required to be unique
-                        if ($input_params->{'unique'})
-                        {
-                            # Query the database for the existence of the same value
-                            my $sth = $dbh->prepare("SELECT count(*) FROM $table_name WHERE " . $field->{'name'} . " = " . $dbh->quote($value));
-                            my $rv = $sth->execute();
-                            my $ary_ref = $sth->fetchrow_arrayref();
-                            # If such value exists
-                            if ($ary_ref->[0] > 0)
-                            {
-                                die ($field->{'name'} ." must be unique while a duplicate entry already exists!");
-                            }
-                        }
-                        
-                        # This specifies that the input must not
-                        # match a regexp.
-                        if ($input_params->{'not_match'})
-                        {
-                            my $pattern = $input_params->{'not_match'};
-                            if ($value =~ /$pattern/)
-                            {
-                                die $input_params->{'comment'};
-                            }
-                        }
+                    $table_id_field = exists($table->{'id'}) || $id_field;
+                    $table_name = $table->{'name'};
+                }
+                $dbh->prepare("DELETE FROM $table_name WHERE $table_id_field = $user_id");
+                $rv = $sth->execute();
+            }
 
-                        # This specifies that the input must match
-                        # a regexp.
-                        if ($input_params->{'match'})
+            $o->print("<h1>OK</h1>\n\n<p>the $record_title was deleted</p>\n");
+        }
+        else
+        {
+            # Updating the user fields
+
+            my (@query_fields, @query_values);
+            my $type_man = Technion::Seminars::TypeMan::get_type_man();
+            
+            foreach my $field (@{$table_spec->{'fields'}})
+            {
+                # This variable would be assigned the value of the field
+                my $value = "";
+                # Determine how to input the field
+                my $input = $field->{'input'} || { 'type' => "normal", };
+                 
+                if ($input->{'primary_key'})
+                {
+                    next;
+                }
+                if ($field->{'display'}->{'type'} eq "constant")
+                {
+                    next;
+                }
+                
+                {
+                    # Retrieve the value from the CGI field
+                    $value = $q->param($field->{'name'});
+                    # Check that its type agrees with it
+                    my ($status, $error_string) = ($type_man->check_value($field->{'type'}, $field->{'type_params'}, $value));
+                    # If it does not.
+                    if ($status)
+                    {
+                        # Throw an error
+
+                        # Substitute the field name into the '$F' macro.
+                        $error_string =~ s/\$F/$field->{'name'}/ge;
+                        
+                        die ($field->{'name'} . " could not be accepted: $error_string");
+                    }
+
+                    # Get the input constraints.
+                    my $input_params_arr = $field->{'input_params'};
+                    if ($input_params_arr)
+                    {
+                        # Iterate over the input constraints
+                        foreach my $input_params ((ref($input_params_arr) eq "ARRAY") ? (@$input_params_arr) : ($input_params_arr))
                         {
-                            my $pattern = $input_params->{'match'};
-                            if ($value !~ /$pattern/)
+                            # Check if this field is required to be unique
+                            if ($input_params->{'unique'})
                             {
-                                die $input_params->{'comment'};
+                                # Query the database for the existence of the same value
+                                my $sth = $dbh->prepare("SELECT count(*) FROM $table_name WHERE " . $field->{'name'} . " = " . $dbh->quote($value));
+                                my $rv = $sth->execute();
+                                my $ary_ref = $sth->fetchrow_arrayref();
+                                # If such value exists
+                                if ($ary_ref->[0] > 0)
+                                {
+                                    die ($field->{'name'} ." must be unique while a duplicate entry already exists!");
+                                }
+                            }
+                            
+                            # This specifies that the input must not
+                            # match a regexp.
+                            if ($input_params->{'not_match'})
+                            {
+                                my $pattern = $input_params->{'not_match'};
+                                if ($value =~ /$pattern/)
+                                {
+                                    die $input_params->{'comment'};
+                                }
+                            }
+
+                            # This specifies that the input must match
+                            # a regexp.
+                            if ($input_params->{'match'})
+                            {
+                                my $pattern = $input_params->{'match'};
+                                if ($value !~ /$pattern/)
+                                {
+                                    die $input_params->{'comment'};
+                                }
                             }
                         }
                     }
                 }
+
+                # Push the field name
+                push @query_fields, $field->{'name'};
+
+                push @query_values, $value;
             }
 
-            # Push the field name
-            push @query_fields, $field->{'name'};
+            my $edit_query = "UPDATE $table_name SET " . join(",", map { $query_fields[$_] . "=" . $dbh->quote($query_values[$_]) } (0 .. $#query_fields)) . " WHERE $id_field = $user_id";
 
-            push @query_values, $value;
+            $sth = $dbh->prepare($edit_query);
+            my $rv = $sth->execute();
+            
+            $o->print("<h1>OK</h1>\n\n<p>the $record_title was updated</p>\n");
         }
 
-        my $edit_query = "UPDATE $table_name SET " . join(",", map { $query_fields[$_] . "=" . $dbh->quote($query_values[$_]) } (0 .. $#query_fields)) . " WHERE $id_field = $user_id";
+    };
 
-        $sth = $dbh->prepare($edit_query);
-        my $rv = $sth->execute();
-        
-        $o->print("<h1>OK</h1>\n\n<p>the $record_title was updated</p>\n");
+    # Handle an exception throw
+    if ($@)
+    {
+        $o->print("<h1>Error in Input!</h1>\n\n");
+        $o->print("<p>" . $@ . "</p>");
     }
+
+
 }
 
 1;

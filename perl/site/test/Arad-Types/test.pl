@@ -59,6 +59,7 @@ my @value_tests =
     'v2' => 300,
 },
 { 't' => "bool", 'v' => "0", 'v2' => "0" },
+{ 't' => "email", 'p' => { 'len' => 255 }, 'v' => "shlomif\@vipe.stud.technion.ac.il", 'v2' => "shlomif\@iglu.org.il" },
 );
 
 my $typeman = Technion::Seminars::TypeMan::get_type_man();

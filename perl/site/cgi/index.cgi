@@ -18,8 +18,8 @@ my $q = CGI->new();
 sub check_url
 {
     my $url = shift; 
-    print STDERR "\$url=$url";
-    return (($url eq "index.cgi"), "");    
+    print STDERR "\$url=$url\n";
+    return (($url =~ /index.cgi((\/)?)/), "");    
 }
 
 # Make sure our URL ends with a slash.

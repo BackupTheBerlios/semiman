@@ -17,7 +17,7 @@ sub check_value
     my $type_params = shift;
     my $value = shift;
 
-    return system("ckaddr", $value);
+    return (((system("ckaddr", $value) / 256) == 0) ? (0, ""): (1,"Invalid E-mail address"));
 }
 
 sub get_type_params
