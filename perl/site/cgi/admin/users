@@ -24,7 +24,7 @@ sub check_url
 {
     my $url = shift;
 
-    my $verdict = ($url =~ /^admin\/users\/(([A-Za-z_]*\/)|(new\/(add\.cgi)?))?$/) ? 1 : 0;
+    my $verdict = ($url =~ /^admin\/users\/(([A-Za-z_]*\/(edit\.cgi)?)|(new\/(add\.cgi)?))?$/) ? 1 : 0;
     
     return ($verdict, "admin/users/");
 }
@@ -251,7 +251,7 @@ my $draw_page = sub {
                 $o->print("<p>" . $@ . "</p>");
             }
         }
-        elsif ($base_url =~ m/admin\/users\/(\w+)\//)
+        elsif ($base_url =~ m/^admin\/users\/(\w+)\/$/)
         {
             # Display a form to edit the current user.
 
@@ -274,9 +274,8 @@ my $draw_page = sub {
                     if ($display_type eq "hidden")
                     {
                         $o->print("<input type=\"hidden\" name=\"" . $field->{'name'} . "\" value=\"" . CGI::escapeHTML($data->{$field_name}) . "\" />\n");
-                        next;
                     }
-                    elsif ($display_type eq "constant")                    
+                    elsif ($display_type eq "constant")
                     {
                         $o->print("<b>$field_name</b>: " . 
                             CGI::escapeHTML($data->{$field_name}) . 
@@ -300,7 +299,7 @@ my $draw_page = sub {
                 $o->print("<h1>Unknown User $username</h1>");
             }
         }
-        elsif ($base_url =~ m/admin\/users\/(\w+)\/edit.cgi/)
+        elsif ($base_url =~ m/^admin\/users\/(\w+)\/edit.cgi$/)
         {
             my $dbh = Technion::Seminars::DBI->new();
             my $user_id = $q->param("User_ID");
@@ -317,7 +316,8 @@ my $draw_page = sub {
             }
 
             my (@query_fields, @query_values);
-
+            my $type_man = Technion::Seminars::TypeMan::get_type_man();
+            
             foreach my $field (@{$config{'database'}->{'tables'}->{'users'}->{'fields'}})
             {
                 # This variable would be assigned the value of the field
@@ -326,6 +326,10 @@ my $draw_page = sub {
                 my $input = $field->{'input'} || { 'type' => "normal", };
                  
                 if ($input->{'primary_key'})
+                {
+                    next;
+                }
+                if ($field->{'display'}->{'type'} eq "constant")
                 {
                     next;
                 }

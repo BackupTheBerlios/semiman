@@ -1,5 +1,7 @@
 package Technion::Seminars::UserMan;
 
+use Technion::Seminars::DBI;
+
 use strict;
 
 sub new
@@ -36,15 +38,21 @@ sub get_admin_level
     my $user = shift;
     my $password = shift;
 
-    if (!exists($users{$user}))
+    my $dbh = Technion::Seminars::DBI->new();
+
+    my $sth = $dbh->prepare("SELECT Password, Super_Admin FROM users WHERE Username = " . $dbh->quote($user));
+    my $rv = $sth->execute();
+
+    my $data = $sth->fetchrow_arrayref();
+
+    if ($data->[0] eq $password)
+    {
+        return ($data->[1] ? "site" : "club");
+    }
+    else
     {
         return "readonly";
     }
-    if ($users{$user}->{"password"} ne $password)
-    {
-        return "readonly";
-    }
-    return $users{$user}->{'admin'} ? "site" : "club";
 }
 
 1;
