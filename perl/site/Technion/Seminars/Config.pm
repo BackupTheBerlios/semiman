@@ -69,7 +69,7 @@ BEGIN {
                                 'name' => "Password",
                                 'type' => "varchar",
                                 'type_params' => { 'len' => 255 }, 
-                                'display' => {'type' => "Password" },
+                                'display' => {'type' => "password" },
                             },
                             {
                                 'name' => "Email",

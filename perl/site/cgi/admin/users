@@ -85,12 +85,21 @@ my $draw_page = sub {
             $o->print("<form method=\"post\" action=\"add.cgi\">\n");
             foreach my $field (@{$config{'database'}->{'tables'}->{'users'}->{'fields'}})
             {
+                if ($field->{'input'}->{'type'} eq "auto")
+                {
+                    next;
+                }
                 $o->print("<b>" .
                     (exists($field->{'title'}) ? 
                         $field->{'title'} : 
                         $field->{'name'}
                     ) . 
-                    "</b>: <input type=\"text\" name=\"" . 
+                    "</b>: <input type=\"" . 
+                    (($field->{'display'}->{'type'} eq "password") ? 
+                        "password" : 
+                        "text"
+                    ) . 
+                    "\" name=\"" . 
                     $field->{'name'} . 
                     "\" /><br />\n"
                     );
