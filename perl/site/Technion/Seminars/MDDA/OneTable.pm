@@ -67,7 +67,7 @@ sub render_add_form
         if ($widget_type eq "textarea")
         {
             $o->print($heading . "<br />\n" .
-                "<textarea name=\"" . $field->{'name'} . "\"rows=\"" . $widget_params->{'height'} .
+                "<textarea name=\"" . $field->{'name'} . "\" rows=\"" . $widget_params->{'height'} .
                 "\" cols=\"" . $widget_params->{'width'} . "\">\n" .
                 "</textarea><br />\n\n"
             );
@@ -287,12 +287,30 @@ sub render_edit_form
             }
             else
             {
-                $o->print("<b>$field_name</b>: " .
-                    "<input name=\"$field_name\" " . 
-                    (($display_type eq "password") ? "type=\"password\"" : "") .
-                    " value=\"" . 
-                    CGI::escapeHTML($data->{$field_name}) . 
-                    "\" /><br />\n");
+                my $widget_params = $field->{'widget_params'};
+                my $widget_type = $widget_params->{'type'} || "";
+
+                my $heading = "<b>$field_name</b>: ";
+
+                if ($widget_type eq "textarea")
+                {
+                    $o->print($heading . "<br />\n" .
+                        "<textarea name=\"" . $field->{'name'} . 
+                        "\" rows=\"" . $widget_params->{'height'} . 
+                        "\" cols=\"" . $widget_params->{'width'} . "\">\n" .
+                        CGI::escapeHTML($data->{$field_name}) .
+                        "</textarea><br />\n\n"
+                    );
+                }
+                else
+                {
+                    $o->print($heading .
+                        "<input name=\"$field_name\" " . 
+                        (($display_type eq "password") ? "type=\"password\"" : "") .
+                        " value=\"" . 
+                        CGI::escapeHTML($data->{$field_name}) . 
+                        "\" /><br />\n");
+                }
             }
         }
         $o->print("\n\n<input type=\"submit\" name=\"action\" value=\"Update\" />\n");
