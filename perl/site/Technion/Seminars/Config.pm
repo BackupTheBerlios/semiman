@@ -237,6 +237,7 @@ BEGIN {
                             },
                             {
                                 'name' => 'Subject_ID',
+                                'title' => "Subject ID",
                                 'type' => "int32",
                                 'input' => 
                                 {

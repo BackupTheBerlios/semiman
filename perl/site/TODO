@@ -18,3 +18,6 @@ himself into a non site admin.
 * Make sure Date and Time are edited using combo-boxes separate for 
 day/month/year and for hour/minutes.
 
+* Add a "current club" under Clubs in the navigation bar when editing
+a club.
+

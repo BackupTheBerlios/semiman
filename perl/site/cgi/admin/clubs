@@ -213,8 +213,13 @@ my $edit_seminars = sub {
 
     my $order_by_clause = "ORDER BY seminars.Date, seminars.Time ";
 
-    
+    my $can_edit_seminars = (($admin_level eq "site") || $club_permissions->[0]);
 
+    my $mdda =
+        Technion::Seminars::MDDA::OneTable->new(
+            'seminars',
+            $config{'database'}->{'tables'}->{'seminars'}
+        );
 
     if (scalar(@url_components) == 0)
     {
@@ -246,7 +251,7 @@ my $edit_seminars = sub {
         
         $print_seminars->("owned");
 
-        if ($club_permissions->[0])
+        if ($can_edit_seminars)
         {
             $o->print("<h3><a href=\"./new/\">New Seminar</a></h3>\n");
         }
@@ -272,8 +277,6 @@ my $edit_seminars = sub {
         my $type = shift(@url_components);
         if ($type eq "owned")
         {
-            my $can_edit_seminars = (($admin_level eq "site") || $club_permissions->[0]);
-
             if (scalar(@url_components) == 0)
             {
             }
@@ -305,12 +308,6 @@ my $edit_seminars = sub {
                    
                     return;
                 }
-
-                my $mdda =
-                    Technion::Seminars::MDDA::OneTable->new(
-                        'seminars',
-                        $config{'database'}->{'tables'}->{'seminars'}
-                    );
 
                 if (scalar(@url_components) == 0)
                 {
@@ -346,6 +343,18 @@ my $edit_seminars = sub {
                     }
                 }
             }
+        }
+        elsif ($type eq "new")
+        {
+            if (scalar(@url_components) == 0)
+            {
+                if ($can_edit_seminars)
+                {
+                    $o->print("<h1>Add New Seminar</h1>\n\n");
+                    $mdda->render_add_form($o);
+                }
+            }
+
         }
     }
 };
