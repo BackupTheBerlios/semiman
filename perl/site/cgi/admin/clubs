@@ -536,6 +536,13 @@ my $draw_page = sub {
             'clubs', 
             $config{'database'}->{'tables'}->{'clubs'}
         );
+
+    my $mdda_mailinglists = 
+        Technion::Seminars::MDDA::OneTable->new(
+            'mailinglists', 
+            $config{'database'}->{'tables'}->{'mailinglists'}
+            );
+
     
 
     if ($admin_level eq "readonly")
@@ -637,6 +644,18 @@ my $draw_page = sub {
                                 'field-title' => $clubname,
                                 'ok-title' => "none",
                             );
+                            
+                            $o->print("<h2>Edit Mailing Lists Properties</h2>");
+                            
+                            $mdda_mailinglists->render_edit_form(
+                                $o, 
+                                "Club_ID", 
+                                $club_id,
+                                'field-title' => $clubname,
+                                'ok-title' => "none",
+                                'script-url' => "edit_mail.cgi",
+                            );
+                            
 
                             {
                                 $o->print("\n\n<h2><a href=\"./subjects/\">Edit Subjects</a></h2>\n\n");
@@ -669,6 +688,18 @@ my $draw_page = sub {
                                     'record-title' => "club",
                                     'id-field-title' => "club ID",
                                     'dependent-tables' => [ "permissions" ],
+                                );
+                            }
+                        }
+                        elsif ($script eq "edit_mail.cgi")
+                        {
+                            if ($can_edit_subjects)
+                            {
+                                $mdda_mailinglists->perform_edit_operation(
+                                    $q, $o,
+                                    "Club_ID",
+                                    'record-title' => "club",
+                                    'id-field-title' => "club ID",
                                 );
                             }
                         }

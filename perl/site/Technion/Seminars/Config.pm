@@ -174,7 +174,7 @@ BEGIN {
                             {
                                 'name' => 'Homepage',
                                 'type' => "url",
-                                'type_params' => { 'len' => 30 },
+                                'type_params' => { 'len' => 255 },
                             },
                             {
                                 'name' => "Description",
@@ -194,7 +194,7 @@ BEGIN {
                             'add' =>
                             [
                                 "INSERT INTO permissions (User_ID, Club_ID, Seminars, Subjects) SELECT users.User_ID, \$F{Club_ID}, 0, 0 FROM users",
-                                "INSERT INTO mailinglists (Club_ID, From, To) VALUES ($F{Club_ID}, '', '')",
+                                "INSERT INTO mailinglists (Club_ID, From, To) VALUES (\$F{Club_ID}, '', '')",
                             ],
                             'delete' =>
                             [
@@ -215,11 +215,13 @@ BEGIN {
                             },
                             {
                                 'name' => "From_Addr",
+                                'title' => "From Address",
                                 'type' => "varchar",
                                 'type_params' => {'len' => 255 },
                             },
                             {
                                 'name' => "To_Addr",
+                                'title' => "To Address",
                                 'type' => "varchar",
                                 'type_params' => {'len' => 255 },
                             },

@@ -476,6 +476,8 @@ sub render_edit_form
 
     my $cancel_delete = $options{'no-delete-button'} || 0;
 
+    my $script_url = $options{'script-url'} || "edit.cgi";
+
     foreach my $title ($ok_title, $error_title)
     {
         $title =~ s/\$V/$user_title/g;
@@ -499,12 +501,12 @@ sub render_edit_form
         }
         # We have a valid username
 
-        $o->print("<form method=\"post\" action=\"edit.cgi\">\n");
+        $o->print("<form method=\"post\" action=\"$script_url\">\n");
         $o->print("<table>\n");
         foreach my $field (@{$table_spec->{'fields'}})
         {
             $o->print("<tr>\n");
-            my $display_type = $field->{'display'}->{'type'};
+            my $display_type = $field->{'display'}->{'type'} || "";
             my $field_name = $field->{'name'};
             my $field_title = exists($field->{'title'}) ? $field->{'title'} : $field_name;
             if ($display_type eq "hidden")
