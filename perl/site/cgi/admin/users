@@ -268,12 +268,30 @@ my $draw_page = sub {
                 $o->print("<form method=\"post\" action=\"edit.cgi\">\n");
                 foreach my $field (@{$config{'database'}->{'tables'}->{'users'}->{'fields'}})
                 {
-                    if ($field->{'display'}->{'type'} eq "hidden")
+                    my $display_type = $field->{'display'}->{'type'};
+                    my $field_name = $field->{'name'};
+                    if ($display_type eq "hidden")
                     {
-                        $o->print("<input type=\"hidden\" name=\"" . $field->{'name'} . "\" value=\"" . CGI::escapeHTML($data->{$field->{'name'}}) . " />\n");
+                        $o->print("<input type=\"hidden\" name=\"" . $field->{'name'} . "\" value=\"" . CGI::escapeHTML($data->{$field_name}) . "\" />\n");
                         next;
                     }
+                    elsif ($display_type eq "constant")                    
+                    {
+                        $o->print("<b>$field_name</b>: " . 
+                            CGI::escapeHTML($data->{$field_name}) . 
+                            "<br />\n");
+                    }
+                    else
+                    {
+                        $o->print("<b>$field_name</b>: " .
+                            "<input name=\"$field_name\" " . 
+                            (($display_type eq "password") ? "type=\"password\"" : "") .
+                            " value=\"" . 
+                            CGI::escapeHTML($data->{$field_name}) . 
+                            "\" /><br />\n");
+                    }
                 }
+                $o->print("\n\n<input type=\"submit\" value=\"Update\" />\n");
                 $o->print("\n\n</form>\n");
             }
             else

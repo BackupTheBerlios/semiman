@@ -59,7 +59,7 @@ BEGIN {
                                 'type' => "varchar",
                                 'type_params' => { 'len' => 30 },
                                 'input_params' => 
-                                [ 
+                                [
                                     { 
                                         'unique' => 1
                                     }, 
@@ -73,6 +73,7 @@ BEGIN {
                                     },
 
                                ],
+                               'display' => { 'type' => "constant" },
                             },
                             {
                                 'name' => "Super_Admin",
