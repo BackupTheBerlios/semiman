@@ -121,18 +121,18 @@ my $draw_page = sub {
     while (my $row = $sth->fetchrow_arrayref())
     {
         my ($club_id, $name) = @$row;
-        $o->print("<option value=\"club-$club_id\">" . CGI::escapeHTML("All $name" . "'s Subjects") . "</option>\n");        
+        $o->print("<option value=\"club-$club_id\">" . CGI::escapeHTML("All $name" . "'s Subjects") . "</option>\n");
     }
 
-    $sth = $dbh->prepare("SELECT clubs.Name, subjects.Subject_ID, subjects.Name FROM clubs, subjects WHERE subjects.Club_ID = clubs.Club_ID ORDER BY clubs.Name, subjects.Name");
+    $sth = $dbh->prepare("SELECT clubs.Club_ID, clubs.Name, subjects.Subject_ID, subjects.Name FROM clubs, subjects WHERE subjects.Club_ID = clubs.Club_ID ORDER BY clubs.Name, subjects.Name");
 
     $rv = $sth->execute();
 
     while (my $row = $sth->fetchrow_arrayref())
     {
-        my ($club_name, $subj_id, $subj_name) = @$row;
+        my ($club_id, $club_name, $subj_id, $subj_name) = @$row;
 
-        $o->print("<option value=\"subj-$subj_id\">" . CGI::escapeHTML("$club_name :: $subj_name") . "</option>\n");
+        $o->print("<option value=\"subj-$club_id-$subj_id\">" . CGI::escapeHTML("$club_name :: $subj_name") . "</option>\n");
     }
 
     $o->print("</select></td>\n");

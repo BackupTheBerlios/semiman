@@ -49,8 +49,13 @@ my $draw_page = sub {
     my $dbh = Technion::Seminars::DBI->new();
 
     my $where_clause = "";
+    my $groupby_clause = " GROUP BY seminars.Seminar_ID";
 
     my @clauses;
+
+    push @clauses, "seminars.Seminar_ID = associations.Seminar_ID";
+
+    my %tables = ("seminars" => 1, "associations" => 1);
 
     if ($q->param("keywords"))
     {
@@ -66,12 +71,79 @@ my $draw_page = sub {
         push @clauses, ("MATCH(seminars.Lecturer) AGAINST (" . $dbh->quote($lecturer).")");
     }
 
+    if ($q->param("subjects"))
+    {
+        my @ids = $q->param("subjects");
+        if (scalar(@ids) > 500)
+        {
+            @ids = @ids[0 .. 499];
+        }
+        my (%clubs);
+        foreach my $id (@ids)
+        {
+            if ($id eq "all")
+            {
+                goto SKIP_SUBJECTS_PARAM;
+            }
+            elsif ($id =~ /^club-(\d{1,9})$/)
+            {
+                $clubs{$1}->{'all'} = 1;
+            }
+            elsif ($id =~ /^subj-(\d{1,9})-(\d{1,9})$/)
+            {
+                $clubs{$1}->{'subj'}->{$2} = 1;
+            }
+            else
+            {
+                # Do Nothing - invalid ID
+            }
+        }
+        # Filter out the clubs who were marked entirely
+        # and the subject IDs whose clubs were not marked entirely
+        my @club_ids = (grep { exists($clubs{$_}->{'all'}) } keys(%clubs));
+        my @subj_ids = 
+            (map 
+                { 
+                    (exists($clubs{$_}->{'all'})) ? 
+                        () : 
+                        keys(%{$clubs{$_}->{'subj'}}) 
+                } 
+                keys(%clubs)
+            );
+
+        my $is_club_ids = (scalar(@club_ids) > 0);
+        my $is_subj_ids = (scalar(@subj_ids) > 0);
+
+        if ($is_club_ids || $is_subj_ids)
+        {
+            @tables{qw(clubs associations subjects)} = (1,1,1);
+
+            my $my_clause = "associations.Seminar_ID = seminars.Seminar_ID AND ";
+            if ($is_club_ids && $is_subj_ids)
+            {
+                $my_clause .= "(associations.Subject_ID IN (" . join(",", @subj_ids) . ") OR (associations.Subject_ID = subjects.Subject_ID AND subjects.Club_ID IN (" . join(",", @club_ids) .")))";
+            }
+            elsif ($is_club_ids)
+            {
+                $my_clause .= "(associations.Subject_ID = subjects.Subject_ID AND subjects.Club_ID IN (" . join(",", @club_ids) ."))";
+            }
+            else
+            {
+                $my_clause .= "(associations.Subject_ID IN (" . join(",", @subj_ids). "))";
+            }
+
+            push @clauses, $my_clause;            
+        }
+        
+        SKIP_SUBJECTS_PARAM:
+    }
+
     if (scalar(@clauses))
     {
         $where_clause = "WHERE " . join(" AND ", (map { "($_)" } @clauses));
     }
 
-    my $query = "SELECT seminars.Seminar_ID, seminars.Title, seminars.Date FROM seminars $where_clause ORDER BY seminars.Date";
+    my $query = "SELECT seminars.Seminar_ID, seminars.Title, seminars.Date FROM " . join(",", keys(%tables)) . " $where_clause $groupby_clause ORDER BY seminars.Date";
 
     print STDERR "\$query=$query\n";
     
