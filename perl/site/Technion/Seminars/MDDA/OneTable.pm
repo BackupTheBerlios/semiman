@@ -420,20 +420,22 @@ sub render_edit_form
         # We have a valid username
 
         $o->print("<form method=\"post\" action=\"edit.cgi\">\n");
+        $o->print("<table>\n");
         foreach my $field (@{$table_spec->{'fields'}})
         {
+            $o->print("<tr>\n");
             my $display_type = $field->{'display'}->{'type'};
             my $field_name = $field->{'name'};
             my $field_title = exists($field->{'title'}) ? $field->{'title'} : $field_name;
             if ($display_type eq "hidden")
             {
-                $o->print("<input type=\"hidden\" name=\"" . $field->{'name'} . "\" value=\"" . CGI::escapeHTML($data->{$field_name}) . "\" />\n");
+                $o->print("<td><input type=\"hidden\" name=\"" . $field->{'name'} . "\" value=\"" . CGI::escapeHTML($data->{$field_name}) . "\" /></td>\n");
             }
             elsif ($display_type eq "constant")
             {
-                $o->print("<b>$field_title</b>: " . 
+                $o->print("<td><b>$field_title</b>:</td><td>" . 
                     CGI::escapeHTML($data->{$field_name}) . 
-                    "<br />\n");
+                    "</td>");
             }
             else
             {
@@ -444,30 +446,33 @@ sub render_edit_form
 
                 if ($widget_type eq "textarea")
                 {
-                    $o->print($heading . "<br />\n" .
+                    $o->print("<td colspan=\"2\">$heading</td></tr><tr><td colspan=\"2\">\n" .
                         "<textarea name=\"" . $field->{'name'} . 
                         "\" rows=\"" . $widget_params->{'height'} . 
                         "\" cols=\"" . $widget_params->{'width'} . "\">\n" .
                         CGI::escapeHTML($data->{$field_name}) .
-                        "</textarea><br />\n\n"
+                        "</textarea></td>\n\n"
                     );
                 }
                 else
                 {
-                    $o->print($heading .
+                    $o->print("<td>$heading</td><td>" .
                         "<input name=\"$field_name\" " . 
                         (($display_type eq "password") ? "type=\"password\"" : "") .
                         " value=\"" . 
                         CGI::escapeHTML($data->{$field_name}) . 
-                        "\" /><br />\n");
+                        "\" /></td>\n");
                 }
             }
+            $o->print("</tr>\n");
         }
-        $o->print("\n\n<input type=\"submit\" name=\"action\" value=\"Update\" />\n");
+        $o->print("\n\n<tr><td colspan=\"2\"><input type=\"submit\" name=\"action\" value=\"Update\" />\n");
         if (! $cancel_delete)
         {
             $o->print("\n\n<input type=\"submit\" name=\"action\" value=\"Delete\" />\n");
         }
+        $o->print("</td></tr>\n");
+        $o->print("</table>\n");
         $o->print("\n\n</form>\n");
     }
     else

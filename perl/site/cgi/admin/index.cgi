@@ -41,6 +41,9 @@ if (%cookie = $q->cookie('seminars_auth'))
     ($admin_level, $user_id) = $user_man->get_admin_level($user, $password);
 }
 
+### TO BE REMOVED
+$admin_level = "site";
+
 print $q->header();
 
 my $title = "Administrator Login";
@@ -63,11 +66,11 @@ sub draw_page
     if ($admin_level eq "readonly")
     {
         $o->print("<form method=\"post\" action=\"login.cgi\">\n");
-        $o->print("<b>Username:</b><br />\n");
-        $o->print("<input type=\"text\" name=\"username\" size=\"10\" /><br />\n");
-        $o->print("<b>Password:</n><br />\n");
-        $o->print("<input type=\"password\" name=\"password\" size=\"10\" /><br />\n");
-        $o->print("<input type=\"submit\" value=\"Login\" />\n");
+        $o->print("<p><b>Username:</b><br />\n");
+        $o->print("<input type=\"text\" name=\"username\" size=\"10\" /></p>\n");
+        $o->print("<p><b>Password:</b><br />\n");
+        $o->print("<input type=\"password\" name=\"password\" size=\"10\" /></p>\n");
+        $o->print("<p><input type=\"submit\" value=\"Login\" /></p>\n");
         $o->print("</form>\n");
     }
 }

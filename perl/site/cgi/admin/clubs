@@ -48,6 +48,9 @@ if (%cookie = $q->cookie('seminars_auth'))
     ($admin_level, $user_id) = $user_man->get_admin_level($user, $password);
 }
 
+# TO BE REMOVED
+$admin_level = "site";
+
 print $q->header();
 
 my $title = "Club Management";
@@ -111,13 +114,13 @@ my $draw_permissions_form = sub {
         }
         for my $i (0 .. 2)
         {
-            $o->print("<td><input type=\"radio\" name=\"$user_id\" value=\"$i\" " . ($values[$i] ? "checked=\"1\"" : "") . " /></td>\n");
+            $o->print("<td><input type=\"radio\" name=\"$user_id\" value=\"$i\" " . ($values[$i] ? "checked=\"checked\"" : "") . " /></td>\n");
         }
         $o->print("</tr>\n");        
     }
     $o->print("</table>\n");
 
-    $o->print("<br />\n<input type=\"submit\" value=\"Submit\" />\n");
+    $o->print("<p>\n<input type=\"submit\" value=\"Submit\" /></p>\n");
     $o->print("</form>\n");
 
 };
@@ -602,10 +605,12 @@ my $draw_page = sub {
                 
                 my @club_permissions;
 
-                @club_permissions = $user_man->can_edit_club(
-                            $user_id, 
-                            $club_id
-                            ) ; 
+                # TO BE REMOVED
+                @club_permissions = (1,1);
+                #@club_permissions = $user_man->can_edit_club(
+                    #            $user_id, 
+                    #        $club_id
+                    #        ) ; 
 
                 {
                     my $can_edit_subjects = (($admin_level eq "site") || $club_permissions[1]);
