@@ -86,11 +86,14 @@ sub render
     $o->print("<tbody>\n");
     $o->print("<tr>\n");
     $o->print("<td valign=\"top\" class=\"navbar\" width=\"20%\">\n")
+    $o->print("<a href=\"" . $self->linkto([]) . "\" class=\"nav\">Main</a><br />\n");
+    $o->print("<a href=\"" . $self->linkto(["calendar"]) . "\" class=\"nav\">Calendar</a><br />\n");
     $o->print("</td>\n");
     $o->print("<td valign=\"top\" class=\"main\">\n");
     if (!ref($contents))
     {
         $o->print($contents);
+        $o->print("\n");
     }
     elsif (ref($contents) eq "CODE")
     {
