@@ -13,21 +13,26 @@ use vars qw(@EXPORT @ISA);
 @EXPORT=qw(%config);
 
 BEGIN {
+
+    my $ip_addr_str = `sbin/ifconfig ppp0 | grep "inet addr"`;
+    $ip_addr_str =~ m/inet addr:(\d+\.\d+\.\d+\.\d+)/;
+    my $ip_addr = $1;
+    
     %config = 
     (
         'crypt_file' => "/etc/seminars-crypt-file",
         # The URL of the HTTP Read-only Tree
         'http_url' => 
             {
-                'url' => "http://132.68.52.118/seminars/",
-                'host' => "132.68.52.118",
+                'url' => "http://$ip_addr/seminars/",
+                'host' => "$ip_addr",
                 'path' => "seminars",
             },
         # The URL of the HTTPS Admin Tree
         'https_url' =>
             {
-                'url' => "https://132.68.52.118/seminars/",
-                'host' => "132.68.52.118",
+                'url' => "https://$ip_addr/seminars/",
+                'host' => "$ip_addr",
                 'path' => "seminars",
             },
         # Browser Compatibility Flag - make the code less standard
