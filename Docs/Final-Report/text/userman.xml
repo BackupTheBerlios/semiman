@@ -1,0 +1,117 @@
+<?xml version='1.0' ?>
+
+<!-- <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "http://www.oa
+sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
+<!-- This comment is meant to settle gvim -->
+
+<chapter id="user_man">
+    <title>User Manual</title>
+    <section id="installation">
+        <title>Installation</title>
+        <para>
+            You'll need a UNIX system with the following programs installed:
+        </para>
+        <para>
+            <itemizedlist>
+                <listitem>
+                    Perl 5.6.1 or Greater
+                </listitem>
+                <listitem>
+                    Apache 1.3.23 or Greater
+                </listitem>
+                <listitem>
+                    mod_perl configured for Apache.
+                </listitem>
+                <listitem>
+                    MySQL 3.23.47 or Greater
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            Afterwards the following CPAN modules need to be installed:
+        </para>
+        <para>
+            <itemizedlist>
+                <listitem>
+                    CGI
+                </listitem>
+                <listitem>
+                    Crypt::Blowfish
+                </listitem>
+                <listitem>
+                    Data::Dumper
+                </listitem>
+                <listitem>
+                    Date::DayOfWeek
+                </listitem>
+                <listitem>
+                    Data::Parse
+                </listitem>
+                <listitem>
+                    DBI
+                </listitem>
+                <listitem>
+                    DBD-Mysql
+                </listitem>
+                <listitem>
+                    Math::BigInt
+                </listitem>
+                <listitem>
+                    MIME::Base64
+                </listitem>
+                <listitem>
+                    Time::DaysInMonth
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            After that, unpack the distribution. You need to make sure 
+            $DIST/perl/site is in the mod_perl include path. Next create
+            an alias for $DIST/perl/site/cgi, and make sure all files except
+            for those ending with .css are handled by mod_perl.
+        </para>
+        <section id="Config_pm">
+            <title>Configuring Config.pm</title>
+            <para>
+                At the beginning of the file 
+                <filename>$DIST/perl/site/Technion/Seminars/Config.pm</filename>
+                are several constants that need to be set. Search for SET ME
+                and set them to their apporpriate values.
+            </para>
+        </section>
+        <section id="crypt_file">
+            <title>Creating a crypt file</title>
+            <para>
+                Create a crypt file (in the path specified in Config.pm) and 
+                place there 56 bytes of random data. The following command will
+                work on Linux:                
+            </para>
+            <para>
+                <screen>
+                $ dd if=/dev/urandom of=cryptfile bs=56 count=1
+                </screen>
+            </para>        
+        </section>
+    </section>
+    
+</chapter>
+
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:4
+sgml-indent-data:t
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+sgml-parent-document: "zavitan.xml"
+End:
+-->
+
