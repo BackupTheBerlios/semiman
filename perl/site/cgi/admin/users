@@ -70,7 +70,7 @@ my $draw_page = sub {
             $o->print("<h2>Existing Users</h2>\n");
             
             my $dbh = DBI->connect(@{$config{'database'}}{'dsn', 'user', 'password'});
-            my $sth = $dbh->prepare("SELECT * FROM users");
+            my $sth = $dbh->prepare("SELECT * FROM users ORDER BY Username");
             my $rv = $sth->execute();
             while (my $row = $sth->fetchrow_hashref())
             {
