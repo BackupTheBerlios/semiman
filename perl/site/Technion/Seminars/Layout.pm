@@ -53,6 +53,11 @@ sub initialize
             $admin_level = $param;
             next;
         }
+        if ($arg =~ /^-?cgi-query$/)
+        {
+            my $q = $self->{'cgi-query'} = $param;
+            $self->{'printer_friendly_version'} = $q->param("printer_friendly_version");
+        }
     }
 
     $self->{'path'} = [ split(m!/!, $path) ] ;
@@ -108,6 +113,8 @@ sub render
     my @path = @{$self->{'path'}};
 
     my $admin_level = $self->{'admin_level'};
+
+    my $pfriend = $self->{'printer_friendly_version'};
     
     $o->print("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n");
     $o->print("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 " . 
@@ -121,68 +128,74 @@ sub render
     $o->print("<link rel=\"StyleSheet\" href=\"" . $self->linkto(["style.css"], 0) . "\" type=\"text/css\" />\n");
     $o->print("</head>\n");
     $o->print("<body>\n");
-    $o->print("<table summary=\"Layout Table: The first cell contains a navigation bar, the second the main page\" border=\"0\" width=\"99%\">\n");
-    $o->print("<tbody>\n");
-    $o->print("<tr>\n");
-    $o->print("<td valign=\"top\" class=\"navbar\" style=\"width:20%\">\n");
-
-    $o->print("<ul class=\"navbarmain\">\n");
-
-    my $put_link = sub {
-        my $path = shift;
-        my $text = shift;
-        $o->print("<li><a href=\"" . $self->linkto($path) . "\" class=\"navbar\">" .
-            $text .
-            "</a></li>\n"
-        );
-    };
-
-    my $promote = sub {
-        $o->print("<li><ul class=\"navbarnested\">\n");
-    };
-
-    my $demote = sub {
-        $o->print("</ul></li>\n");
-    };
-
-    my $separator = sub {
-        $o->print("<li><br /></li>\n");
-    };
-    
-    $put_link->([], "Main");
-    $separator->();
-    $put_link->(["day"], "Daily Calendar");
-    $put_link->(["week"], "Weekly Calendar");
-    $put_link->(["month"], "Monthly Calendar");
-    $separator->();
-    $put_link->(["search"], "Search");
-    $separator->();
-    $put_link->(["club"], "The Clubs");
-    $separator->();
-    if ($admin_level eq "readonly")
+    if (! $pfriend)
     {
-        $o->print("<li><a href=\"". ($config{'https_url'}->{'url'} . "admin/") . "\">Admin</a></li>\n");
-    }
-    else
-    {
-        $o->print("</ul>\n<h3 class=\"navbar\">Admin</h3>\n<ul class=\"navbarmain\">\n");
+        $o->print("<table summary=\"Layout Table: The first cell contains a navigation bar, the second the main page\" border=\"0\" width=\"99%\">\n");
+        $o->print("<tbody>\n");
+        $o->print("<tr>\n");
+        $o->print("<td valign=\"top\" class=\"navbar\" style=\"width:20%\">\n");
+
+        $o->print("<ul class=\"navbarmain\">\n");
+
+        my $put_link = sub {
+            my $path = shift;
+            my $text = shift;
+            $o->print("<li><a href=\"" . $self->linkto($path) . "\" class=\"navbar\">" .
+                $text .
+                "</a></li>\n"
+            );
+        };
+
+        my $promote = sub {
+            $o->print("<li><ul class=\"navbarnested\">\n");
+        };
+
+        my $demote = sub {
+            $o->print("</ul></li>\n");
+        };
+
+        my $separator = sub {
+            $o->print("<li><br /></li>\n");
+        };
+        
+        $put_link->([], "Main");
         $separator->();
-        $put_link->(["admin", "clubs"], "Clubs");
-        if (($path[0] eq "admin") && ($path[1] eq "clubs") && (scalar(@path) >= 3))
+        $put_link->(["day"], "Daily Calendar");
+        $put_link->(["week"], "Weekly Calendar");
+        $put_link->(["month"], "Monthly Calendar");
+        $separator->();
+        $put_link->(["search"], "Search");
+        $separator->();
+        $put_link->(["club"], "The Clubs");
+        $separator->();
+        if ($admin_level eq "readonly")
         {
-            $promote->();
-            $put_link->([ @path[0 .. 2] ], $path[2]);
-            $demote->();
+            $o->print("<li><a href=\"". ($config{'https_url'}->{'url'} . "admin/") . "\">Admin</a></li>\n");
         }
-        if ($admin_level eq "site")
+        else
         {
-            $put_link->(["admin", "users"], "Users");
+            $o->print("</ul>\n<h3 class=\"navbar\">Admin</h3>\n<ul class=\"navbarmain\">\n");
+            $separator->();
+            $put_link->(["admin", "clubs"], "Clubs");
+            if (($path[0] eq "admin") && ($path[1] eq "clubs") && (scalar(@path) >= 3))
+            {
+                $promote->();
+                $put_link->([ @path[0 .. 2] ], $path[2]);
+                $demote->();
+            }
+            if ($admin_level eq "site")
+            {
+                $put_link->(["admin", "users"], "Users");
+            }
+            $put_link->(["admin", "logout.cgi"], "Log out");
         }
-        $put_link->(["admin", "logout.cgi"], "Log out");
+
+        $o->print("<li><br /></li>\n");
+        $o->print("<li><a href=\"./?printer_friendly_version=1\">Printer Friendly Verions</a></li>\n");
+        $o->print("</ul>\n");
+        $o->print("</td>\n");
+        $o->print("<td valign=\"top\" class=\"main\">\n");
     }
-    $o->print("</ul>\n");
-    $o->print("</td>\n");
-    $o->print("<td valign=\"top\" class=\"main\">\n");
     if (!ref($contents))
     {
         $o->print($contents);
@@ -192,12 +205,15 @@ sub render
     {
         $contents->($o);
     }
-    $o->print("</td>\n");
-    $o->print("</tr>\n");
-    $o->print("</tbody>\n");
-    $o->print("</table>\n");
+    if (! $pfriend)
+    {
+        $o->print("</td>\n");
+        $o->print("</tr>\n");
+        $o->print("</tbody>\n");
+        $o->print("</table>\n");
+    }
     $o->print("</body>\n");
-    $o->print("</html>\n");    
+    $o->print("</html>\n");
 }
 
 1;

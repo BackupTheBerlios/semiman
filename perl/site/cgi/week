@@ -128,6 +128,7 @@ my $layout =
     Technion::Seminars::Layout->new(
         'path' => $base_url,
         'title' => $title,
+        'cgi-query' => $q,
     );
 
 my $get_week_url = sub {

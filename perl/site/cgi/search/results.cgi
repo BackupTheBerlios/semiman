@@ -36,6 +36,7 @@ my $layout =
     Technion::Seminars::Layout->new(
         'path' => "search", 
         'title' => $title,
+        'cgi-query' => $q,
     );
 
 my $o = Gamla::TextStream::Out::File->new(\*STDOUT);

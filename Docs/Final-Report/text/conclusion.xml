@@ -137,7 +137,100 @@ sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
             own framework.
         </para>
     </section>
+    <section id="docbook">
+        <title>DocBook</title>
+        <para>
+            In our previous project (the IP-Noise Simulator one) Roy and I 
+            used Microsoft Word to manage our mid-term report and our final 
+            report. We used both Microsoft Word 2000 and Word XP. It was not
+            an enjoyable experience. Microsoft Word has so many idiosyncracies
+            that working with it was a nightmare, in which we tried to make
+            things look the way we wanted them to. Many times we gave up
+            and let Word have it "his" way.
+        </para>
+        <para>
+            For this project we decided to use a UNIXish format like LaTeX or
+            DocBook. We settled DocBook for two reasons:
+        </para>
+        <para>
+            <orderedlist>
+                <listitem>
+                    <para>
+                        It can easily generate LaTeX, Word RTF or HTML.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        It has better support for HyperText.
+                    </para>
+                </listitem>                
+            </orderedlist>
+        </para>
+        <para>
+            We were very impressed with the output given to us by DocBook.
+            It creates a nice PDF that looks and behaves well in Acrobat
+            Reader. And it generates nice HTML.
+        </para>
+        <para>
+            DocBook's only fault as far as we are concerned is that it is
+            very verbose. But this is a small price to pay for piece of 
+            mind and portability.
+        </para>
+    </section>
+    <section id="rtfm_and_stfw">
+        <title>RTFM and STFW</title>
+        <para>
+            It is well know that RTFM stands for "Read the Fabolous Manual"
+            and STFW for "Search the Fabolous Web". Many people don't 
+            understand the importance of looking for previous effort before
+            they start coding. However, we found that by asking the mailing
+            list of Linux-IL and looking we managed to find a few things that
+            helped us:
+        </para>
+        <para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+                        webCal - a web-based calendar written in Perl (without
+                        SQL) which we used to rob ideas and HTML from.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        Various CPAN modules - made our job a little easier,
+                        especially when dealing with dates.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        UserFriendly Codebase - a web-based forum written
+                        for the immortal cartoon. We based our authentication
+                        methodology on its code.
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </para>
 
+        <para>
+            While the previous effort may not be exactly re-usable,
+            it is still better to look for ideas, become impressed,
+            and learn from other people's experiences.
+        </para>
+</section>
+<section id="i18n">
+    <title>Internationalization, Localization and Bi-directionality</title>
+    <para>
+        When we asked Yoram Yihyie about whether we should support Hebrew
+        or not, he said that it would not be necessary. Thus, if one
+        wishes to convert the framework to a different language, we don't
+        expect the task to be trivial.
+    </para>
+    <para>
+        First, all the strings need to be isolated, and GNU gettext put to 
+        use and other such changes. A complete re-write would not be 
+        necessary, but it would require a lot of work.
+    </para>
+</section>
 </chapter>
 
 

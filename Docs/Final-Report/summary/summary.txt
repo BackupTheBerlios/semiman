@@ -37,6 +37,7 @@
     - WebCal
     - Why we wrote our own thing (vs. using OpenACP)
     - I18N, L16N and BiDi
+    - RTFM and STFW before you start
 
 6. Thanks
 
