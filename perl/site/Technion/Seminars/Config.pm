@@ -19,15 +19,15 @@ BEGIN {
         # The URL of the HTTP Read-only Tree
         'http_url' => 
             {
-                'url' => "http://localhost/seminars/",
-                'host' => "localhost",
+                'url' => "http://132.68.52.118/seminars/",
+                'host' => "132.68.52.118",
                 'path' => "seminars",
             },
         # The URL of the HTTPS Admin Tree
         'https_url' =>
             {
-                'url' => "https://localhost/seminars/",
-                'host' => "localhost",
+                'url' => "https://132.68.52.118/seminars/",
+                'host' => "132.68.52.118",
                 'path' => "seminars",
             },
         # Browser Compatibility Flag - make the code less standard

@@ -54,7 +54,7 @@ else
         $q->cookie(
             -name => "seminars_auth",
             -value => { 'user' => $user, 'password' => $user_man->encrypt($password) },
-            -path => ( $config{'https_url'}->{'path'} . "/admin/" ),
+            -path => ( "/" . $config{'https_url'}->{'path'} . "/admin/" ),
             -domain => $config{'https_url'}->{'host'},
             -expires => "+12h",
             -secure => 1,
@@ -62,7 +62,7 @@ else
     print $q->header(-cookie => $cookie);
     
     print ("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">" . 
-        "<html>\n<head>\n<title>Redirecting to Site</title>\n<meta http-equiv=\"REFRESH\" content=\"0; URL=./\" />\n</head>\n<body>\n</body>\n</html>\n");
+        "<html>\n<head>\n<title>Redirecting to Site</title>\n" . "<meta http-equiv=\"REFRESH\" content=\"0; URL=./\" />" . "\n</head>\n<body>\n</body>\n</html>\n");
     exit(0);
 }
 

@@ -216,6 +216,7 @@ my $edit_seminars = sub {
     # my $group_by_clause = "GROUP BY subjects.Subject_ID ";
 
     my $can_edit_seminars = (($admin_level eq "site") || $club_permissions->[0]);
+    my $can_edit_club = (($admin_level eq "site") || $club_permissions->[0]);
 
     my $mdda =
         Technion::Seminars::MDDA::OneTable->new(
@@ -264,7 +265,18 @@ my $edit_seminars = sub {
                         $o->print("<h3>$subj_name</h3>\n<ul>\n");
                     }
                 }
-                $o->print("<li><a href=\"./$type/$id/\">$date - $title</a></li>");
+                $o->print("<li><a href=\"./$type/$id/\">$date - $title</a>");
+                
+                if (($type eq "assoc") && ($can_edit_club))
+                {
+                    $o->print("<form method=\"post\" action=\"./$type/$id/disassoc.cgi\">\n" . 
+                        "<input type=\"hidden\" name=\"Subject_ID\" value=\"$subj_id\" />\n" .
+                        "<input type=\"submit\" value=\"Disassociate\" />\n" .
+                        "</form>\n"
+                    );
+                }
+                
+                $o->print("</li>");
                 $prev_subj_id = $subj_id;
             }
             $o->print("</ul>\n");
