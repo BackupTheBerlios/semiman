@@ -428,6 +428,37 @@ my $edit_seminars = sub {
                         $o->print("<input type=\"submit\" value=\"Submit\" />\n");
                         $o->print("</form>\n");
                     }
+                    elsif ($script eq "assoc.cgi")
+                    {
+                        # Handler for the association form
+                        my $query;
+                        my @ids = $q->param("assoc_list");
+                        ID_LOOP: foreach my $id (@ids)
+                        {
+                            # Check to see that the user can edit this ID
+                            if ($admin_level ne "site")
+                            {
+                                my $query = "SELECT count(*) " . 
+                                    "FROM subjects, permissions " . 
+                                    "WHERE subjects.Club_ID = permissions.Club_ID ". 
+                                        "AND subjects.Subject_ID = $id " .
+                                        "AND permissions.User_ID = $user_id";
+
+                                my $sth = $dbh->prepare($query);
+                                my $rv = $sth->execute();
+                                my $verdict = $sth->fetchrow_arrayref();
+                                if (! $verdict->[0])
+                                {
+                                    next ID_LOOP;
+                                }
+                            }
+
+                            my $sth = $dbh->prepare("INSERT INTO associations (Subject_ID, Seminar_ID) VALUES ($id, $seminar_id)");
+                            my $rv = $sth->execute();
+                        }
+
+                        $o->print("<h1>OK</h1>\n\n<p>\nThe subjects were associated with the seminar</p>\n");
+                    }
                 }
             }
         }
