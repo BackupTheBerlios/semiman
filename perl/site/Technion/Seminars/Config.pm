@@ -247,7 +247,7 @@ BEGIN {
                                 {
                                     'type' => "dep-get",
                                     'method' => "choose-from-query",
-                                    'query' => "SELECT Subject_ID FROM subjects WHERE Club_ID = \$PF{Club_ID}",
+                                    'query' => "SELECT Subject_ID, Name FROM subjects WHERE Club_ID = \$PF{Club_ID}",
                                 },
                                 'input_params' =>
                                 [

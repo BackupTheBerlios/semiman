@@ -12,6 +12,8 @@ use Gamla::Object;
 
 @ISA=qw(Gamla::Object);
 
+use CGI;
+
 use Technion::Seminars::Config;
 use Technion::Seminars::DBI;
 use Technion::Seminars::TypeMan;
@@ -81,6 +83,34 @@ sub render_add_form
                 "</textarea><br />\n\n"
             );
         }
+        elsif ($widget_type eq "combobox")
+        {
+            $o->print($heading . "<select name=\"" . $field->{'name'} . "\">\n");
+            if ($input_type eq "dep-get")
+            {
+                if ($input->{'method'} eq "choose-from-query")
+                {
+                    my $query = $input->{'query'};
+                    $query =~ s/\$PF{(\w+)}/$self->{'parent_fields'}->{$1}/ge;
+                    my $dbh = Technion::Seminars::DBI->new();
+                    my $sth = $dbh->prepare($query);
+                    my $rv = $sth->execute();
+                    while (my $row = $sth->fetchrow_arrayref())
+                    {
+                        $o->print("<option value=\"" . CGI::escapeHTML($row->[0]) . "\">" . CGI::escapeHTML($row->[1]) . "</option>\n");
+                    }
+                    $o->print("\n</select>\n<br />\n");
+                }
+                else
+                {
+                    die "Don't know what to do";
+                }
+            }
+            else
+            {
+                die "Don't know what to do";
+            }
+        }       
         else
         {
             my $field_display_type = exists($field->{'display'}->{'type'}) ?
