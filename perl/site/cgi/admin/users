@@ -152,7 +152,7 @@ my $draw_page = sub {
                         my $input_params_arr = $field->{'input_params'};
                         if ($input_params_arr)
                         {
-                            foreach my $input_params ((ref($input_params_arr) eq "ARRAY") ? @$input_params_arr : ($input_params_arr))
+                            foreach my $input_params ((ref($input_params_arr) eq "ARRAY") ? (@$input_params_arr) : ($input_params_arr))
                             {
                                 if ($input_params->{'unique'})
                                 {
@@ -167,7 +167,10 @@ my $draw_page = sub {
                                 if ($input_params->{'not_match'})
                                 {
                                     my $pattern = $input_params->{'not_match'};
-                                    if ($value =~ /$pattern/);
+                                    open O, ">>/tmp/users-dump.txt";
+                                    print O "\$pattern=$pattern\n";
+                                    close(O);
+                                    if ($value =~ /$pattern/)
                                     {
                                         die $input_params->{'comment'};
                                     }
