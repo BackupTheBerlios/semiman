@@ -95,6 +95,54 @@ BEGIN {
                             },
                         ],
                     },
+                    'clubs' =>
+                    {
+                        'fields' =>
+                        [
+                            {
+                                'name' => "Club_ID",
+                                'type' => "int32",
+                                'input' => { 'type' => "auto", 'method' => "get-new-id", "primary_key" => 1, },
+                                'display' => { 'type' => "hidden" },
+                            },
+                            {
+                                'name' => 'Name',
+                                'type' => "varchar",
+                                'type_params' => { 'len' => 255 },
+                            },
+                            {
+                                'name' => 'Clubname',
+                                'type' => "varchar",
+                                'type_params' => { 'len' => 30 },
+                                'input_params' => 
+                                [
+                                    { 
+                                        'unique' => 1
+                                    }, 
+                                    { 
+                                        'not_match' => '^new$', 
+                                        'comment' => "new is a reserved word and cannot be assigned as a username",
+                                    },
+                                    {
+                                        'match' => '^[a-zA-Z]\w*$' ,  
+                                        'comment' => "The username must start with a letter and extend with letters, digits and underscores",
+                                    },
+
+                               ],
+                               'display' => { 'type' => "constant" },
+                            },
+                            {
+                                'name' => 'Homepage',
+                                'type' => "url",
+                                'type_params' => { 'len' => 30 },
+                            }
+                            {
+                                'name' => "Description",
+                                'type' => "varchar",
+                                'type_params' => { 'len' => 64*1024 },
+                            },
+                        ],
+                    }
                 },
             },
 

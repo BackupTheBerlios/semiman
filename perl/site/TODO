@@ -1,8 +1,14 @@
-* Synchronize the Usernames/Passwords of the HTTP Authentication with the
-SQL database.
+Pressing:
+---------
+
+* Write the clubs table spec.
+
+Non-pressing:
+-------------
 
 * Make sure the boolean Super_Admin gets a checkbox.
 
 * Deal with cases of a user deleting himself or turning
 himself into a non site admin.
+
 
