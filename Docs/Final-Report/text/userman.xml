@@ -111,7 +111,33 @@ sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
             </para>
         </section>
     </section>
-    
+    <section id="basic_op_concepts">
+        <title>Basic Operation Concepts</title>
+        <para>
+            The system manages several clubs, and several users. A user may
+            be a super-admin, in which case he can edit users and edit
+            the clubs' data as he pleases. If not, he is restricted to editing
+            the data of the clubs to which he has permissions to.
+        </para>
+        <para>
+            For each club, there are three levels of usability by a non
+            super-admin user. Either that user may not do anything with the 
+            club; or he can add or edit seminars, but not manage the subjects
+            list; lastly, it is possible that he can also manage the list
+            of subjects that are associated with that specific club.
+        </para>
+        <para>
+            When a seminar is created, it is owned by the club that created
+            it under one of its subjects. This seminar can then be associated
+            with other subjects, including those of other clubs. Alternatively,
+            it can be disassociated from subjects it had been associated with
+            previously.
+        </para>
+        <para>
+            Seminars may not be deleted, but non-associated are not
+            displayed to the general public.
+        </para>
+    </section>
 </chapter>
 
 
