@@ -44,25 +44,50 @@ sub render_add_form
     # relevant one.
     foreach my $field (@{$table_spec->{'fields'}})
     {
-        # If it's an auto field than it is not filled by the user.
-        if ($field->{'input'}->{'type'} eq "auto")
+        # If it's an auto field than it is not filled by the user.        
+        my $input = $field->{'input'} || {};
+        my $input_type = $input->{'type'} || "";
+        if ($input_type eq "auto")
         {
             next;
         }
-        $o->print("<b>" .
-            (exists($field->{'title'}) ? 
-                $field->{'title'} : 
-                $field->{'name'}
-            ) . 
-            "</b>: <input type=\"" . 
-            (($field->{'display'}->{'type'} eq "password") ? 
-                "password" : 
-                "text"
-            ) . 
-            "\" name=\"" . 
-            $field->{'name'} . 
-            "\" /><br />\n"
+        
+        my $widget_params = $field->{'widget_params'};
+        my $widget_type = $widget_params->{'type'} || "";
+
+        my $heading = "<b>" .
+                (exists($field->{'title'}) ? 
+                    $field->{'title'} : 
+                    $field->{'name'}
+                ) . 
+                "</b>:";
+        
+        print STDERR "\$widget_type=$widget_type\n";
+
+        if ($widget_type eq "textarea")
+        {
+            $o->print($heading . "<br />\n" .
+                "<textarea rows=\"" . $widget_params->{'height'} .
+                "\" cols=\"" . $widget_params->{'width'} . "\">\n" .
+                "</textarea><br />\n\n"
             );
+        }
+        else
+        {
+            my $field_display_type = exists($field->{'display'}->{'type'}) ?
+                $field->{'display'}->{'type'} : "";
+                
+            $o->print($heading . 
+                "<input type=\"" .
+                (($field_display_type eq "password") ? 
+                    "password" : 
+                    "text"
+                ) . 
+                "\" name=\"" . 
+                $field->{'name'} . 
+                "\" /><br />\n"
+                );
+        }
     }
     $o->print("\n\n<input type=\"submit\" value=\"Add\" />\n\n");
     $o->print("</form>\n");
@@ -317,7 +342,7 @@ sub perform_edit_operation
 
     if ($data->[0] == "0")
     {
-        $o->print("<h1>Error - An $record_title with this $id_field_title not found!</h1>\n\n<p>The $id_field_title $user_id was not found on this server.</p>\n\n");
+        $o->print("<h1>Error - A $record_title with this $id_field_title not found!</h1>\n\n<p>The $id_field_title $user_id was not found on this server.</p>\n\n");
     }
     if ($q->param("action") eq "Delete")
     {

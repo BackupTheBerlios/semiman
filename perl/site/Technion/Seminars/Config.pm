@@ -140,9 +140,15 @@ BEGIN {
                                 'name' => "Description",
                                 'type' => "varchar",
                                 'type_params' => { 'len' => 64*1024 },
+                                'widget_params' => 
+                                { 
+                                    'type' => "textarea", 
+                                    'height' => 10,
+                                    'width' => 50,
+                                },
                             },
                         ],
-                    }
+                    },
                 },
             },
     );
