@@ -35,6 +35,9 @@ BEGIN {
 
     # SET ME to the path of the crypt file for encrypting passwords
     my $crypt_file = "/etc/seminars-crypt-file";
+
+    # SET ME to the host of the mail server
+    my $mail_server = "t2.technion.ac.il";
     
     %config = 
     (
@@ -56,6 +59,7 @@ BEGIN {
         # Browser Compatibility Flag - make the code less standard
         # and more compatible with common browser bugs.
         'browser_compatibility' => 1,
+        'smtp_server' => $mail_server,
         'database' =>
             {
                 'dsn' => $dsn,

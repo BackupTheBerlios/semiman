@@ -9,6 +9,8 @@ use CGI;
 
 use DBI;
 
+use Net::SMTP;
+
 use Gamla::TextStream::Out::File;
 
 use Technion::Seminars::Config;
@@ -278,6 +280,11 @@ my $edit_seminars = sub {
                         "<input type=\"submit\" value=\"Disassociate\" />\n</p>\n" .
                         "</form>\n"
                     );
+                    $o->print("<form method=\"post\" action=\"./$type/$id/notify_mail.cgi\">\n" .
+                        "<p class=\"onebuttonform\">\n<input type=\"hidden\" name=\"Subject_ID\" value=\"$subj_id\" />\n" . 
+                        "<input type=\"submit\" value=\"Notify by E-mail\" />\n</p>\n" .
+                        "</form>\n"
+                    );
                 }
                 elsif ($type eq "owned")
                 {
@@ -520,6 +527,52 @@ my $edit_seminars = sub {
                             my $rv = $sth->execute();
 
                             $o->print("<h1>OK</h1>\n\n<p>The seminar was disassociated.</p>\n");
+                        }
+                    }
+                    elsif ($script eq "notify_mail.cgi")
+                    {
+                        if ($can_edit_club)
+                        {
+                            my $sth = 
+                                $dbh->prepare( #INDEXED
+                                    "SELECT * FROM seminars WHERE Seminar_ID = $seminar_id");
+                            my $rv = $sth->execute();
+                            my $data = $sth->fetchrow_hashref();
+
+                            my $sth =
+                                $dbh->prepare(
+                                    "SELECT Name FROM subjects WHERE Subject_ID = " . $q->param("Subject_ID"));
+
+                            my $rv = $sth->execute();
+                            my ($subject_name) = $sth->fetchrow_array();
+
+                            my $sth = 
+                                $dbh->prepare( #INDEXED
+                                    "SELECT To_Addr, From_Addr FROM mailinglists WHERE Club_ID = $club_id");
+                            my $rv = $sth->execute();
+                            my $to_from = $sth->fetchrow_hashref();
+
+                            if (($to_from->{'To_Addr'} =~ /^\s+$/) ||
+                                ($to_from->{'From_Addr'} =~ /^\s+$/))
+                            {
+                                exit(0);
+                            }
+                            
+                            
+                            my $smtp = Net::SMTP->new($config{'smtp_server'});
+                            $smtp->mail($to_from->{'From_Addr'});
+                            $smtp->to($to_from->{'To_Addr'});
+                            
+                            $smtp->data();
+                            $smtp->datasend("Subject: Lecture: " . $data->{'Title'} . "\n\n");
+                            $smtp->datasend($data->{'Title'} . "\n");
+                            $smtp->datasend("Given by " . $data->{'Lecturer'} . "\n");
+                            $smtp->datasend("Time: " . $data->{'Date'} . ", " . $data->{'Time'} . "-" . $data->{'EndTime'} . "\n" );
+                            $smtp->datasend("Room: " . $data->{'Room'} . "\n");
+                            $smtp->datasend("Description:\n" . $data->{'Description'} ."\n\n");
+                            $smtp->datasend("Contact Information:\n" . $data->{'ContactInfo'});
+                            $smtp->dataend();
+                            $smtp->quit();
                         }
                     }
                 }
