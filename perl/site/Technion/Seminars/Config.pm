@@ -58,6 +58,7 @@ BEGIN {
                                 'name' => 'Username',
                                 'type' => "varchar",
                                 'type_params' => { 'len' => 30 },
+                                'input_params' => { 'unique' => 1, },
                             },
                             {
                                 'name' => "Super_Admin",

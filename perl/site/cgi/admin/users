@@ -22,7 +22,7 @@ sub check_url
 {
     my $url = shift;
 
-    my $verdict = ($url =~ /^admin\/users\/([A-Za-z_]*\/)?$/) ? 1 : 0;
+    my $verdict = ($url =~ /^admin\/users\/(([A-Za-z_]*\/)|(new\/(add\.cgi)?))?$/) ? 1 : 0;
     
     return ($verdict, "admin/users/");
 }
@@ -106,6 +106,69 @@ my $draw_page = sub {
             }
             $o->print("\n\n<input type=\"submit\" value=\"Add\" />\n\n");
             $o->print("</form>\n");
+        }
+        elsif ($base_url eq "admin/users/new/add.cgi")
+        {
+            eval {
+
+                my $dbh = DBI->connect(@{$config{'database'}}{'dsn', 'user', 'password'});
+                    
+                my (@query_fields, @query_values);
+                my $type_man = Technion::Seminars::TypeMan->new();
+             
+                foreach my $field (@{$config{'database'}->{'tables'}->{'users'}->{'fields'}})
+                {
+                    push @query_fields, $field->{'name'};
+                    my $value = "";
+                    my $input = $field->{'input'} || { 'type' => "normal", };
+
+                    if ($input->{'type'} eq "auto")
+                    {
+                        if ($input->{'method'} eq "by-value")
+                        {
+                            $value = $input->{'value'};
+                        }
+                        elsif ($input->{'method'} eq "get-new-id")
+                        {
+                            # Note: MySQL Specific
+                            $value = 0;
+                        }
+                    }
+                    else
+                    {
+                        $value = $q->param($field->{'name'});
+                        my ($status, $error_string) = ($type_man->check_value($field->{'type'}, $field->{'type_params'}, $value));
+                        if (! $status)
+                        {
+                            die ($field->{'name'} . " could not be accepted: $error_string");
+                        }
+                        if ($field->{'input_params'}->{'unique'})
+                        {
+                            my $sth = $dbh->prepare("SELECT count(*) FROM users WHERE " . $field->{'name'} . " = " . $dbh->quote($value));
+                            my $rv = $sth->execute();
+                            my $ary_ref = $sth->fetchrow_arrayref();
+                            if ($ary_ref->[0] > 0)
+                            {
+                                die ($field->{'name'} " must be unique and there is already a duplicate entry!";
+                            }
+                        }
+                    }
+
+                    push @query_values, $value;
+                }
+
+                my $sth = $dbh->prepare("INSERT INTO users (" . join(",", @query_fields) . ") VALUES (" . join(",", map { $dbh->quote($_) } @query_values) . ")");
+                my $rv = $sth->execute();
+
+                $o->print("<h1>OK</h1>\n");
+                $o->print("<p>The user was added.</p>\n");
+            };
+
+            if ($@)
+            {
+                $o->print("<h1>Error in Input!</h1>\n\n");
+                $o->print("<p>" . $@ . "</p>");
+            }
         }
     }
 };
