@@ -66,6 +66,13 @@ my $o = Gamla::TextStream::Out::File->new(\*STDOUT);
 my $draw_page = sub {
     my $o = shift;
 
+    my $mdda = 
+        Technion::Seminars::MDDA::OneTable->new(
+            'clubs', 
+            $config{'database'}->{'tables'}->{'clubs'}
+        );
+    
+
     if ($admin_level eq "readonly")
     {
         return;
@@ -114,6 +121,19 @@ my $draw_page = sub {
             $o->print("<a href=\"./" . $data->{"clubs.Clubname"} . "/\">" .
                 CGI::escapeHTML($data->{"clubs.Name"}) . 
                 "</a><br />\n");                
+        }
+    }
+    else
+    {
+        my $clubname = shift(@url_components);
+        if ($clubname eq "new")
+        {
+            if ($admin_level eq "site")
+            {
+                $o->print("<h1>Add a New Club</h1>\n\n");
+                
+                $mdda->render_add_form($o);
+            }
         }
     }
 

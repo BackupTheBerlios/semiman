@@ -15,6 +15,7 @@ use Technion::Seminars::SlashUrl;
 use Technion::Seminars::UserMan;
 use Technion::Seminars::TypeMan;
 use Technion::Seminars::DBI;
+use Technion::Seminars::MDDA::OneTable;
 
 use Gamla::TextStream::Out::File;
 
@@ -63,7 +64,13 @@ my $layout =
 my $o = Gamla::TextStream::Out::File->new(\*STDOUT);
 
 my $draw_page = sub {
-    my $o = shift;        
+    my $o = shift;
+
+    my $mdda = 
+        Technion::Seminars::MDDA::OneTable->new(
+            'users', 
+            $config{'database'}->{'tables'}->{'users'}
+        );
    
     # Only site-wide admins can enter this page
     if ($admin_level eq "site")
@@ -92,33 +99,7 @@ my $draw_page = sub {
 
             $o->print("<h1>Add a New User</h1>\n\n");
 
-            $o->print("<form method=\"post\" action=\"add.cgi\">\n");
-            # Loop over all the fields and output an edit box for each 
-            # relevant one.
-            foreach my $field (@{$config{'database'}->{'tables'}->{'users'}->{'fields'}})
-            {
-                # If it's an auto field than it is not filled by the user.
-                if ($field->{'input'}->{'type'} eq "auto")
-                {
-                    next;
-                }
-                $o->print("<b>" .
-                    (exists($field->{'title'}) ? 
-                        $field->{'title'} : 
-                        $field->{'name'}
-                    ) . 
-                    "</b>: <input type=\"" . 
-                    (($field->{'display'}->{'type'} eq "password") ? 
-                        "password" : 
-                        "text"
-                    ) . 
-                    "\" name=\"" . 
-                    $field->{'name'} . 
-                    "\" /><br />\n"
-                    );
-            }
-            $o->print("\n\n<input type=\"submit\" value=\"Add\" />\n\n");
-            $o->print("</form>\n");
+            $mdda->render_add_form($o);
         }
         elsif ($base_url eq "admin/users/new/add.cgi")
         {
