@@ -190,6 +190,7 @@ my $draw_page = sub {
                                 "Club_ID",
                                 'record-title' => "club",
                                 'id-field-title' => "club ID",
+                                'dependent-tables' => [ "permissions" ],
                             );
                         }
                     }

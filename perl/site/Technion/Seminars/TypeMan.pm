@@ -9,6 +9,7 @@ use Arad::Types;
 use Arad::Types::SQL::Int32;
 use Arad::Types::SQL::VarChar;
 use Arad::Types::SQL::Double;
+use Arad::Types::SQL::Boolean;
 
 use Arad::Types::Abstract::Bounded;
 
@@ -18,6 +19,7 @@ sub get_type_man
     $sql_typeman->register_type(Arad::Types::SQL::Int32::get_type_params());
     $sql_typeman->register_type(Arad::Types::SQL::VarChar::get_type_params());
     $sql_typeman->register_type(Arad::Types::SQL::Double::get_type_params());
+    $sql_typeman->register_type(Arad::Types::SQL::Boolean::get_type_params());
 
     my $abstract_typeman = Arad::Types->new();
 

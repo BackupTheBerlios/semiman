@@ -291,9 +291,7 @@ sub perform_edit_operation
 
     my $o = shift;
 
-    my $id_field = shift;
-
-    my $dependant_tables = shift || [];
+    my $id_field = shift;    
 
     my %options = @_;
 
@@ -304,6 +302,8 @@ sub perform_edit_operation
     my $table_name = $self->{'table_name'};
 
     my $table_spec = $self->{'table_spec'};
+
+    my $dependent_tables = $options{'dependent-tables'} || [];
 
 
     my $dbh = Technion::Seminars::DBI->new();
@@ -317,16 +317,26 @@ sub perform_edit_operation
 
     if ($data->[0] == "0")
     {
-        $o->print("<h1>Error - $id_field_title not found!</h1>\n\n<p>The $id_field_title $user_id was not found on this server.</p>\n\n");
+        $o->print("<h1>Error - An $record_title with this $id_field_title not found!</h1>\n\n<p>The $id_field_title $user_id was not found on this server.</p>\n\n");
     }
     if ($q->param("action") eq "Delete")
     {
         $sth = $dbh->prepare("DELETE FROM $table_name WHERE $id_field = $user_id");
         $rv = $sth->execute();
-        foreach my $table (@$dependant_tables)
+        foreach my $table (@$dependent_tables)
         {
-            my $table_id_field = exists($table->{'id'}) || $id_field;;
-            $dbh->prepare("DELETE FROM " . $table->{'name'} ." WHERE $table_id_field = $user_id");
+            my ($table_id_field, $table);
+            if (ref($table) eq "")
+            {
+                $table_id_field = $id_field;
+                $table_name = $table;
+            }
+            else
+            {
+                $table_id_field = exists($table->{'id'}) || $id_field;
+                $table_name = $table->{'name'};
+            }
+            $dbh->prepare("DELETE FROM $table_name WHERE $table_id_field = $user_id");
             $rv = $sth->execute();
         }
 
