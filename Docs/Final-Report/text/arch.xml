@@ -232,6 +232,27 @@ sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
                 regard to the users table.
             </para>
         </section>
+        <section id="day">
+            <title>day</title>
+            <para>
+                This script is a daily calendar. On top it displays a 
+                navigation bar with links to the previous day, the next day,
+                the current week and the current month. The date of the day
+                is inputted from the URL. A URL of "day/2002/09/10" denotes
+                September 10, 2002.
+            </para>
+            <para>
+                The seminars are displayed one by one sorted according to their
+                time. The time of seminars that are still to come is displayed
+                in green, while that of those that have passed is displayed
+                in red.
+            </para>
+            <para>
+                The script performs one query to the database to retrieve
+                a list of values for display. Only seminars that were associated
+                with one or more subject are displayed.
+            </para>
+        </section>
 
     </section>
 </chapter>
