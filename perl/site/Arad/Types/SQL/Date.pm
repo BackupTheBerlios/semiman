@@ -56,7 +56,59 @@ sub check_value
     }
 }
 
-sub compare
+# Expands years given as 1, 2, 3 or 4 digits to a 4-digit precision
+# year value.
+sub expand_year
+{
+    my $entered = shift;
+    my ($new_year);
+
+    my @curr_time = localtime(time());
+    my $curr_year = $curr_time[5]+1900;
+
+    if ($entered < 0)
+    {
+        return $entered;
+    }    
+    elsif (length($entered) == 1)
+    {
+        $new_year = $curr_year - ($curr_year % 10) + $entered;
+    }
+    elsif (length($entered) == 2)
+    {
+        # In case somebody decides to travel back in time and still use this software... :-)
+        if (($curr_year >= 0) && ($curr_year <= 99))
+        {
+            $new_year = $curr_year - ($curr_year % 100) + $entered;
+        }
+        else
+        {
+            # Create a window from $curr_year-50 to $curr_year+50 
+            $new_year = ($curr_year-50 + (($entered - ($curr_year % 100) + 50) % 100));
+        }
+    }
+    elsif (length($entered) == 3)
+    {
+        if (($curr_year >= 0) && ($curr_year <= 999))
+        {
+            $new_year = $curr_year - ($curr_year % 1000) + $entered;
+        }
+        else
+        {
+            # Create a window from $curr_year-500 to $curr_year+500 
+            $new_year = ($curr_year-500 + (($entered - ($curr_year % 1000) + 500) % 1000));
+        }
+    }
+    else
+    {
+        $new_year = $entered;
+    }
+
+    return $new_year;
+}
+
+
+sub compare_values
 {
     my $typeman = shift;
     my $type_spec = shift;
