@@ -200,11 +200,12 @@ my $draw_page = sub {
     $o->print("<table border=\"1\" width=\"100%\">\n");
     
 
+    my $set_width = " style=\"width:12.5%\" ";
     $o->print("<tr>\n");
-    $o->print("<td valign=\"top\" width=\"12.5%\"></td>\n");
+    $o->print("<td valign=\"top\" $set_width></td>\n");
     for(my $d=0;$d<7;$d++)
     {
-        $o->print("<td valign=\"top\" width=\"12.5%\"><a href=\"" . $layout->linkto(["day", @{$day_dates[$d]} ]) . "\">" . $week_days[$d] . "</a></td>\n");
+        $o->print("<td valign=\"top\" $set_width><a href=\"" . $layout->linkto(["day", @{$day_dates[$d]} ]) . "\">" . $week_days[$d] . "</a></td>\n");
     }
     $o->print("</tr>\n");
 
@@ -214,7 +215,7 @@ my $draw_page = sub {
         $o->print("<td>". $time_breaks[$time_coord] . "-".$time_breaks[$time_coord+1]."</td>\n");
         for($day_coord=0;$day_coord<7;$day_coord++)
         {
-            $o->print("<td valign=\"top\" width=\"12.5%\">\n");
+            $o->print("<td valign=\"top\" $set_width>\n");
             $o->print(
                 join(
                     "\n<br />\n", 
