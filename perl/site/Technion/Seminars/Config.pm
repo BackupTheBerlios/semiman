@@ -46,7 +46,7 @@ BEGIN {
                             {
                                 'name' => "User_ID",
                                 'type' => "int32",
-                                'input' => { 'type' => "auto", 'method' => "get-new-id" },
+                                'input' => { 'type' => "auto", 'method' => "get-new-id", "primary_key" => 1, },
                                 'display' => { 'type' => "hidden" },
                             },
                             {
