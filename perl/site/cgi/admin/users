@@ -75,7 +75,7 @@ my $draw_page = sub {
             $o->print("<h1>$title</h1>\n\n");
             $o->print("<h2><a href=\"./new/\">Add a New User</a></h2>");
             $o->print("<h2>Existing Users</h2>\n");
-            
+
             my $dbh = Technion::Seminars::DBI->new();
             my $sth = $dbh->prepare("SELECT * FROM users ORDER BY Username");
             my $rv = $sth->execute();
@@ -258,7 +258,7 @@ my $draw_page = sub {
             # Init a database handle
             my $dbh = Technion::Seminars::DBI->new();
             my $sth = $dbh->prepare("SELECT * FROM users WHERE Username = '$username'");
-            my ($rv = $sth->execute())
+            my $rv = $sth->execute();
             my $data;
             
             if ($data = $sth->fetchrow_hashref())
@@ -270,19 +270,16 @@ my $draw_page = sub {
                 {
                     if ($field->{'display'}->{'type'} eq "hidden")
                     {
-                        $o->print("<input type=\"hidden\" name=\"" . $field->{'name'} . "\" value=\"" . escapeHTML($data->{$field->{'name'}}) . " />\n");
+                        $o->print("<input type=\"hidden\" name=\"" . $field->{'name'} . "\" value=\"" . CGI::escapeHTML($data->{$field->{'name'}}) . " />\n");
                         next;
                     }
-                    
                 }
+                $o->print("\n\n</form>\n");
             }
             else
             {
                 $o->print("<h1>Unknown User $username</h1>");
             }
-            
-            
-        
         }
     }
 };
