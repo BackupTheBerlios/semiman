@@ -36,7 +36,7 @@ sub check_url
 my $base_url = &normalize_url($q, \&check_url, "https");
 
 my (%cookie);
-my ($user, $password);
+my ($user, $password, $user_id);
 my $admin_level = "readonly";
 
 my $user_man = Technion::Seminars::UserMan->new();
@@ -150,19 +150,36 @@ my $draw_page = sub {
         else
         {
             my $dbh = Technion::Seminars::DBI->new();
-            my $sth = $dbh->prepare("SELECT Club_ID FROM Clubs WHERE Clubname = '$clubname'");
+            my $sth = $dbh->prepare("SELECT Club_ID FROM clubs WHERE Clubname = '$clubname'");
             my $rv = $sth->execute();
             
             my $row = $sth->fetchrow_arrayref();
             if ($row)
             {
                 my $club_id = $row->[0];
+                
+                my @club_permissions;
+                
                 if (($admin_level eq "site") || 
-                    ($user_man->can_edit_club($user_id, $club_id)))
-                if (scalar(@url_components) == 0)
+                    (eval { 
+                        @club_permissions = $user_man->can_edit_club(
+                            $user_id, 
+                            $club_id
+                            ) ; 
+                        $club_permissions[0] 
+                        }
+                    ))
                 {
-                    $mdda->render_edit_form($o, "Club_ID", $club_id);
-                }                
+                    if (scalar(@url_components) == 0)
+                    {
+                        $mdda->render_edit_form(
+                            $o, 
+                            "Club_ID", 
+                            $club_id,
+                            'field-title' => $clubname,
+                        );
+                    }                
+                }
             }
             else
             {

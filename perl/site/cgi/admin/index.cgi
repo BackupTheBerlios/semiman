@@ -29,7 +29,7 @@ sub check_url
 &normalize_url($q, \&check_url, "https");
 
 my (%cookie);
-my ($user, $password);
+my ($user, $password, $user_id);
 my $admin_level = "readonly";
 
 my $user_man = Technion::Seminars::UserMan->new();
@@ -39,7 +39,7 @@ if (%cookie = $q->cookie('seminars_auth'))
     $user = $cookie{'user'};
     $password = $cookie{'password'};
 
-    $admin_level = $user_man->get_admin_level($user, $password);
+    ($admin_level, $user_id) = $user_man->get_admin_level($user, $password);
 }
 
 print $q->header();

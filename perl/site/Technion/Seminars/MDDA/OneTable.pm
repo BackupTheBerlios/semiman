@@ -222,13 +222,13 @@ sub render_edit_form
 
     my $ok_title = $options{'ok-title'} || "Editing \$V";
 
-    
-
     my $error_title = $options{'error-title'} || "Unknown \$F - \$V";
+
+    my $user_title = $options{'field-title'} || $username;
 
     foreach my $title ($ok_title, $error_title)
     {
-        $title =~ s/\$V/$username/g;
+        $title =~ s/\$V/$user_title/g;
         $title =~ s/\$F/$key_field/g;
     }
     

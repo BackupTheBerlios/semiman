@@ -40,7 +40,7 @@ sub get_admin_level
 
     my $dbh = Technion::Seminars::DBI->new();
 
-    my $sth = $dbh->prepare("SELECT Password, Super_Admin FROM users WHERE Username = " . $dbh->quote($user));
+    my $sth = $dbh->prepare("SELECT Password, Super_Admin, User_ID FROM users WHERE Username = " . $dbh->quote($user));
     my $rv = $sth->execute();
 
     my $data = $sth->fetchrow_arrayref();
@@ -56,13 +56,28 @@ sub get_admin_level
     if ($data->[0] eq $password)
     {
         # The Super_Admin flag determines the level of the user
-        return ($data->[1] ? "site" : "club");
+        return (($data->[1] ? "site" : "club"), $data->[2]);
     }
     else
     {
         # The passwords do not match - fall back to read only.
-        return "readonly";
+        return ("readonly", undef);
     }
+}
+
+sub can_edit_club
+{
+    my $self = shift;
+
+    my $user_id = shift;
+    my $club_id = shift;
+
+    my $dbh = Technion::Seminars::DBI->new();
+
+    my $sth = $dbh->prepare("SELECT count(*), Subjects FROM permissions WHERE User_ID = $user_id AND Club_ID = $club_id");
+    my $rv = $sth->execute();
+    my $row = $sth->fetchrow_arrayref();
+    return (@$row); 
 }
 
 1;
