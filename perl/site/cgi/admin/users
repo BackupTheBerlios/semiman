@@ -14,6 +14,7 @@ use Technion::Seminars::Layout;
 use Technion::Seminars::SlashUrl;
 use Technion::Seminars::UserMan;
 use Technion::Seminars::TypeMan;
+use Technion::Seminars::DBI;
 
 use Gamla::TextStream::Out::File;
 
@@ -75,7 +76,7 @@ my $draw_page = sub {
             $o->print("<h2><a href=\"./new/\">Add a New User</a></h2>");
             $o->print("<h2>Existing Users</h2>\n");
             
-            my $dbh = DBI->connect(@{$config{'database'}}{'dsn', 'user', 'password'});
+            my $dbh = Technion::Seminars::DBI->new();
             my $sth = $dbh->prepare("SELECT * FROM users ORDER BY Username");
             my $rv = $sth->execute();
             while (my $row = $sth->fetchrow_hashref())
@@ -92,8 +93,11 @@ my $draw_page = sub {
             $o->print("<h1>Add a New User</h1>\n\n");
 
             $o->print("<form method=\"post\" action=\"add.cgi\">\n");
+            # Loop over all the fields and output an edit box for each 
+            # relevant one.
             foreach my $field (@{$config{'database'}->{'tables'}->{'users'}->{'fields'}})
             {
+                # If it's an auto field than it is not filled by the user.
                 if ($field->{'input'}->{'type'} eq "auto")
                 {
                     next;
@@ -121,7 +125,8 @@ my $draw_page = sub {
             # Process the user addition
             eval {
 
-                my $dbh = DBI->connect(@{$config{'database'}}{'dsn', 'user', 'password'});
+                # Init a database handle
+                my $dbh = Technion::Seminars::DBI->new();
 
                 # Construct a query
                 my (@query_fields, @query_values);
@@ -244,6 +249,40 @@ my $draw_page = sub {
                 $o->print("<h1>Error in Input!</h1>\n\n");
                 $o->print("<p>" . $@ . "</p>");
             }
+        }
+        elsif ($base_url =~ m/admin\/users\/(\w+)\//)
+        {
+            # Display a form to edit the current user.
+
+            my $username = $1;
+            # Init a database handle
+            my $dbh = Technion::Seminars::DBI->new();
+            my $sth = $dbh->prepare("SELECT * FROM users WHERE Username = '$username'");
+            my ($rv = $sth->execute())
+            my $data;
+            
+            if ($data = $sth->fetchrow_hashref())
+            {
+                # We have a valid username
+                $o->print("<h1>Edit the User $username</h1>\n\n");
+                $o->print("<form method=\"post\" action=\"edit.cgi\">\n");
+                foreach my $field (@{$config{'database'}->{'tables'}->{'users'}->{'fields'}})
+                {
+                    if ($field->{'display'}->{'type'} eq "hidden")
+                    {
+                        $o->print("<input type=\"hidden\" name=\"" . $field->{'name'} . "\" value=\"" . escapeHTML($data->{$field->{'name'}}) . " />\n");
+                        next;
+                    }
+                    
+                }
+            }
+            else
+            {
+                $o->print("<h1>Unknown User $username</h1>");
+            }
+            
+            
+        
         }
     }
 };
