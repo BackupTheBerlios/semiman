@@ -17,8 +17,13 @@ Club-Admin:
     /subjects          -> Subjects List
         /[subject id] -> A specific subject
     /seminars/           ->
-        [seminar name]      -> Edit Seminar
         /new               -> New Seminar
+        /owned
+            [seminar id]      -> Edit Seminar
+                /associate      -> Associate with another subject            
+       /assoc
+            [seminar id]      -> Edit Seminar
+                /associate      -> Associate with another subject
 
 Site Admin:
 -----------

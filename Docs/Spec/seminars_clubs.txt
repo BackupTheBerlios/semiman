@@ -16,3 +16,10 @@ a seminar with a subject of his own clubs.
 
 In the "New Seminar" form, there will be a choice of the primary subject of
 the seminar, from within the subjects of the club in the URL. 
+
+To edit a summer one enters its club and chooses it from the list.
+
+After a seminar is created, an association for it and the owner subject id
+is also implicitly created.
+
+
