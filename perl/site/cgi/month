@@ -1,0 +1,56 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+use CGI;
+
+use Technion::Seminars::Config;
+use Technion::Seminars::Layout;
+use Technion::Seminars::SlashUrl;
+
+use Gamla::TextStream::Out::File;
+
+use POSIX qw(strftime);
+
+use Time::DaysInMonth;
+use Date::DayOfWeek;
+
+my $q = CGI->new();
+
+sub check_url
+{
+    my $url = shift;
+
+    my ($y,$m,$d);
+
+    my $verdict = ($url =~ /^month\/(\d{4})\/(0[1-9]|1[0-2])\/$/) ? 1 : 0;
+
+    return ($verdict, strftime("month/%Y/%m/", localtime(time())));
+}
+
+# Make sure our URL ends with a slash.
+my $base_url = &normalize_url($q, \&check_url);
+
+print $q->header();
+
+my $title = "Monthly Calendar";
+
+my $layout = 
+    Technion::Seminars::Layout->new(
+        'path' => $base_url,
+        'title' => $title,
+    );
+
+my $o = Gamla::TextStream::Out::File->new(\*STDOUT);
+
+sub draw_page
+{
+    my $o = shift;
+
+    $o->print("<h1>$title</h1>\n");
+
+    $o->print("This would be the monthly calendar.");
+}
+
+
+$layout->render($o, \&draw_page);
