@@ -154,11 +154,12 @@ sub render
     {
         $o->print("<b>Admin</b><br />\n");
         $o->print("<br />\n");
-        $put_link->(["clubs"], "Clubs");        
+        $put_link->(["admin", "clubs"], "Clubs");
         if ($admin_level eq "site")
         {
-            $put_link->(["users"], "Users");
+            $put_link->(["admin", "users"], "Users");
         }
+        $put_link->(["admin", "logout.cgi"], "Log out");
     }
     $o->print("</td>\n");
     $o->print("<td valign=\"top\" class=\"main\">\n");

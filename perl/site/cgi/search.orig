@@ -1,5 +1,8 @@
 #!/usr/bin/perl -w
 
+# This is meant to suppress these annoying "subroutine redefined" warnings
+no warnings "redefine";
+
 use strict;
 
 use CGI;
@@ -33,14 +36,12 @@ my $layout =
 
 my $o = Gamla::TextStream::Out::File->new(\*STDOUT);
 
-sub draw_page
-{
+my $draw_page = sub {
     my $o = shift;
 
     $o->print("<h1>$title</h1>\n");
 
     $o->print("This would be a search form.");
-}
+};
 
-
-$layout->render($o, \&draw_page);
+$layout->render($o, $draw_page);

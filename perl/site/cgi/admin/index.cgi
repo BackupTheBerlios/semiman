@@ -1,5 +1,8 @@
 #!/usr/bin/perl -w
 
+# This is meant to suppress these annoying "subroutine redefined" warnings
+no warnings "redefine";
+
 use strict;
 
 use CGI;
@@ -17,7 +20,11 @@ sub check_url
 {
     my $url = shift;
 
-    my $verdict = ($url =~ /^admin(\/index.cgi)?$/) ? 1 : 0;
+    open O, ">>/tmp/admin.dump.txt";
+    print O "\$url=$url\n";
+    close(O);
+
+    my $verdict = ($url =~ /^admin(\/index.cgi(\/)?)?$/) ? 1 : 0;
     
     return ($verdict, "admin/");
 }
@@ -38,8 +45,6 @@ if (%cookie = $q->cookie('seminars_auth'))
 
     $admin_level = $user_man->get_admin_level($user, $password);
 }
-
-my $user = CGI::remote_user();
 
 print $q->header();
 

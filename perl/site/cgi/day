@@ -1,5 +1,8 @@
 #!/usr/bin/perl -w
 
+# This is meant to suppress these annoying "subroutine redefined" warnings
+no warnings "redefine";
+
 use strict;
 
 use CGI;
@@ -41,7 +44,8 @@ my $base_url = &normalize_url($q, \&check_url);
 
 print $q->header();
 
-my $title = "Search for Seminars";
+use vars qw($title);
+$title = "Search for Seminars";
 
 my $layout = 
     Technion::Seminars::Layout->new(
@@ -59,6 +63,11 @@ sub draw_page
 
     $o->print("This would be the daily calendar.");
 }
+
+
+
+
+
 
 
 $layout->render($o, \&draw_page);
