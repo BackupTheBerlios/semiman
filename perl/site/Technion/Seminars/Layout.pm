@@ -27,6 +27,8 @@ sub initialize
 
     my $path = "";
     my $title = "Technion Seminars";
+    my $protocol = "http";
+    my $admin_level = "readonly";
     while (scalar(@_))
     {
         my $arg = shift;
@@ -34,15 +36,29 @@ sub initialize
         if ($arg =~ /^-?path$/)
         {
             $path = $param;
+            next;
         }
         if ($arg =~ /^-?title$/)
         {
             $title = $param;
+            next;
+        }
+        if ($arg =~ /^-?protocol$/)
+        {
+            $protocol = $param;
+            next;
+        }
+        if ($arg =~ /^-?admin[-_]level$/)
+        {
+            $admin_level = $param;
+            next;
         }
     }
 
     $self->{'path'} = [ split(m!/!, $path) ] ;
     $self->{'title'} = $title;
+    $self->{'protocol'} = $protocol;
+    $self->{'admin_level'} = $admin_level;
 
     return 0;
 }
@@ -89,6 +105,8 @@ sub render
     my $browser_compat = $config{'browser_compatibility'};
 
     my @path = @{$self->{'path'}};
+
+    my $admin_level = $self->{'admin_level'};
     
     $o->print("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n");
     $o->print("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 " . 
@@ -128,7 +146,20 @@ sub render
     $o->print("<br />\n");
     $put_link->(["club"], "The Clubs");
     $o->print("<br />\n");
-    $o->print("<a href=\"". ($config{'https_url'}->{'url'} . "admin/") . "\">Admin</a><br />\n");
+    if ($admin_level eq "readonly")
+    {
+        $o->print("<a href=\"". ($config{'https_url'}->{'url'} . "admin/") . "\">Admin</a><br />\n");
+    }
+    else
+    {
+        $o->print("<b>Admin</b><br />\n");
+        $o->print("<br />\n");
+        $put_link->(["clubs"], "Clubs");        
+        if ($admin_level eq "site")
+        {
+            $put_link->(["users"], "Users");
+        }
+    }
     $o->print("</td>\n");
     $o->print("<td valign=\"top\" class=\"main\">\n");
     if (!ref($contents))

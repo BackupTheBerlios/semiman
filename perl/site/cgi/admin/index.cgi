@@ -24,6 +24,8 @@ sub check_url
 # Make sure our URL ends with a slash.
 &normalize_url($q, \&check_url, "https");
 
+my $user = CGI::remote_user();
+
 print $q->header();
 
 my $title = "Administrator Login";
@@ -32,6 +34,7 @@ my $layout =
     Technion::Seminars::Layout->new(
         'path' => "admin",
         'title' => $title,
+        'admin_level' => (($user eq "shlomif") ? "site" : "club"),
     );
 
 my $o = Gamla::TextStream::Out::File->new(\*STDOUT);
