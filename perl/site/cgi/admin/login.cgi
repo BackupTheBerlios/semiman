@@ -53,7 +53,7 @@ else
     my $cookie = 
         $q->cookie(
             -name => "seminars_auth",
-            -value => { 'user' => $user, 'password' => $password },
+            -value => { 'user' => $user, 'password' => $user_man->encrypt($password) },
             -path => ( $config{'https_url'}->{'path'} . "/admin/" ),
             -domain => $config{'https_url'}->{'host'},
             -expires => "+12h",

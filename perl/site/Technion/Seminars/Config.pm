@@ -15,6 +15,7 @@ use vars qw(@EXPORT @ISA);
 BEGIN {
     %config = 
     (
+        'crypt_file' => "/etc/seminars-crypt-file",
         # The URL of the HTTP Read-only Tree
         'http_url' => 
             {

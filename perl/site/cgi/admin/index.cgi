@@ -36,8 +36,7 @@ my $user_man = Technion::Seminars::UserMan->new();
 
 if (%cookie = $q->cookie('seminars_auth'))
 {
-    $user = $cookie{'user'};
-    $password = $cookie{'password'};
+    ($user, $password) = $user_man->get_user_and_password($q);
 
     ($admin_level, $user_id) = $user_man->get_admin_level($user, $password);
 }

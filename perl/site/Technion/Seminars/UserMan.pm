@@ -1,6 +1,10 @@
 package Technion::Seminars::UserMan;
 
 use Technion::Seminars::DBI;
+use Technion::Seminars::Config;
+
+use Crypt::Blowfish;
+use MIME::Base64;
 
 use strict;
 
@@ -27,6 +31,14 @@ my %users =
 sub initialize
 {
     my $self = shift;
+
+    open I, "<" . $config{'crypt_file'} || die "Cannot open Crypt file";
+    my $text = join("", <I>);
+    close(I);
+
+    my $key = pack("a56", $text);
+
+    $self->{'cipher'} = Crypt::Blowfish->new($key);
 
     return 0;
 }
@@ -78,6 +90,65 @@ sub can_edit_club
     my $rv = $sth->execute();
     my $row = $sth->fetchrow_arrayref();
     return (@$row); 
+}
+
+sub decrypt
+{
+    my $self = shift;
+
+    my $enc_password = shift;
+
+    my $cipher = $self->{'cipher'};
+    
+    my $unenc = decode_base64($enc_password);
+    my $unblown;
+
+    my $pos;
+    for ($pos = 0; $pos < length($unenc); $pos += 8)
+    {
+        $unblown .= $cipher->decrypt(substr($unenc, $pos, 8));
+    }
+    $unblown =~ s/\0*$//;
+
+    return $unblown;
+}
+
+sub encrypt
+{
+    my $self = shift;
+
+    my $password = shift;
+
+    $password .= ("\0" x 8);
+
+    my $cipher = $self->{'cipher'};
+
+    my $blown = "";
+    my $pos;
+    
+    for ( $pos = 0; (($pos+8) < length($password)) ; $pos += 8)
+    {
+        $blown .= $cipher->encrypt(substr($password, $pos, 8));
+    }
+
+    my $enc = encode_base64($blown, "");
+
+    return $enc;
+}
+
+sub get_user_and_password
+{
+    my $self = shift;
+
+    my $q = shift;
+
+    my %cookie = $q->cookie('seminars_auth');
+    
+    my $user = $cookie{'user'};
+
+    my $password = $self->decrypt($cookie{'password'});
+
+    return ($user, $password);
 }
 
 1;
