@@ -1,0 +1,84 @@
+#!/usr/bin/perl -w
+
+# This is meant to suppress these annoying "subroutine redefined" warnings
+no warnings "redefine";
+
+use strict;
+
+use CGI;
+use DBI;
+
+use POSIX qw(strftime);
+use Date::Parse;
+
+use Technion::Seminars::Config;
+use Technion::Seminars::Layout;
+use Technion::Seminars::SlashUrl;
+use Technion::Seminars::DBI;
+
+use Gamla::TextStream::Out::File;
+
+my $q = CGI->new();
+
+my @monthes_names = ("January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December");
+
+sub check_url
+{
+    my $url = shift; 
+    return (($url =~ /seminar\/\d+\/?/), "");    
+}
+
+# Make sure our URL ends with a slash.
+my $base_url = &normalize_url($q, \&check_url);
+
+print $q->header();
+
+my $title = "Displaying Seminar";
+
+my $layout = 
+    Technion::Seminars::Layout->new(
+        'path' => $base_url, 
+        'title' => $title,
+    );
+
+my $o = Gamla::TextStream::Out::File->new(\*STDOUT);
+
+my $draw_page = sub {
+    my $o = shift;
+
+    my @url_components = split(/\//, $base_url);
+
+    my $seminar_string = shift(@url_components);
+    my $seminar_id = shift(@url_components);
+    
+    my $query = "SELECT seminars.Title, seminars.Description, seminars.Date, seminars.Time, seminars.Room, seminars.Lecturer, seminars.ContactInfo, clubs.Name FROM seminars, clubs, subjects WHERE seminars.Seminar_ID = $seminar_id AND seminars.Subject_ID = subjects.Subject_ID AND clubs.Club_ID = subjects.Club_ID";
+    
+    my $dbh = Technion::Seminars::DBI->new();
+
+    my $sth = $dbh->prepare($query);
+    
+    my $rv = $sth->execute();
+    my $row = $sth->fetchrow_arrayref();
+    
+    if (! defined($row))
+    {
+        $o->print("<h1>Error</h1>\n<p>A seminar with that ID was not found.</p>\n");
+    }
+    else
+    {
+        my ($title, $desc, $date, $time, $room, $lecturer, $contact_info, $club) = @$row;
+        $o->print("<h1>Displaying Seminar \"" . CGI::escapeHTML($title) . "\"</h1>\n");
+        $o->print("<p>\n<b>Lecturer:</b> " . CGI::escapeHTML($lecturer) . "<br />");
+        $o->print("<b>Description:</b><br />\n</p>\n<p>" . CGI::escapeHTML($desc) . "</p>\n<p>\n");
+        $o->print("<b>Date & Time:</b> " . strftime("%d %B, %Y", localtime(str2time($date))) . " at $time<br />");
+        $o->print("<b>Location:</b> " . CGI::escapeHTML($room) . "<br />\n");
+        $o->print("<b>Publishing Club:</b> " . CGI::escapeHTML($club) . "<br />\n");
+        $o->print("<b>Contact Information:</b><br />\n</p>\n<p>" . CGI::escapeHTML($contact_info) . "</p>\n<p>\n");
+
+        
+    }
+
+};
+
+$layout->render($o, $draw_page);

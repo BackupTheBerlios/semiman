@@ -174,7 +174,7 @@ my $draw_page = sub {
 
     my $query = "SELECT seminars.Seminar_ID, seminars.Title, seminars.Date FROM " . join(",", keys(%tables)) . " $where_clause $groupby_clause ORDER BY seminars.Date";
 
-    print STDERR "\$query=$query\n";
+    # print STDERR "\$query=$query\n";
     
     my $sth = $dbh->prepare($query);
     

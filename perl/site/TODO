@@ -1,7 +1,9 @@
 Pressing:
 ---------
 
-* Add a url type.
+* Implement the Seminar Record Display.
+
+* Implement the calendar views.
 
 Non-pressing:
 -------------
@@ -16,9 +18,10 @@ himself into a non site admin.
 * Make sure Date and Time are edited using combo-boxes separate for 
 day/month/year and for hour/minutes.
 
-* Add a "current club" under Clubs in the navigation bar when editing
-a club.
-
 * Make sure the Subject ID in "Editing Seminar" is displayed by name instead
 of by ID.
+
+* Add an ORDER BY Date and ORDER BY confidence to the search results.
+
+* Make sure that /seminar without the /$id/ will display everything.
 
