@@ -22,7 +22,7 @@ sub check_url
 }
 
 # Make sure our URL ends with a slash.
-&normalize_url($q, \&check_url);
+&normalize_url($q, \&check_url, "https");
 
 print $q->header();
 

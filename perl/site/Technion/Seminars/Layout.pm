@@ -127,6 +127,8 @@ sub render
     $put_link->(["search"], "Search");
     $o->print("<br />\n");
     $put_link->(["club"], "The Clubs");
+    $o->print("<br />\n");
+    $o->print("<a href=\"". ($config{'https_url'}->{'url'} . "admin/") . "\">Admin</a><br />\n");
     $o->print("</td>\n");
     $o->print("<td valign=\"top\" class=\"main\">\n");
     if (!ref($contents))

@@ -20,11 +20,18 @@ sub normalize_url
     # This is a callback to check and normalize the URL
     my $normalize_url_callback = shift;
 
+    # This is the protocol - http or https
+    my $protocol = shift || "http";
+
     # Get the complete URL from the CGI query handle
     my $my_url = $q->self_url();
 
     # Get the base directory for the site
-    my $site_url = $config{'http_url'}->{'url'};
+    my $site_url = 
+        (($protocol eq "https") ? 
+            $config{'https_url'}->{'url'} : 
+            $config{'http_url'}->{'url'}
+        );
     # Strip the base directory of the current URL.
     $my_url =~ s!^$site_url!!;
     # Split into two parts:
