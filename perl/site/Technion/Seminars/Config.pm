@@ -194,12 +194,36 @@ BEGIN {
                             'add' =>
                             [
                                 "INSERT INTO permissions (User_ID, Club_ID, Seminars, Subjects) SELECT users.User_ID, \$F{Club_ID}, 0, 0 FROM users",
+                                "INSERT INTO mailinglists (Club_ID, From, To) VALUES ($F{Club_ID}, '', '')",
                             ],
                             'delete' =>
                             [
                                 "DELETE FROM permissions WHERE Club_ID = \$F{Club_ID}",
+                                "DELETE FROM mailinglists WHERE Club_ID = \$F{Club_ID}",
                             ],
                         },                        
+                    },
+                    'mailinglists' =>
+                    {
+                        'fields' =>
+                        [
+                            {
+                                'name' => "Club_ID",
+                                'type' => "int32",
+                                'input' => { 'type' => "auto", 'method' => "get-new-id", "primary_key" => 1, },
+                                'display' => { 'type' => "hidden" },
+                            },
+                            {
+                                'name' => "From_Addr",
+                                'type' => "varchar",
+                                'type_params' => {'len' => 255 },
+                            },
+                            {
+                                'name' => "To_Addr",
+                                'type' => "varchar",
+                                'type_params' => {'len' => 255 },
+                            },
+                        ],
                     },
                     'permissions' =>
                     {

@@ -21,11 +21,15 @@ CREATE TABLE associations (
 
 INSERT INTO associations VALUES (1,1);
 INSERT INTO associations VALUES (1,6);
+INSERT INTO associations VALUES (1,7);
 INSERT INTO associations VALUES (4,1);
 INSERT INTO associations VALUES (4,4);
 INSERT INTO associations VALUES (5,4);
 INSERT INTO associations VALUES (5,5);
 INSERT INTO associations VALUES (5,6);
+INSERT INTO associations VALUES (5,7);
+INSERT INTO associations VALUES (5,8);
+INSERT INTO associations VALUES (5,9);
 
 #
 # Table structure for table 'clubs'
@@ -48,6 +52,24 @@ CREATE TABLE clubs (
 
 INSERT INTO clubs VALUES (1,'haifux','Haifa Linux Club','http://linuxclub.il.eu.org/homepage','A club for discussing Linux');
 INSERT INTO clubs VALUES (8,'clubnet','Club-Net','http://comnet.technion.ac.il/','Discuss Computer Networks.');
+
+#
+# Table structure for table 'mailinglists'
+#
+
+CREATE TABLE mailinglists (
+  Club_ID int(11) NOT NULL default '0',
+  To_Addr varchar(255) default NULL,
+  From_Addr varchar(255) default NULL,
+  PRIMARY KEY  (Club_ID)
+) TYPE=MyISAM;
+
+#
+# Dumping data for table 'mailinglists'
+#
+
+INSERT INTO mailinglists VALUES (1,'','');
+INSERT INTO mailinglists VALUES (8,'','');
 
 #
 # Table structure for table 'permissions'
@@ -109,6 +131,9 @@ INSERT INTO seminars VALUES (1,4,'Using tcpdump','A lecture about using tcpdump'
 INSERT INTO seminars VALUES (4,4,'BGP','Hay Cohen will give a fascinating lecture about the Border Gateway Protocol','2002-08-30','18:30:00','19:30:00','Taub 6','Hay Cohen','Orr Dunkelman, Guy Keren');
 INSERT INTO seminars VALUES (5,5,'Zavitan - Design and Implementation','Roy Glasberg and Shlomi Fish would cover the design of the Zavitan Seminars Management System	','2002-09-09','16:30:00','19:30:00','Taub 3','Shlomi Fish & Roy Glasberg','Shlomi Fish');
 INSERT INTO seminars VALUES (6,5,'WebMetaLanguage','A lecture about WebMetaLanguage - a tool to \r\ncreate static HTML pages.','2002-08-30','13:30:00','15:30:00','Taub 6','Shlomi Fish','OrrD, Guy Keren');
+INSERT INTO seminars VALUES (7,5,'Perl','Perl is a powerful scripting language.','2002-09-20','18:30:00','20:30:00','Mayer 853','Shlomi Fish','Orr Dunkelman\r\nGuy Keren');
+INSERT INTO seminars VALUES (8,5,'Blah Blah','Your Blah Blah Seminar','2002-09-09','12:30:00','13:30:00','Taub 3','Roy Glasberg','Roy');
+INSERT INTO seminars VALUES (9,5,'Python','A lecture about Python','2002-09-09','20:30:00','22:30:00','Fishbach 300','Yoram Yihyie','Orr Dunkleman Guy Keren');
 
 #
 # Table structure for table 'subjects'
