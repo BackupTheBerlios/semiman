@@ -166,7 +166,7 @@ BEGIN {
                         {
                             'add' =>
                             [
-                                "INSERT INTO permissions (User_ID, Club_ID, Seminars, Subjects) SELECT users.User_ID, $F{Club_ID}, 0, 0 FROM users",
+                                "INSERT INTO permissions (User_ID, Club_ID, Seminars, Subjects) SELECT users.User_ID, \$F{Club_ID}, 0, 0 FROM users",
                             ],
                             'delete' =>
                             [

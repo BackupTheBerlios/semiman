@@ -62,8 +62,6 @@ sub render_add_form
                 ) . 
                 "</b>:";
         
-        print STDERR "\$widget_type=$widget_type\n";
-
         if ($widget_type eq "textarea")
         {
             $o->print($heading . "<br />\n" .
@@ -115,7 +113,10 @@ sub perform_add_operation
         # Construct a query
         my (@query_fields, @query_values);
         my $type_man = Technion::Seminars::TypeMan::get_type_man();
+        
+        my $field_idx = 0;
 
+        my $id_idx = -1;
 
         foreach my $field (@{$table_spec->{'fields'}})
         {
@@ -140,6 +141,7 @@ sub perform_add_operation
                 {
                     # Note: MySQL Specific
                     $value = 0;
+                    $id_idx = $field_idx;
                 }
             }
             else
@@ -209,6 +211,8 @@ sub perform_add_operation
             push @query_fields, $field->{'name'};                    
 
             push @query_values, $value;
+
+            $field_idx++;
         }
 
         # Sanity checks are over - let's insert the values into the table
@@ -220,6 +224,26 @@ sub perform_add_operation
         my $sth = $dbh->prepare($sql_insert_query);
         
         my $rv = $sth->execute();
+
+        if ($id_idx >= 0)
+        {
+            $query_values[$id_idx] = $sth->{'mysql_insertid'};
+        }
+
+        my $triggers = exists($table_spec->{'triggers'}->{'add'}) ? $table_spec->{'triggers'}->{'add'} : [];
+
+        my %field_values;
+        @field_values{@query_fields} = @query_values;
+
+        foreach my $trig (@$triggers)
+        {
+            my $query = $trig;
+            $query =~ s/\$F\{(\w+)\}/$field_values{$1}/ge;
+            print STDERR "\$query=\"$query\"\n";
+            my $sth = $dbh->prepare($query);
+            
+            my $rv = $sth->execute();
+        }
 
         $o->print("<h1>OK</h1>\n");
         $o->print("<p>$ok_message</p>\n");
