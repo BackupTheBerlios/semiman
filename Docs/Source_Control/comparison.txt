@@ -1,0 +1,45 @@
+1. CVS
+    - The de-facto standard in the Open-Source World
+    - Works OK, and relatively flawlessly.
+    - Has many limitations, some very basic.
+    - Fully O-S, and free to use.
+
+2. BitKeeper
+    - A very complete and professional source control system.
+    - Aims to be a replacement for CVS, ClearCase, and anything else
+    in use today.
+    - Requires that either we:
+        1. Send the change logs to the main server. (at real time)
+        2. Pay some money to make sure we don't have to do it.
+            a) Light version that costs less money but has less features.
+            b) Full version that costs more.
+           
+            - The license is "Per seat" and costs $400 to $800 for the
+            lightweight version and $1000 to $2400 for the commercial one.
+
+3. Arch
+    http://www.regexps.com/#arch
+    - Open-Source.
+    - Complete (?)
+    - Developed on FreeBSD but should (!) be portable to other UNIX 
+    platforms.
+    - No Windows support (even on the client side).
+
+4. Subversion
+    http://subversion.tigris.org/
+    - Incomplete and under heavy development
+    - May or may not work properly.
+    - Open-Source
+    - Aims to be a better CVS, but not much more than that, at
+    least not for the forseeable future. (i.e: it is not a ClearCase or 
+    BitKeeper replacement)
+    - Has very few day-to-day idiosincrecies.
+    - Operation is mostly backward compatible with CVS
+
+5. Aegis - 
+    http://aegis.sourceforge.net/
+    - Complete and Stable.
+    - Open-Source
+    - UNIX only
+
+    

@@ -1,0 +1,49 @@
+H2: Coding Guidelines:
+======================
+
+* No eval's.
+* use strict
+* use warnings (the -w switch)
+* Fields are listed in a perl data-structure.
+    - contain flags for sanity checks, field information, etc.
+
+H2: HTML Guidelines:
+====================
+
+* No absolute links.
+* 
+
+
+H2: Class Structure:
+====================
+
+H3: Site Organizer:
+-------------------
+
+Contains a tree of the site. Knows how to get from the current location 
+to the central resource of the site that are embodied in the menus.
+
+H3: Master Page Manager:
+------------------------
+
+Displays the master page (with the menus, the logo, footer, etc.) and delegates
+a request to the page-specific object.
+
+There are several modes of it depending on regular user/club admin/site-wide 
+admin.
+
+H3: Form Pre-Processor:
+-----------------------
+
+A generic class that receives:
+
+1. A data structure that describes the elements processed by the form and 
+the sanity checks that should be performed on them.
+2. The Form CGI Parameters.
+3. Authentication Parameters.
+4. TBD.
+
+It performs the sanity checks, and makes sure that everything is in order.
+It returns OK or a listing of errors (as a { field, what's wrong} tuple).
+
+

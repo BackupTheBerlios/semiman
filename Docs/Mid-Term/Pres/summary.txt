@@ -1,0 +1,55 @@
+* Cover
+    Technion Seminars Management
+        Roy Glasberg
+        Shlomi Fish
+
+        Supervisor:
+            Yoram Yihie.
+
+* Introduction
+    - There are many clubs around the Technion giving seminars.
+    - Our job is to provide a unified, integreated interface.
+    - Based on the WWW, and very accessible.
+
+* Database Concepts
+    - There are several clubs.
+    - Each club can have several active seminars.
+    - There are several web-based ways to view
+    and query the database. (calendar, search)
+
+* Users of the site
+    - Mundane: Can query, but cannnot modify contents
+    - Club Admins: Can modify some aspects of a given club.
+    - Site-wide Admin: Can change and manage everything.
+
+* Working with the site:
+  << Insert the read-only.dia diagram >>
+ 
+* Club Admins Iface:
+    << Insert the club-admin.dia >>
+    
+* Site-wide Admin Iface:
+    << Insert the site-admin.dia >>
+
+* Implementation
+    - Perl scripts and modules running on Apache on a UNIX box.
+    - Using an open-source SQL database.
+    - Basic and standard HTML.    
+
+* Progress:
+    - We wrote some specs describing the project.
+    - We looked for a similar existing effort.
+
+* Schedule:
+    - Week 6:
+        Set up a generic database design and get it to work
+        with some ad-hoc scripts.
+    - Week 7-10:
+        Write some code.
+    - Week 11-12:
+        Human Factors Customization
+    - Week 13-14:
+        Documentation and Distribution Preparation.
+
+
+

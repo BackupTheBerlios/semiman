@@ -1,0 +1,58 @@
+* Type-checking and constraints system.
+    - With the ability to specify constrainst using pure data
+    (no code or sub { }'s).
+    - Close correspondence with SQL.
+
+* Meta-Data Database Access System
+    - Work with tables using perl data structures that define them.
+    - Ability to enumerate fields and later change the fields 
+        (add/remove/modify) without breaking the code.
+        
+        Note: of course, there's a limit to how much this can be 
+        done, but we expect that at least the fields that are not
+        connected with any other table, can be defined and modified
+        this way.
+
+* Calendar Weblet
+    - Flexible and extensible.
+    - Preferablly real-URLs (e.g: http://seminars.technion.ac.il/cal/2002/05/12,
+    etc.)
+
+* Filtering system
+    - Several Cartesian, interoperatble constraints.
+
+* Form Management
+    - Preview/Submit. (first one always preview)
+    - Displaying the wrong input on a new form + all the things that
+    are wrong marked next to the fields where they belong + a summary
+    of what's wrong at the top.
+    - Nice to have: Automatic generation of JavaScript sanity checks. (note:
+    they will not replace sanity checks at the server, and should not make
+    the form dependant on them).
+
+* HTTPS/SSL
+    - Smart and dynamic Password Management.
+        - We store the passwords at the database, possibly hashed.
+        - We need to authenticate the users against them.
+    - RFI.
+
+* Relative URL Managment
+    - How to get from /hello/world to /hello/universe by giving the
+    ../universe URL.
+    - Linking to a central CSS stylesheet.
+    - Absolute URLs considered harmful.
+
+* DBI Extensions:
+    - Portably creating a new record with a unique ID and retrieving 
+    the new ID. (using sequences in PostgreSQL, automatic fields in MySQL 
+    or whatever)
+    - FILL IN
+
+* Page Templating.
+    - We are looking for a good, flexible and secure way to generate pages 
+    on the fly using stubs for Perl code. We can hack something on our own,
+    but an existing technology may be just what we need.
+
+* HTML and Text validation and conversion
+
+
