@@ -62,14 +62,16 @@ BEGIN {
                                 'input_params' => 
                                 [
                                     { 
-                                        'unique' => 1
+                                        'type' => 'unique',
                                     }, 
                                     { 
-                                        'not_match' => '^new$', 
+                                        'type' => "not_match",
+                                        'regex' => '^new$', 
                                         'comment' => "new is a reserved word and cannot be assigned as a username",
                                     },
                                     {
-                                        'match' => '^[a-zA-Z]\w*$' ,  
+                                        'type' => 'match',
+                                        'regex' => '^[a-zA-Z]\w*$' ,  
                                         'comment' => "The username must start with a letter and extend with letters, digits and underscores",
                                     },
 
@@ -130,14 +132,16 @@ BEGIN {
                                 'input_params' => 
                                 [
                                     { 
-                                        'unique' => 1
+                                        'type' => 'unique',                                        
                                     }, 
                                     { 
-                                        'not_match' => '^new$', 
+                                        'type' => 'not_match',
+                                        'regex' => '^new$', 
                                         'comment' => "new is a reserved word and cannot be assigned as a username",
                                     },
                                     {
-                                        'match' => '^[a-zA-Z]\w*$' ,  
+                                        'type' => "match",
+                                        'regex' => '^[a-zA-Z]\w*$',
                                         'comment' => "The username must start with a letter and extend with letters, digits and underscores",
                                     },
 
@@ -245,6 +249,14 @@ BEGIN {
                                     'method' => "choose-from-query",
                                     'query' => "SELECT Subject_ID FROM subjects WHERE Club_ID = \$PF{Club_ID}",
                                 },
+                                'input_params' =>
+                                [
+                                    {
+                                        'type' => "query-pass",
+                                        'query' => "SELECT count(*) FROM subjects WHERE Club_ID = \$PF{Club_ID} AND Subject_ID = \$VALUE{}",
+                                        'comment' => "The subject must belong to the club",
+                                    },
+                                ],
                                 'display' => { 'type' => "constant" },
                                 'widget_params' =>
                                 {
@@ -305,6 +317,7 @@ BEGIN {
                                 "INSERT INTO associations (Subject_ID, Seminar_ID) VALUES (\$F{Subject_ID}, \$F{Seminar_ID})",
                             ],
                         },
+                        'parent' => "clubs",
                     },
                 },
             },

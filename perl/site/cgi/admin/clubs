@@ -218,7 +218,8 @@ my $edit_seminars = sub {
     my $mdda =
         Technion::Seminars::MDDA::OneTable->new(
             'seminars',
-            $config{'database'}->{'tables'}->{'seminars'}
+            $config{'database'}->{'tables'}->{'seminars'},
+            'parent-field' => { 'name' => "Club_ID", 'value' => $club_id },
         );
 
     if (scalar(@url_components) == 0)

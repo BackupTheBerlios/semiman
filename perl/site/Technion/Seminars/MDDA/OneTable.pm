@@ -25,6 +25,17 @@ sub initialize
 
     $self->{'table_name'} = $table_name;
     $self->{'table_spec'} = $table_spec;
+    $self->{'parent_fields'} = {};
+
+    if (scalar(@_))
+    {
+        my $name = shift;
+        my $value = shift;
+        if ($name eq "parent-field")
+        {
+            $self->{'parent_fields'}->{$value->{'name'}} = $value->{'value'};
+        }
+    }
 
     return 0;
 }
@@ -168,8 +179,9 @@ sub perform_add_operation
                     # Iterate over the input constraints
                     foreach my $input_params ((ref($input_params_arr) eq "ARRAY") ? (@$input_params_arr) : ($input_params_arr))
                     {
+                        my $type = $input_params->{'type'};
                         # Check if this field is required to be unique
-                        if ($input_params->{'unique'})
+                        if ($type eq "unique")
                         {
                             # Query the database for the existence of the same value
                             my $sth = $dbh->prepare("SELECT count(*) FROM $table_name WHERE " . $field->{'name'} . " = " . $dbh->quote($value));
@@ -180,25 +192,41 @@ sub perform_add_operation
                             {
                                 die ($field->{'name'} ." must be unique while a duplicate entry already exists!");
                             }
-                        }
-                        
+                        }                        
                         # This specifies that the input must not
                         # match a regexp.
-                        if ($input_params->{'not_match'})
+                        elsif ($type eq "not_match")
                         {
-                            my $pattern = $input_params->{'not_match'};
+                            my $pattern = $input_params->{'regex'};
                             if ($value =~ /$pattern/)
                             {
                                 die $input_params->{'comment'};
                             }
                         }
-
                         # This specifies that the input must match
                         # a regexp.
-                        if ($input_params->{'match'})
+                        elsif ($type eq "match")
                         {
-                            my $pattern = $input_params->{'match'};
+                            my $pattern = $input_params->{'regex'};
                             if ($value !~ /$pattern/)
+                            {
+                                die $input_params->{'comment'};
+                            }
+                        }
+                        elsif ($type eq "query-pass")
+                        {
+                            my $query = $input_params->{'query'};
+                            $query =~ s/\$PF{(\w+)}/$self->{'parent_fields'}->{$1}/ge;
+                            $query =~ s/\$VALUE{}/$value/;
+                            my $sth = $dbh->prepare($query);
+                            my $rv = $sth->execute();
+
+                            my $row = $sth->fetchrow_arrayref();
+                            if ($row->[0])
+                            {
+                                # OK
+                            }
+                            else
                             {
                                 die $input_params->{'comment'};
                             }
