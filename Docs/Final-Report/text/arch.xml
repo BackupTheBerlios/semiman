@@ -35,7 +35,37 @@ sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
             class manages form rendering and validation for addition and 
             editing of one-table based queries (with the possibility of 
             triggers to maintain dependency with other tables).
-        </para>            
+        </para>
+    </section>
+    <section id="classes">
+        <title>Classes</title>
+        <para>
+            In this section we will cover the classes that were used
+            in the code.
+        </para>
+        <section id="arad_types">
+            <title>Arad::Types</title>
+            <para>
+                Arad::Types is a type manager that manages an hierarchy of
+                types and allows validating a type instance, and comparing
+                one type instance to another. Types may inherit each other,
+                to allow for derived types and sub-classes.
+            </para>
+            <para>
+                Each type is identified by a symbolic name, and registered by 
+                using the function <function>register_type</function>. Upon
+                operation a type accepts a reference to a hash called 
+                <parameter class="function">type_params</parameter> that 
+                specifies some parameters for the type. For instance, the 
+                <parameter class="function">len</parameter> paramter 
+                specifies the length of an instance of the a string-like 
+                type.
+            </para>
+            <para>
+                We encapsulated each type in its own module.
+            </para>
+        </section>
+        
     </section>
 </chapter>
 
