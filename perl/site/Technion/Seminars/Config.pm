@@ -49,7 +49,7 @@ BEGIN {
         # The URL of the HTTPS Admin Tree
         'https_url' =>
             {
-                'url' => "https://$https_host/$https_path",
+                'url' => "https://$https_host/$https_path/",
                 'host' => $https_host,
                 'path' => $https_path,
             },
