@@ -32,6 +32,12 @@ BEGIN {
         # Browser Compatibility Flag - make the code less standard
         # and more compatible with common browser bugs.
         'browser_compatibility' => 1,
+        'database' =>
+            {
+                'dsn' => "DBI:mysql:database=test_seminars",
+                'user' => "nobody",
+                'password' => "",
+            },
 
     );
 };

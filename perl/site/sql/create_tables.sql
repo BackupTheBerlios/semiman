@@ -96,6 +96,7 @@ CREATE TABLE subjects (
 CREATE TABLE users (
   User_ID int(11) NOT NULL default '0',
   Name varchar(255) default NULL,
+  Username varchar(30) default NULL,
   Super_Admin tinyint(4) default NULL,
   Password varchar(255) default NULL,
   Email varchar(255) default NULL,

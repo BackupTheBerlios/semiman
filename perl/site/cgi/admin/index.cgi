@@ -20,10 +20,6 @@ sub check_url
 {
     my $url = shift;
 
-    open O, ">>/tmp/admin.dump.txt";
-    print O "\$url=$url\n";
-    close(O);
-
     my $verdict = ($url =~ /^admin(\/index.cgi(\/)?)?$/) ? 1 : 0;
     
     return ($verdict, "admin/");
