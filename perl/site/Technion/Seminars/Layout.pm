@@ -85,9 +85,26 @@ sub render
     $o->print("<table summary=\"Layout Table: The first cell contains a navigation bar, the second the main page\" border=\"0\" width=\"99%\">\n");
     $o->print("<tbody>\n");
     $o->print("<tr>\n");
-    $o->print("<td valign=\"top\" class=\"navbar\" width=\"20%\">\n")
-    $o->print("<a href=\"" . $self->linkto([]) . "\" class=\"nav\">Main</a><br />\n");
-    $o->print("<a href=\"" . $self->linkto(["calendar"]) . "\" class=\"nav\">Calendar</a><br />\n");
+    $o->print("<td valign=\"top\" class=\"navbar\" width=\"20%\">\n");
+
+    my $put_link = sub {
+        my $path = shift;
+        my $text = shift;
+        $o->print("<a href=\"" . $self->linkto($path) . "\" class=\"nav\">" .
+            $text .
+            "</a><br />\n"
+        );
+    };
+    
+    $put_link->([], "Main");
+    $o->print("<br />\n");
+    $put_link->(["day"], "Daily Calendar");
+    $put_link->(["week"], "Weekly Calendar");
+    $put_link->(["month"], "Monthly Calendar");
+    $o->print("<br />\n");
+    $put_link->(["search"], "Search");
+    $o->print("<br />\n");
+    $put_link->(["club"], "The Clubs");
     $o->print("</td>\n");
     $o->print("<td valign=\"top\" class=\"main\">\n");
     if (!ref($contents))
