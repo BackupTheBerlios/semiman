@@ -2,7 +2,7 @@ BASE = Zavitan_Final_Report
 
 DEST_DIR = $(BASE)
 
-XML_SOURCES = zavitan.xml userman.xml
+XML_SOURCES = zavitan.xml userman.xml arch.xml
 
 all: $(DEST_DIR)/index.html $(DEST_DIR)/book.css
 
