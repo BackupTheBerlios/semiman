@@ -65,6 +65,33 @@ sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
                 We encapsulated each type in its own module.
             </para>
         </section>
+        <section id="gamla_textstream_out">
+            <title>Gamla::TextStream::Out</title>
+            <para>
+                This is a minimal class that outputs text. An invocation
+                of the method print causes its arguments to be written
+                indirectly written to a specified file handle.
+            </para>
+        </section>
+        <section id="layout">
+            <title>Technion::Seminars::Layout</title>
+            <para>
+                This class manages the generic layout of the site. It prints
+                the HTML header and the navigation bar, calls a callback to
+                print the body of the page, and prints the HTML footer.
+            </para>
+            <para>
+                The method <function>linkto</function> can be used to give
+                a relative URL to different parts of the sites. It is internally
+                used to render the navigation bar.
+            </para>
+            <para>
+                The method <function>render</function> does the actual 
+                rendering of the site layout. It accepts as a paramters the 
+                text-stream that should be used to output text to the screen,
+                and the callback to render the contents of the site.
+            </para>
+        </section>
         
     </section>
 </chapter>
