@@ -2,8 +2,6 @@
 # AuthType Basic
 # AuthUserFile /home/shlomi/Docs/Univ/Seminars/from_cvs/perl/site/users
 
-# Removed by Shlomif in order to make it nice on the validation service.
-# To be restored later.
-#SSLRequireSSL
+SSLRequireSSL
 
 # require valid-user
