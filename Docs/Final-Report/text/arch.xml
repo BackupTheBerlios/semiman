@@ -116,6 +116,59 @@ sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
                 database for the seminars and subjects flag of this user.
             </para>
         </section>
+        <section id="config">
+            <title>Technion::Seminars::Config</title>
+
+            <para>
+                This module provides a central place for specifying common
+                configuration parameters across the different modules. This
+                module includes information about the URLs in which the
+                site resides, MySQL information and the information required
+                by the MDDA interface.
+            </para>
+            <para>
+                It includes a list of tables, and each one contains a list
+                of fields, as well as optional lists of derived-table, triggers,
+                and record-wide input constraints. For each field the following
+                paramters are specified:
+            </para>
+            <para>
+                <orderedlist>
+                    <listitem>
+                        <parameter>name</parameter> - the field's SQL name.
+                    </listitem>
+                    <listitem>
+                        <parameter>title</parameter> (optional) - the title
+                        as it appears to the user.
+                    </listitem>
+                    <listitem>
+                        <parameter>type</parameter> - the field's 
+                        <classname>Arad::Types</classname> type-ID.
+                    </listitem>
+                    <listitem>
+                        <parameter>type_params</parameter> - the field's
+                        type paramters
+                    </listitem>
+                    <listitem>
+                        <parameter>input</parameter> (optional) - the way this field is
+                        being input.
+                    </listitem>
+                    <listitem>
+                        <parameter>input_params</parameter> (optional) - constraints on
+                        the field
+                    </listitem>
+                    <listitem>
+                        <parameter>display</parameter> (optional) - the manner 
+                        the field is displayed on the form. Can be constant (in
+                        which case it is not editable), password, or hidden.
+                    </listitem>
+                    <listitem>
+                        <parameter>widget_params</parameter> - specifies the
+                        control used for editing the type.
+                    </listitem>
+                </orderedlist>
+            </para>
+        </section>
         
     </section>
 </chapter>
