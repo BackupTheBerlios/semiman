@@ -26,6 +26,8 @@ sub normalize_url
     # Get the complete URL from the CGI query handle
     my $my_url = $q->self_url();
 
+    print STDERR "\$my_url=$my_url\n";
+
     # Get the base directory for the site
     my $site_url = 
         (($protocol eq "https") ? 
@@ -34,6 +36,7 @@ sub normalize_url
         );
     # Strip the base directory of the current URL.
     $my_url =~ s!^$site_url!!;
+    print STDERR "\$my_url(2)=$my_url\n";
     # Split into two parts:
     # $base - what comes before the question mark
     # $rest - what comes afterwards

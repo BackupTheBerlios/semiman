@@ -23,7 +23,7 @@ my $q = CGI->new();
 sub check_url
 {
     my $url = shift; 
-    return (($url =~ /search\/(index.cgi)?/), "search/");    
+    return (($url =~ /^search(\/(index.cgi)?)?$/), "search/");    
 }
 
 # Make sure our URL ends with a slash.

@@ -20,7 +20,7 @@ sub check_url
 {
     my $url = shift;
 
-    my $verdict = ($url =~ /^admin(\/index.cgi(\/)?)?$/) ? 1 : 0;
+    my $verdict = ($url =~ /^admin(\/(index.cgi(\/)?)?)?$/) ? 1 : 0;
     
     return ($verdict, "admin/");
 }
