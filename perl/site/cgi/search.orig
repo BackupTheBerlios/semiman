@@ -1,0 +1,35 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+use CGI;
+
+use Technion::Seminars::Layout;
+
+use Gamla::TextStream::Out::File;
+
+my $q = CGI->new();
+
+print $q->header();
+
+my $title = "Search for Seminars";
+
+my $layout = 
+    Technion::Seminars::Layout->new(
+        'path' => "search", 
+        'title' => $title,
+    );
+
+my $o = Gamla::TextStream::Out::File->new(\*STDOUT);
+
+sub draw_page
+{
+    my $o = shift;
+
+    $o->print("<h1>$title</h1>\n");
+
+    $o->print("This would be a search form.");
+}
+
+
+$layout->render($o, \&draw_page);

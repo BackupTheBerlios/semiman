@@ -61,7 +61,7 @@ sub linkto
         shift(@other_url);
     }
     
-    return "./".join("/", ((map { ".." } @this_url), @other_url));
+    return "./".join("/", ((map { ".." } @this_url), @other_url)) . "/";
 }
 
 sub render
@@ -116,7 +116,7 @@ sub render
     {
         $contents->($o);
     }
-    $o->print("</td>")
+    $o->print("</td>\n");
     $o->print("</tr>\n");
     $o->print("</tbody>\n");
     $o->print("</table>\n");
