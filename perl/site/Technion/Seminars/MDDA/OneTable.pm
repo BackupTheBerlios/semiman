@@ -42,6 +42,128 @@ sub initialize
     return 0;
 }
 
+sub check_input_params
+{
+    my $self = shift;
+    my $field = shift;
+    my $value = shift;
+
+    my $dbh = shift;
+    my $type_man = shift;
+
+    my $table_name = $self->{'table_name'};
+
+    # Get the input constraints.
+    my $input_params_arr = $field->{'input_params'};
+    
+    if ($input_params_arr)
+    {
+        # Iterate over the input constraints
+        foreach my $input_params ((ref($input_params_arr) eq "ARRAY") ? (@$input_params_arr) : ($input_params_arr))
+        {
+            my $type = $input_params->{'type'};
+            # Check if this field is required to be unique
+            if ($type eq "unique")
+            {
+                # Query the database for the existence of the same value
+                my $sth = $dbh->prepare("SELECT count(*) FROM $table_name WHERE " . $field->{'name'} . " = " . $dbh->quote($value));
+                my $rv = $sth->execute();
+                my $ary_ref = $sth->fetchrow_arrayref();
+                # If such value exists
+                if ($ary_ref->[0] > 0)
+                {
+                    die ($field->{'name'} ." must be unique while a duplicate entry already exists!");
+                }
+            }                        
+            # This specifies that the input must not
+            # match a regexp.
+            elsif ($type eq "not_match")
+            {
+                my $pattern = $input_params->{'regex'};
+                if ($value =~ /$pattern/)
+                {
+                    die $input_params->{'comment'};
+                }
+            }
+            # This specifies that the input must match
+            # a regexp.
+            elsif ($type eq "match")
+            {
+                my $pattern = $input_params->{'regex'};
+                if ($value !~ /$pattern/)
+                {
+                    die $input_params->{'comment'};
+                }
+            }
+            elsif ($type eq "query-pass")
+            {
+                my $query = $input_params->{'query'};
+                $query =~ s/\$PF{(\w+)}/$self->{'parent_fields'}->{$1}/ge;
+                $query =~ s/\$VALUE{}/$value/;
+                my $sth = $dbh->prepare($query);
+                my $rv = $sth->execute();
+
+                my $row = $sth->fetchrow_arrayref();
+                if ($row->[0])
+                {
+                    # OK
+                }
+                else
+                {
+                    die $input_params->{'comment'};
+                }
+            }
+            elsif ($type eq "compare")
+            {
+                my $compare_type = $input_params->{'compare_type'};
+                my $compare_to = $input_params->{'compare_to'};
+                my $compare_value;
+                if ($compare_to->{'type'} eq "function")
+                {
+                    if ($compare_to->{'function'} eq "get-current-date")
+                    {
+                        my ($sec,$min,$hour,$mday,$mon,
+                            $year,$wday,$yday,$isdst) = localtime(time());
+                        $year += 1900;
+                        
+                        $compare_value = sprintf("%4i-%2i-%2i", $year, $mon, $mday);
+                    }
+                    else
+                    {
+                        die "Unknown function!\n";
+                    }
+                }
+                else
+                {
+                    die "Unknown compare_to type!";
+                }
+
+                my $verdict = 
+                    $type_man->compare_values(
+                        $field->{'type'},
+                        $field->{'type_params'},
+                        $value,
+                        $compare_value
+                    );
+
+                if ($compare_type eq ">=")
+                {
+                    if ($verdict < 0)
+                    {
+                        die $input_params->{'comment'};
+                    }
+                }
+                else
+                {
+                    die "Unknown compare type $compare_type!";
+                }
+            }
+        }
+    }
+    
+    return 0;
+}
+
 sub render_add_form
 {
     my $self = shift;
@@ -202,67 +324,7 @@ sub perform_add_operation
                     die ($field->{'name'} . " could not be accepted: $error_string");
                 }
 
-                # Get the input constraints.
-                my $input_params_arr = $field->{'input_params'};
-                if ($input_params_arr)
-                {
-                    # Iterate over the input constraints
-                    foreach my $input_params ((ref($input_params_arr) eq "ARRAY") ? (@$input_params_arr) : ($input_params_arr))
-                    {
-                        my $type = $input_params->{'type'};
-                        # Check if this field is required to be unique
-                        if ($type eq "unique")
-                        {
-                            # Query the database for the existence of the same value
-                            my $sth = $dbh->prepare("SELECT count(*) FROM $table_name WHERE " . $field->{'name'} . " = " . $dbh->quote($value));
-                            my $rv = $sth->execute();
-                            my $ary_ref = $sth->fetchrow_arrayref();
-                            # If such value exists
-                            if ($ary_ref->[0] > 0)
-                            {
-                                die ($field->{'name'} ." must be unique while a duplicate entry already exists!");
-                            }
-                        }                        
-                        # This specifies that the input must not
-                        # match a regexp.
-                        elsif ($type eq "not_match")
-                        {
-                            my $pattern = $input_params->{'regex'};
-                            if ($value =~ /$pattern/)
-                            {
-                                die $input_params->{'comment'};
-                            }
-                        }
-                        # This specifies that the input must match
-                        # a regexp.
-                        elsif ($type eq "match")
-                        {
-                            my $pattern = $input_params->{'regex'};
-                            if ($value !~ /$pattern/)
-                            {
-                                die $input_params->{'comment'};
-                            }
-                        }
-                        elsif ($type eq "query-pass")
-                        {
-                            my $query = $input_params->{'query'};
-                            $query =~ s/\$PF{(\w+)}/$self->{'parent_fields'}->{$1}/ge;
-                            $query =~ s/\$VALUE{}/$value/;
-                            my $sth = $dbh->prepare($query);
-                            my $rv = $sth->execute();
-
-                            my $row = $sth->fetchrow_arrayref();
-                            if ($row->[0])
-                            {
-                                # OK
-                            }
-                            else
-                            {
-                                die $input_params->{'comment'};
-                            }
-                        }
-                    }
-                }
+                my $ret = $self->check_input_params($field, $value, $dbh, $type_man);
             }
 
             # Push the field name
@@ -517,50 +579,7 @@ sub perform_edit_operation
                         die ($field->{'name'} . " could not be accepted: $error_string");
                     }
 
-                    # Get the input constraints.
-                    my $input_params_arr = $field->{'input_params'};
-                    if ($input_params_arr)
-                    {
-                        # Iterate over the input constraints
-                        foreach my $input_params ((ref($input_params_arr) eq "ARRAY") ? (@$input_params_arr) : ($input_params_arr))
-                        {
-                            # Check if this field is required to be unique
-                            if ($input_params->{'unique'})
-                            {
-                                # Query the database for the existence of the same value
-                                my $sth = $dbh->prepare("SELECT count(*) FROM $table_name WHERE " . $field->{'name'} . " = " . $dbh->quote($value));
-                                my $rv = $sth->execute();
-                                my $ary_ref = $sth->fetchrow_arrayref();
-                                # If such value exists
-                                if ($ary_ref->[0] > 0)
-                                {
-                                    die ($field->{'name'} ." must be unique while a duplicate entry already exists!");
-                                }
-                            }
-                            
-                            # This specifies that the input must not
-                            # match a regexp.
-                            if ($input_params->{'not_match'})
-                            {
-                                my $pattern = $input_params->{'not_match'};
-                                if ($value =~ /$pattern/)
-                                {
-                                    die $input_params->{'comment'};
-                                }
-                            }
-
-                            # This specifies that the input must match
-                            # a regexp.
-                            if ($input_params->{'match'})
-                            {
-                                my $pattern = $input_params->{'match'};
-                                if ($value !~ /$pattern/)
-                                {
-                                    die $input_params->{'comment'};
-                                }
-                            }
-                        }
-                    }
+                    my $ret = $self->check_input_params($field, $value, $dbh, $type_man);
                 }
 
                 # Push the field name

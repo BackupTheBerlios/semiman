@@ -282,6 +282,19 @@ BEGIN {
                             {
                                 'name' => "Date",
                                 'type' => "date",
+                                'input_params' =>
+                                [
+                                    {
+                                        'type' => "compare",
+                                        'compare_type' => ">=",
+                                        'compare_to' => 
+                                        {
+                                            'type' => "function",
+                                            'function' => "get-current-date",
+                                        },
+                                        'comment' => "Date must be in the future",
+                                    },
+                                ],
                             },
                             {
                                 'name' => "Time",

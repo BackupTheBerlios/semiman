@@ -3,14 +3,9 @@ Pressing:
 
 * Add a url type.
 
-* Add the associated seminars to the seminars display.
-
-* Implement the choice of subject in the add new seminar as a combo box.
-
-* Make sure an association is implicitly added when a seminar is added.
-
 * Make sure the date is found in the future.
 
+* Associate/Disassociate.
 
 Non-pressing:
 -------------
@@ -27,4 +22,7 @@ day/month/year and for hour/minutes.
 
 * Add a "current club" under Clubs in the navigation bar when editing
 a club.
+
+* Make sure the Subject ID in "Editing Seminar" is displayed by name instead
+of by ID.
 
