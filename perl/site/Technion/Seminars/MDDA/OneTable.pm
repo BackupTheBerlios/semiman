@@ -164,6 +164,75 @@ sub check_input_params
     return 0;
 }
 
+sub check_record_wide_input_params
+{
+    my $self = shift;
+    my $dbh = shift;
+    my $type_man = shift;
+    my $query_fields = shift;
+    my $query_values = shift;
+
+    my $table_spec = $self->{'table_spec'};
+
+    my %field_indexes;
+    @field_indexes{@$query_fields} = (0 .. (scalar(@$query_fields)-1));
+
+    if (!exists($table_spec->{'input_params'}))
+    {
+        return 0;
+    }
+
+    my $constraint;
+
+    my $eval_operand = sub {
+        my $operand = shift;
+
+        if ($operand->{'type'} eq "field")
+        {
+            my $name = $operand->{'name'};
+            my $index = $field_indexes{$name};
+            return ($table_spec->{'fields'}->[$index]->{'type'},
+                $table_spec->{'fields'}->[$index]->{'type_params'},
+                $query_values->[$index]);
+        }
+        else
+        {
+            die "Unknown operand type" . $operand->{'type'};
+        }
+    };
+
+    foreach $constraint (@{$table_spec->{'input_params'}})
+    {
+        if ($constraint->{'type'} eq "compare")
+        {
+            my @left = $eval_operand->($constraint->{'left'});
+            my @right = $eval_operand->($constraint->{'right'});
+            my $verdict = 
+                $type_man->compare_values(
+                    $left[0],
+                    $left[1],
+                    $left[2],
+                    $right[2]
+                );
+
+            if ($verdict > 0)
+            {
+                # Do nothing
+            }
+            else
+            {
+                die $constraint->{'comment'};
+            }                
+        }
+        else
+        {
+            die "Unknown constraint type!\n";
+        }
+    }
+
+    return 0;
+}
+
 sub render_add_form
 {
     my $self = shift;
@@ -343,6 +412,8 @@ sub perform_add_operation
 
             $field_idx++;
         }
+
+        my $ret = $self->check_record_wide_input_params($dbh, $type_man, \@query_fields, \@query_values);
 
         # Sanity checks are over - let's insert the values into the table
 
@@ -601,6 +672,13 @@ sub perform_edit_operation
 
                 push @query_values, $value;
             }
+
+            my $ret = $self->check_record_wide_input_params(
+                $dbh, 
+                $type_man, 
+                \@query_fields, 
+                \@query_values
+                );
 
             my $edit_query = "UPDATE $table_name SET " . join(",", map { $query_fields[$_] . "=" . $dbh->quote($query_values[$_]) } (0 .. $#query_fields)) . " WHERE $id_field = $user_id";
 
