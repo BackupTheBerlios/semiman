@@ -253,6 +253,27 @@ sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
                 with one or more subject are displayed.
             </para>
         </section>
+        <section id="week">
+            <title>week</title>
+            <para>
+                This script displays a calendar for an entire week. Every day
+                is displayed in a separate column, and can be accessed from
+                a link at its header. There is also a navigation bar to navigate
+                to the previous or next weeks.
+            </para>
+            <para>
+                The URL behaves in a similar fashion to "day", denoting the
+                first day of that week.
+            </para>
+            <para>
+                A day is split into 5 segments, and in each one the seminars 
+                that belong to it are displayed. The seminars were handled by
+                making a query to the database and then organising them within
+                7*5 cells in accordance with their date and time. Afterwards,
+                the table was rendered while filling the cells with their
+                contents.
+            </para>
+        </section>
 
     </section>
 </chapter>
