@@ -156,7 +156,7 @@ my $draw_page = sub {
 
     my @week_calendar = (map { [ map { [] } (1 .. 5) ] } (1..7));
 
-    my @time_breaks = qw(0:00 8:30 12:30 16:30 20:30 24:00);
+    my @time_breaks = qw(0:00 08:30 12:30 16:30 20:30 24:00);
 
     my ($record, $time_coord, $day_coord);
 

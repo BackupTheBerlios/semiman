@@ -336,6 +336,24 @@ BEGIN {
                             ],
                         },
                         'parent' => "clubs",
+                        'input_params' =>
+                        [
+                            {
+                                'type' => "compare",
+                                'compare_type' => ">",
+                                'left' => 
+                                {
+                                    'type' => "field",
+                                    'name' => 'EndTime',
+                                },
+                                'right' =>
+                                {
+                                    'type' => "field",
+                                    'name' => 'Time',
+                                },
+                                'comment' => "The lecture must end after it starts",
+                            },
+                        ],
                     },
                 },
             },
