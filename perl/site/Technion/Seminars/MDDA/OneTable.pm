@@ -1,5 +1,3 @@
-#
-
 # This module is responsible for the Meta-Data Database Access routines
 # of the seminars package.
 #
@@ -14,6 +12,7 @@ use Gamla::Object;
 
 @ISA=qw(Gamla::Object);
 
+use Technion::Seminars::Config;
 use Technion::Seminars::DBI;
 use Technion::Seminars::TypeMan;
 
@@ -38,7 +37,7 @@ sub render_add_form
 
     my $table_spec = $self->{'table_spec'};
 
-    # Output a form with which one can add a new user.
+    # Output a form with which one can add a new record.
 
     $o->print("<form method=\"post\" action=\"add.cgi\">\n");
     # Loop over all the fields and output an edit box for each 
@@ -284,6 +283,154 @@ sub render_edit_form
     return 0;
 }
 
+sub perform_edit_operation
+{
+    my $self = shift;
+
+    my $q = shift;
+
+    my $o = shift;
+
+    my $id_field = shift;
+
+    my $dependant_tables = shift || [];
+
+    my %options = @_;
+
+    my $id_field_title = $options{'id-field-title'} || $id_field;
+
+    my $record_title = $options{'record-title'} || $id_field;
+
+    my $table_name = $self->{'table_name'};
+
+    my $table_spec = $self->{'table_spec'};
+
+
+    my $dbh = Technion::Seminars::DBI->new();
+    my $user_id = $q->param("$id_field");
+    my $sth = $dbh->prepare("SELECT count(*) FROM $table_name WHERE $id_field = $user_id");
+    my $rv = $sth->execute();
+
+    my $data;
+
+    $data = $sth->fetchrow_arrayref();
+
+    if ($data->[0] == "0")
+    {
+        $o->print("<h1>Error - $id_field_title not found!</h1>\n\n<p>The $id_field_title $user_id was not found on this server.</p>\n\n");
+    }
+    if ($q->param("action") eq "Delete")
+    {
+        $sth = $dbh->prepare("DELETE FROM $table_name WHERE $id_field = $user_id");
+        $rv = $sth->execute();
+        foreach my $table (@$dependant_tables)
+        {
+            my $table_id_field = exists($table->{'id'}) || $id_field;;
+            $dbh->prepare("DELETE FROM " . $table->{'name'} ." WHERE $table_id_field = $user_id");
+            $rv = $sth->execute();
+        }
+
+        $o->print("<h1>OK</h1>\n\n<p>the $record_title was deleted</p>\n");
+    }
+    else
+    {
+        # Updating the user fields
+
+        my (@query_fields, @query_values);
+        my $type_man = Technion::Seminars::TypeMan::get_type_man();
+        
+        foreach my $field (@{$table_spec->{'fields'}})
+        {
+            # This variable would be assigned the value of the field
+            my $value = "";
+            # Determine how to input the field
+            my $input = $field->{'input'} || { 'type' => "normal", };
+             
+            if ($input->{'primary_key'})
+            {
+                next;
+            }
+            if ($field->{'display'}->{'type'} eq "constant")
+            {
+                next;
+            }
+            
+            {
+                # Retrieve the value from the CGI field
+                $value = $q->param($field->{'name'});
+                # Check that its type agrees with it
+                my ($status, $error_string) = ($type_man->check_value($field->{'type'}, $field->{'type_params'}, $value));
+                # If it does not.
+                if ($status)
+                {
+                    # Throw an error
+
+                    # Substitute the field name into the '$F' macro.
+                    $error_string =~ s/\$F/$field->{'name'}/ge;
+                    
+                    die ($field->{'name'} . " could not be accepted: $error_string");
+                }
+
+                # Get the input constraints.
+                my $input_params_arr = $field->{'input_params'};
+                if ($input_params_arr)
+                {
+                    # Iterate over the input constraints
+                    foreach my $input_params ((ref($input_params_arr) eq "ARRAY") ? (@$input_params_arr) : ($input_params_arr))
+                    {
+                        # Check if this field is required to be unique
+                        if ($input_params->{'unique'})
+                        {
+                            # Query the database for the existence of the same value
+                            my $sth = $dbh->prepare("SELECT count(*) FROM $table_name WHERE " . $field->{'name'} . " = " . $dbh->quote($value));
+                            my $rv = $sth->execute();
+                            my $ary_ref = $sth->fetchrow_arrayref();
+                            # If such value exists
+                            if ($ary_ref->[0] > 0)
+                            {
+                                die ($field->{'name'} ." must be unique while a duplicate entry already exists!");
+                            }
+                        }
+                        
+                        # This specifies that the input must not
+                        # match a regexp.
+                        if ($input_params->{'not_match'})
+                        {
+                            my $pattern = $input_params->{'not_match'};
+                            if ($value =~ /$pattern/)
+                            {
+                                die $input_params->{'comment'};
+                            }
+                        }
+
+                        # This specifies that the input must match
+                        # a regexp.
+                        if ($input_params->{'match'})
+                        {
+                            my $pattern = $input_params->{'match'};
+                            if ($value !~ /$pattern/)
+                            {
+                                die $input_params->{'comment'};
+                            }
+                        }
+                    }
+                }
+            }
+
+            # Push the field name
+            push @query_fields, $field->{'name'};
+
+            push @query_values, $value;
+        }
+
+        my $edit_query = "UPDATE $table_name SET " . join(",", map { $query_fields[$_] . "=" . $dbh->quote($query_values[$_]) } (0 .. $#query_fields)) . " WHERE $id_field = $user_id";
+
+        $sth = $dbh->prepare($edit_query);
+        my $rv = $sth->execute();
+        
+        $o->print("<h1>OK</h1>\n\n<p>the $record_title was updated</p>\n");
+    }
+}
 
 1;
 

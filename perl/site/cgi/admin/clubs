@@ -178,7 +178,21 @@ my $draw_page = sub {
                             $club_id,
                             'field-title' => $clubname,
                         );
-                    }                
+                    }
+                    else
+                    {
+                        my $script = shift(@url_components);
+
+                        if ($script eq "edit.cgi")
+                        {
+                            $mdda->perform_edit_operation(
+                                $q, $o,
+                                "Club_ID",
+                                'record-title' => "club",
+                                'id-field-title' => "club ID",
+                            );
+                        }
+                    }
                 }
             }
             else

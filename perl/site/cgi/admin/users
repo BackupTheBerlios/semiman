@@ -103,7 +103,7 @@ my $draw_page = sub {
         }
         elsif ($base_url eq "admin/users/new/add.cgi")
         {
-            $mdda->perform_add_operation($o, $q, "The user was added");
+            $mdda->perform_add_operation($q, $o, "The user was added");
         }
         elsif ($base_url =~ m/^admin\/users\/(\w+)\/$/)
         {
@@ -129,9 +129,9 @@ my $draw_page = sub {
             }
             if ($q->param("action") eq "Delete")
             {
-                $sth = $dbh->prepare("DELETE FROM users WHERE User_ID = $user_id");
+                $sth = $dbh->prepare("DELETE FROM $table_name WHERE $id_field = $user_id");
                 $rv = $sth->execute();
-                $dbh->prepare("DELETE FROM permissions WHERE User_ID = $user_id");
+                $dbh->prepare("DELETE FROM permissions WHERE $id_field = $user_id");
                 $rv = $sth->execute();
 
                 $o->print("<h1>OK</h1>\n\n<p>the user was deleted</p>\n");
