@@ -69,12 +69,14 @@ my $draw_page = sub {
     }
     $o->print("</tr>");
     my $start_day_of_week = dayofweek(1,$month,$year);
-    my @start_day = ($year,$month,1);
+    my @start_day = ($year,$month,"1");
     if ($start_day_of_week > 0)
     {
         @start_day = ($year - ($month == 1), ($month == 1)?12:($month-1));
         push @start_day, (days_in(@start_day) - ($start_day_of_week-1));
     }
+
+    @start_day = format_date(@start_day);
 
     my @current_day = @start_day;
     
@@ -88,8 +90,21 @@ my $draw_page = sub {
             if (($current_day[1] == $month) && ($current_day[2] == days_in($year,$month)))
             {
                 $mybreak = 0;
-            }            
-            $o->print("<td width=\"14%\" valign=\"top\"></td>\n");
+            }
+            my ($bgcolor, $link_to_day);
+            if ($current_day[1] == $month)
+            {
+                $bgcolor = "";
+                my $d = $current_day[2];
+                $d =~ s/^0+//;
+                $link_to_day = "<a href=\"" . $layout->linkto(["day", @current_day]) . "\">$d</a>\n";
+            }
+            else
+            {
+                $bgcolor = "bgcolor=\"lightgreen\"";
+                $link_to_day = "";
+            }
+            $o->print("<td width=\"14%\" $bgcolor valign=\"top\">$link_to_day</td>\n");
             @current_day = get_next_day(@current_day);
         }
         $o->print("</tr>\n");
