@@ -137,7 +137,7 @@ my $draw_page = sub {
                 {
                     $o->print("<h1>Add a New Club</h1>\n\n");
                 
-                    $mdda->render_add_form($o);                
+                    $mdda->render_add_form($o, "The club was added");
                 }
                 else
                 {

@@ -73,6 +73,7 @@ sub perform_add_operation
 {
     my $self = shift;
     my $o = shift;
+    my $ok_message = shift || "Database was updated succesfully.";
 
     my $table_spec = $self->{'table_spec'};
     my $table_name = $self->{'table_name'};
@@ -192,7 +193,7 @@ sub perform_add_operation
         my $rv = $sth->execute();
 
         $o->print("<h1>OK</h1>\n");
-        $o->print("<p>The user was added.</p>\n");
+        $o->print("<p>$ok_message</p>\n");
     };
 
     # Handle an exception throw
