@@ -72,4 +72,5 @@ sub get_type_params
         );
 }
 
+1;
 
