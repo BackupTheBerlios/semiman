@@ -5,6 +5,7 @@
 
 <!ENTITY projectname "Zavitan">
 <!ENTITY projecttitle "&projectname; - a Web-based Interface for Managing Seminars">
+<!ENTITY usermanchapter SYSTEM "userman.xml">
 ]>
 
 <book id="index">
@@ -98,6 +99,7 @@
             </para>
         </section>
     </chapter>
+    &usermanchapter;
     
 </book>
 <!-- Keep this comment at the end of the file

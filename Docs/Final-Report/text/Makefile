@@ -2,7 +2,7 @@ BASE = Zavitan_Final_Report
 
 DEST_DIR = $(BASE)
 
-XML_SOURCES = zavitan.xml
+XML_SOURCES = zavitan.xml userman.xml
 
 all: $(DEST_DIR)/index.html $(DEST_DIR)/book.css
 
@@ -23,5 +23,5 @@ $(BASE).zip: $(DEST_DIR)/index.html
 #fcs-book.pdf: $(XML_SOURCES)
 #	xmlto pdf -v --extensions -m glossterm.xsl $<
 
-fcs-book.pdf: $(XML_SOURCES)
+zavitan.pdf: $(XML_SOURCES)
 	db2pdf $<
