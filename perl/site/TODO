@@ -23,3 +23,6 @@ of by ID.
 
 * Make sure that /seminar without the /$id/ will display everything.
 
+* Make sure the end time is greater than the start time, for a seminar.
+
+

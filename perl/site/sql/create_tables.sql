@@ -19,8 +19,12 @@ CREATE TABLE associations (
 #
 
 INSERT INTO associations VALUES (1,1);
+INSERT INTO associations VALUES (1,6);
 INSERT INTO associations VALUES (4,1);
+INSERT INTO associations VALUES (4,4);
 INSERT INTO associations VALUES (5,4);
+INSERT INTO associations VALUES (5,5);
+INSERT INTO associations VALUES (5,6);
 
 #
 # Table structure for table 'clubs'
@@ -75,26 +79,29 @@ INSERT INTO permissions VALUES (5,8,0,0);
 #
 
 CREATE TABLE seminars (
-  Seminar_ID int(11) NOT NULL auto_increment PRIMARY KEY,
+  Seminar_ID int(11) NOT NULL auto_increment,
   Subject_ID int(11) default NULL,
   Title varchar(255) default NULL,
   Description mediumtext,
   Date date default NULL,
   Time time default NULL,
+  EndTime time default NULL,
   Room varchar(255) default NULL,
   Lecturer varchar(255) default NULL,
   ContactInfo mediumblob,
-  FULLTEXT (Title,Description),
-  FULLTEXT (Lecturer)
+  PRIMARY KEY  (Seminar_ID),
+  FULLTEXT KEY Title (Title,Description),
+  FULLTEXT KEY Lecturer (Lecturer)
 ) TYPE=MyISAM;
 
 #
 # Dumping data for table 'seminars'
 #
 
-INSERT INTO seminars VALUES (1,4,'Using tcpdump','A lecture about using tcpdump','2002-08-27','18:30:00','Taub 6','Guy Keren Esq.','Orr Dunkleman, Guy Keren');
-INSERT INTO seminars VALUES (4,4,'BGP','Hay Cohen will give a fascinating lecture about the Border Gateway Protocol','2002-08-30','18:30:00','Taub 6','Hay Cohen','Orr Dunkelman, Guy Keren');
-INSERT INTO seminars VALUES (5,5,'Zavitan - Design and Implementation','Roy Glasberg and Shlomi Fish would cover the design of the Zavitan Seminars Management System	','2002-09-09','16:30:00','Taub 3','Shlomi Fish & Roy Glasberg','Shlomi Fish');
+INSERT INTO seminars VALUES (1,4,'Using tcpdump','A lecture about using tcpdump','2002-08-27','18:30:00','20:30:00','Taub 6','Guy Keren Esq.','Orr Dunkleman, Guy Keren');
+INSERT INTO seminars VALUES (4,4,'BGP','Hay Cohen will give a fascinating lecture about the Border Gateway Protocol','2002-08-30','18:30:00','19:30:00','Taub 6','Hay Cohen','Orr Dunkelman, Guy Keren');
+INSERT INTO seminars VALUES (5,5,'Zavitan - Design and Implementation','Roy Glasberg and Shlomi Fish would cover the design of the Zavitan Seminars Management System	','2002-09-09','16:30:00','19:30:00','Taub 3','Shlomi Fish & Roy Glasberg','Shlomi Fish');
+INSERT INTO seminars VALUES (6,5,'WebMetaLanguage','A lecture about WebMetaLanguage - a tool to \r\ncreate static HTML pages.','2002-08-30','13:30:00','15:30:00','Taub 6','Shlomi Fish','OrrD, Guy Keren');
 
 #
 # Table structure for table 'subjects'

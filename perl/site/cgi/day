@@ -12,6 +12,7 @@ use Technion::Seminars::Layout;
 use Technion::Seminars::SlashUrl;
 use Technion::Seminars::DBI;
 use Technion::Seminars::TypeMan;
+use Technion::Seminars::Utils;
 
 use Gamla::TextStream::Out::File;
 
@@ -167,14 +168,12 @@ sub draw_page
     while (my $row = $sth->fetchrow_arrayref())
     {
         my ($seminar_id, $title, $time_raw) = @$row;
-        my $time;
+        my $time = time_remove_secs($time_raw);
 
         my $before = $before_date || $type_man->compare_values("time", "", $time, $this_time);
 
         my $class = ($before < 0) ? "after" : "before";
 
-        $time_raw =~ m/^(\d+):(\d+)/;
-        $time = "$1:$2";
 
         $o->print("<p><b class=\"$class\">$time</b>: <a href=\"../../../../seminar/$seminar_id/\" class=\"$class\">" . CGI::escapeHTML($title) . "</a></p>");        
     }

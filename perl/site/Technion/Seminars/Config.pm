@@ -301,6 +301,11 @@ BEGIN {
                                 'type' => "time",
                             },
                             {
+                                'name' => "EndTime",
+                                'type' => "time",
+                                'title' => "End Time",
+                            },
+                            {
                                 'name' => "Room",
                                 'type' => "varchar",
                                 'type_params' => { 'len' => 255 },
