@@ -10,6 +10,8 @@ use CGI;
 use Technion::Seminars::Config;
 use Technion::Seminars::Layout;
 use Technion::Seminars::SlashUrl;
+use Technion::Seminars::DBI;
+use Technion::Seminars::TypeMan;
 
 use Gamla::TextStream::Out::File;
 
@@ -18,6 +20,8 @@ use POSIX qw(strftime);
 use Time::DaysInMonth;
 
 my $q = CGI->new();
+
+my ($year, $month, $day);
 
 sub check_url
 {
@@ -28,9 +32,9 @@ sub check_url
     if ($verdict)
     {
 
-        my ($y,$m,$d) = ($1,$2,$3);
+        ($year,$month,$day) = ($1,$2,$3);
 
-        if ($d > days_in($y, $m))
+        if ($day > days_in($year, $month))
         {
             $verdict = 0;
         }
@@ -45,7 +49,7 @@ my $base_url = &normalize_url($q, \&check_url);
 print $q->header();
 
 use vars qw($title);
-$title = "Search for Seminars";
+$title = "Daily Calendar";
 
 my $layout = 
     Technion::Seminars::Layout->new(
@@ -61,7 +65,27 @@ sub draw_page
 
     $o->print("<h1>$title</h1>\n");
 
-    $o->print("This would be the daily calendar.");
+    my $dbh = Technion::Seminars::DBI->new();
+
+    my $sth = $dbh->prepare("SELECT seminars.Seminar_ID, seminars.Title, seminars.Time FROM seminars WHERE seminars.Date = " . $dbh->quote(sprintf("%.4i-%.2i-%.2i", $year,$month,$day)) . " ORDER BY seminars.Time");
+
+    my $rv = $sth->execute();
+
+    my $this_time = strftime("%k:%M:%S", localtime(time()));
+
+    my $type_man = Technion::Seminars::TypeMan::get_type_man();
+
+    while (my $row = $sth->fetchrow_arrayref())
+    {
+        my ($seminar_id, $title, $time) = @$row;
+
+        my $before = $type_man->compare_values("time", "", $time, $this_time);
+
+        my $class = ($before < 0) ? "after" : "before";
+
+        $o->print("<p><b class=\"$class\">$time</b>: <a href=\"../../../../seminar/$seminar_id/\" class=\"$class\">" . CGI::escapeHTML($title) . "</a></p>");        
+    }
+
 }
 
 

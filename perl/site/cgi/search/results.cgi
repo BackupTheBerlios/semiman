@@ -61,14 +61,14 @@ my $draw_page = sub {
     {
         my $keywords = $q->param("keywords");
         $keywords = substr($keywords, 0, 500);
-        push @clauses, ("MATCH(seminars.Title,seminars.Description) AGAINST (" . $dbh->quote($keywords).")");
+        push @clauses, ("MATCH(seminars.Title,seminars.Description) AGAINST (" . $dbh->quote($keywords).") > 0");
     }
 
     if ($q->param("lecturer"))
     {
         my $lecturer = $q->param("lecturer");
         $lecturer = substr($lecturer, 0, 100);
-        push @clauses, ("MATCH(seminars.Lecturer) AGAINST (" . $dbh->quote($lecturer).")");
+        push @clauses, ("MATCH(seminars.Lecturer) AGAINST (" . $dbh->quote($lecturer).") > 0");
     }
 
     if ($q->param("subjects"))
@@ -174,7 +174,7 @@ my $draw_page = sub {
 
     my $query = "SELECT seminars.Seminar_ID, seminars.Title, seminars.Date FROM " . join(",", keys(%tables)) . " $where_clause $groupby_clause ORDER BY seminars.Date";
 
-    # print STDERR "\$query=$query\n";
+    print STDERR "\$query=$query\n";
     
     my $sth = $dbh->prepare($query);
     
