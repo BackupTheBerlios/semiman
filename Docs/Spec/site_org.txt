@@ -13,7 +13,7 @@ Read-Only:
 Club-Admin:
 -----------
 
-/admin/[club id]
+/admin/clubs/[club id]
     /subjects          -> Subjects List
         /[subject id] -> A specific subject
     /seminars/           -> 
@@ -23,7 +23,7 @@ Club-Admin:
 Site Admin:
 -----------
 
-/site-admin
+/admin
     /clubs
         /[club-id]
         /new

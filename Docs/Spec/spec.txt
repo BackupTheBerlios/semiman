@@ -85,7 +85,7 @@ H4: Subjects:
 
 This table will contain a list of subjects within a club.
 
-1. Subject_ID - The primary key. Uniquely identifis the subject.
+1. Subject_ID - The primary key. Uniquely identifies the subject.
 
 2. Club_ID - The club to which this subject belongs.
 
