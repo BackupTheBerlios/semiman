@@ -133,9 +133,17 @@ my $draw_page = sub {
         {
             if ($admin_level eq "site")
             {
-                $o->print("<h1>Add a New Club</h1>\n\n");
+                if (scalar(@url_components) == 0)
+                {
+                    $o->print("<h1>Add a New Club</h1>\n\n");
                 
-                $mdda->render_add_form($o);
+                    $mdda->render_add_form($o);                
+                }
+                else
+                {
+                    # Let's process the form request.
+                    
+                }
             }
         }
     }

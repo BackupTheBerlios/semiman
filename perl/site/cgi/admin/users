@@ -103,6 +103,7 @@ my $draw_page = sub {
         }
         elsif ($base_url eq "admin/users/new/add.cgi")
         {
+            $mdda->perform_add_operation($o);
             # Process the user addition
             eval {
 
