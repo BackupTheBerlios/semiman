@@ -10,7 +10,7 @@ use CGI;
 use Technion::Seminars::Config;
 use Technion::Seminars::Layout;
 use Technion::Seminars::SlashUrl;
-use Technion::Seminars::Utils qw(@week_days_abbrevs);
+use Technion::Seminars::Utils qw(@week_days_abbrevs format_date get_future_day get_next_day);
 
 use Gamla::TextStream::Out::File;
 
@@ -58,15 +58,42 @@ my $draw_page = sub {
 
     $o->print("<h1>$title</h1>\n");
 
-    $o->print("This would be the monthly calendar.");
-
     $o->print("<table border=\"1\" width=\"100%\">\n<tr>\n");
     $o->print("<td width=\"1%\"></td>");
-    for(my $i=0;$i<7;$i++)
+
+    my ($i);
+    
+    for($i=0;$i<7;$i++)
     {
         $o->print("<td width=\"14%\">" . $week_days_abbrevs[$i] . "</td>\n");
     }
-    $o->print("</tr>\n");
+    $o->print("</tr>");
+    my $start_day_of_week = dayofweek(1,$month,$year);
+    my @start_day = ($year,$month,1);
+    if ($start_day_of_week > 0)
+    {
+        @start_day = ($year - ($month == 1), ($month == 1)?12:($month-1));
+        push @start_day, (days_in(@start_day) - ($start_day_of_week-1));
+    }
+
+    my @current_day = @start_day;
+    
+    my $mybreak = 1;
+    for(my $w=0;($w<5) && $mybreak;$w++)
+    {
+        $o->print("<tr>\n");
+        $o->print("<td width=\"1%\"><a href=\"" . $layout->linkto(["week",format_date(@current_day)]) . "\">*</a></td>\n");
+        for($i=0;$i<7;$i++)
+        {
+            if (($current_day[1] == $month) && ($current_day[2] == days_in($year,$month)))
+            {
+                $mybreak = 0;
+            }            
+            $o->print("<td width=\"14%\" valign=\"top\"></td>\n");
+            @current_day = get_next_day(@current_day);
+        }
+        $o->print("</tr>\n");
+    }
     $o->print("</table>\n");
 };
 

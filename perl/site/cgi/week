@@ -20,7 +20,7 @@ use Technion::Seminars::SlashUrl;
 use Technion::Seminars::TypeMan;
 use Technion::Seminars::DBI;
 
-use Technion::Seminars::Utils qw(@week_days_abbrevs);
+use Technion::Seminars::Utils qw(@week_days_abbrevs format_date get_future_day get_next_day);
 
 my $q = CGI->new();
 
@@ -86,47 +86,16 @@ sub check_url
     return ($verdict, sprintf("week/%04i/%02i/%02i/", $y, $m, $d));
 }
 
-# Format a date as (YYYY,MM,DD)
-my $format_date = sub {
-    my ($y, $m, $d) = @_;
-
-    return (sprintf("%.4d", $y), sprintf("%.2d", $m), sprintf("%.2d", $d));
-};
-
-# Get a date $inc days in the future.
-# $inc must be lesser than 28, as this function does not
-# overflow to monthes after the next properly.
-my $get_future_day = sub {
-    my $inc = shift;
-    
-    my ($y, $m, $d) = @_;
-
-    $d += $inc;
-    if ($d > days_in($y,$m))
-    {
-        $d -= days_in($y,$m);
-        $m++;
-        if ($m > 12)
-        {
-            $m = 1;
-            $y++;
-        }
-    }
-    return $format_date->($y,$m,$d);
-};
 
 
 my $get_end_of_week = sub {
-    return $get_future_day->(6,@_);
+    return get_future_day(6,@_);
 };
 
 my $get_next_week = sub {
-    return $get_future_day->(7,@_);
+    return get_future_day(7,@_);
 };
 
-my $get_next_day = sub {
-    return $get_future_day->(1,@_);
-};
 
 my $get_prev_week = sub {
     my ($new_year, $new_month, $new_day) = @_;
@@ -209,7 +178,7 @@ my $draw_page = sub {
 
     for(my $a=1;$a<7;$a++)
     {
-        push @day_dates, [ $get_next_day->(@{$day_dates[$#day_dates]}) ];
+        push @day_dates, [ get_next_day(@{$day_dates[$#day_dates]}) ];
     }
     
     my (@row);
