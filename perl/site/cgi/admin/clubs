@@ -237,7 +237,7 @@ my $edit_seminars = sub {
             while (my $row = $sth->fetchrow_arrayref())
             {
                 my ($id, $title, $date) = @$row;
-                $o->print("<li><a href=\"./$type/$id\">$date - $title</a></li>");
+                $o->print("<li><a href=\"./$type/$id/\">$date - $title</a></li>");
             }
             $o->print("</ul>\n");
         };
@@ -272,6 +272,8 @@ my $edit_seminars = sub {
         my $type = shift(@url_components);
         if ($type eq "owned")
         {
+            my $can_edit_seminars = (($admin_level eq "site") || $club_permissions->[0]);
+
             if (scalar(@url_components) == 0)
             {
             }
@@ -304,26 +306,44 @@ my $edit_seminars = sub {
                     return;
                 }
 
-                $o->print("<h1>Editing Seminar $seminar_id</h1>\n\n");
-
-                my $can_edit_seminars = (($admin_level eq "site") || $club_permissions->[0]);
-
                 my $mdda =
                     Technion::Seminars::MDDA::OneTable->new(
                         'seminars',
                         $config{'database'}->{'tables'}->{'seminars'}
                     );
 
-                if ($can_edit_seminars)
+                if (scalar(@url_components) == 0)
                 {
-                    $mdda->render_edit_form(
-                        $o,
-                        "Seminar_ID",
-                        $seminar_id,
-                        'field-title' => $seminar_id,
-                        'ok-title' => "none",
-                        'no-delete-button' => 1,
-                    );                    
+
+                    $o->print("<h1>Editing Seminar $seminar_id</h1>\n\n");
+
+                    if ($can_edit_seminars)
+                    {
+                        $mdda->render_edit_form(
+                            $o,
+                            "Seminar_ID",
+                            $seminar_id,
+                            'field-title' => $seminar_id,
+                            'ok-title' => "none",
+                            'no-delete-button' => 1,
+                        );                    
+                    }
+                }
+                else
+                {
+                    my $script = shift(@url_components);
+                    if ($script eq "edit.cgi")
+                    {
+                        if ($can_edit_seminars)
+                        {
+                            $mdda->perform_edit_operation(
+                                $q, $o,
+                                "Seminar_ID",
+                                'record-title' => "seminar",
+                                'id-field-title' => "seminar ID",
+                            );
+                        }
+                    }
                 }
             }
         }
