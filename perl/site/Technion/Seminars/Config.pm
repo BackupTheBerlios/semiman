@@ -13,31 +13,54 @@ use vars qw(@EXPORT @ISA);
 @EXPORT=qw(%config);
 
 BEGIN {
+    # SET ME to the hostname of the HTTP site
+    my $http_host = "132.68.52.118";
+    # SET ME to the path under the HTTP site (excluding leading and trailing
+    # slashes)
+    my $http_path = "seminars";
+    # SET ME to the hostname of the HTTPS site
+    my $https_host = "132.68.52.118";
+    # SET ME to the path under the HTTPS site (excluding leading and trailing
+    # slashes)
+    my $https_path = "seminars";
+
+    # SET ME to the DBI DSN of the database
+    my $dsn = "DBI:mysql:database=test_seminars";
+
+    # SET ME to the database username
+    my $user = "nobody";
+
+    # SET ME to the databse password
+    my $password = "";
+
+    # SET ME to the path of the crypt file for encrypting passwords
+    my $crypt_file = "/etc/seminars-crypt-file";
+    
     %config = 
     (
-        'crypt_file' => "/etc/seminars-crypt-file",
+        'crypt_file' => ,
         # The URL of the HTTP Read-only Tree
         'http_url' => 
             {
-                'url' => "http://132.68.52.118/seminars/",
-                'host' => "132.68.52.118",
-                'path' => "seminars",
+                'url' => "http://$http_host/$http_path/",
+                'host' => $http_host,
+                'path' => $http_path,
             },
         # The URL of the HTTPS Admin Tree
         'https_url' =>
             {
-                'url' => "https://132.68.52.118/seminars/",
-                'host' => "132.68.52.118",
-                'path' => "seminars",
+                'url' => "https://$https_host/$https_path",
+                'host' => $https_host,
+                'path' => $https_path,
             },
         # Browser Compatibility Flag - make the code less standard
         # and more compatible with common browser bugs.
         'browser_compatibility' => 1,
         'database' =>
             {
-                'dsn' => "DBI:mysql:database=test_seminars",
-                'user' => "nobody",
-                'password' => "",
+                'dsn' => $dsn,
+                'user' => $user, 
+                'password' => $password,
                 'tables' =>
                 {
                     'users' =>

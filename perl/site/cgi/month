@@ -43,7 +43,7 @@ my $base_url = &normalize_url($q, \&check_url);
 
 print $q->header();
 
-my $title = "Monthly Calendar for " . $monthes_names[$month] . ", $year";
+my $title = "Monthly Calendar for " . $monthes_names[$month-1] . ", $year";
 
 my $layout = 
     Technion::Seminars::Layout->new(
