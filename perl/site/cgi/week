@@ -84,10 +84,22 @@ sub check_url
     return ($verdict, sprintf("week/%04i/%02i/%02i/", $y, $m, $d));
 }
 
-my $get_end_of_week = sub {
+# Format a date as (YYYY,MM,DD)
+my $format_date = sub {
     my ($y, $m, $d) = @_;
 
-    $d += 6;
+    return (sprintf("%.4d", $y), sprintf("%.2d", $m), sprintf("%.2d", $d));
+};
+
+# Get a date $inc days in the future.
+# $inc must be lesser than 28, as this function does not
+# overflow to monthes after the next properly.
+my $get_future_day = sub {
+    my $inc = shift;
+    
+    my ($y, $m, $d) = @_;
+
+    $d += $inc;
     if ($d > days_in($y,$m))
     {
         $d -= days_in($y,$m);
@@ -98,26 +110,39 @@ my $get_end_of_week = sub {
             $y++;
         }
     }
-    return ($y,$m,$d);
+    return $format_date->($y,$m,$d);
+};
+
+
+my $get_end_of_week = sub {
+    return $get_future_day->(6,@_);
+};
+
+my $get_next_week = sub {
+    return $get_future_day->(7,@_);
 };
 
 my $get_next_day = sub {
+    return $get_future_day->(1,@_);
+};
+
+my $get_prev_week = sub {
     my ($new_year, $new_month, $new_day) = @_;
-    if ($new_day == days_in($year, $month))
+
+    if ($new_day - 7 < 1)
     {
-        $new_day = 1;
-        $new_month++;
-        if ($new_month == 13)
+        $new_month--;
+        if ($new_month == 0)
         {
-            $new_month = 1;
-            $new_year++;
+            $new_year--;
+            $new_month = 12;
         }
+        return ($new_year, $new_month, days_in($new_year,$new_month) - 7 + $new_day);
     }
     else
     {
-        $new_day++;
+        return ($new_year, $new_month, $new_day - 7);
     }
-    return ($new_year,$new_month,$new_day);
 };
 
 
@@ -134,6 +159,9 @@ my $layout =
         'title' => $title,
     );
 
+my $get_week_url = sub {
+    return $layout->linkto(["week", @_]);
+};
     
 my $o = Gamla::TextStream::Out::File->new(\*STDOUT);
 
@@ -143,6 +171,17 @@ my $draw_page = sub {
     my $o = shift;
 
     $o->print("<h1>$title</h1>\n");
+
+    my $navigation_bar = 
+        "<table border=\"1\">\n" . 
+        "<tr>\n" .
+        "<td><a href=\"" . $get_week_url->($get_prev_week->($year,$month,$day)) . "\">Previous Week</a></td>\n" .
+        "<td><a href=\"" . $get_week_url->($get_next_week->($year,$month,$day)) . "\">Next Week</a></td>\n" .
+        
+        "</tr>\n" .
+        "</table>\n";
+
+    $o->print($navigation_bar);
 
     my @week_calendar = (map { [ map { [] } (1 .. 5) ] } (1..7));
 
@@ -171,10 +210,11 @@ my $draw_page = sub {
         push @day_dates, [ $get_next_day->(@{$day_dates[$#day_dates]}) ];
     }
     
-    my @row = @$record;
+    my (@row);
     
     if (defined($record))
     {
+        @row = @$record;
         LOOP:               
         for($day_coord=0;$day_coord<7;$day_coord++)
         {
