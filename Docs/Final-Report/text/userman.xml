@@ -92,6 +92,24 @@ sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
                 </screen>
             </para>        
         </section>
+        <section id="database">
+            <title>Initializing the Database</title>
+            <para>
+                Create a MySQL database that the user specified in Config.pm 
+                have full read and write permissions to. Fill the database using
+                <filename>$DIST/site/sql/create_tables.sql</filename>. This 
+                will create a default super-user named root with password root.
+            </para>
+        </section>
+        <section id="web">
+            <title>Logging to the Web Interface</title>
+            <para>
+                Access the site's URL and access the admin link. Log in as root,
+                with password root. (make sure you change the password 
+                afterwards). Now, you can start adding clubs and users and set
+                up the system.
+            </para>
+        </section>
     </section>
     
 </chapter>
