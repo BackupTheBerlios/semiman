@@ -18,7 +18,6 @@ my $q = CGI->new();
 sub check_url
 {
     my $url = shift; 
-    print STDERR "\$url=\"$url\"\n";
     my $verdict = ($url =~ /^(index\.cgi(\/)?)?$/) ? 1 : 0;
     return ($verdict, "");
 }
