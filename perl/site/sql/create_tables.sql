@@ -84,7 +84,8 @@ CREATE TABLE seminars (
   Room varchar(255) default NULL,
   Lecturer varchar(255) default NULL,
   ContactInfo mediumblob,
-  FULLTEXT (Title,Description)
+  FULLTEXT (Title,Description),
+  FULLTEXT (Lecturer)
 ) TYPE=MyISAM;
 
 #

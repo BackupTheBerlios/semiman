@@ -59,6 +59,13 @@ my $draw_page = sub {
         push @clauses, ("MATCH(seminars.Title,seminars.Description) AGAINST (" . $dbh->quote($keywords).")");
     }
 
+    if ($q->param("lecturer"))
+    {
+        my $lecturer = $q->param("lecturer");
+        $lecturer = substr($lecturer, 0, 100);
+        push @clauses, ("MATCH(seminars.Lecturer) AGAINST (" . $dbh->quote($lecturer).")");
+    }
+
     if (scalar(@clauses))
     {
         $where_clause = "WHERE " . join(" AND ", (map { "($_)" } @clauses));
