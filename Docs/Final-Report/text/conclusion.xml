@@ -1,0 +1,123 @@
+<?xml version='1.0' ?>
+
+<!-- <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "http://www.oa
+sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
+<!-- This comment is meant to settle gvim -->
+
+<chapter id="conclusion">
+    <title>Conclusions</title>
+    <section id="full_text_search">
+        <title>Full Text Search in MySQL</title>
+        <para>
+            When we wanted to implement searching for keywords on the 
+            Lecturer and Keywords fields we contemplated how we are going
+            to do it using excessive "LIKE \"%[mykeyord]%\" statements,
+            or regular expressions. However, by going over the MySQL
+            manual we discovered that MySQL has a full text search. (which
+            was not O(n) complexity).            
+        </para>
+        <para>
+            Due to the fact that it was an SQL extension, we hesitated to
+            use it. We decided for it, because we figured out it was limited
+            to one place in the code, and could easily be replaced by a 
+            different proprietary method (or a standard SQL one, should the
+            implementor choose to take it), assuming a conversion to a
+            different database is needed.
+        </para>
+        <para>
+            We should note that the SQL standard in itself is very limited
+            and unsatistfiable, which often requires the use of proprietary
+            extensions (in both commercial and Open-Source offerings) to make
+            it usable. Shlomi Fish, one of the authors, even contemplated 
+            starting an Extended-SQL (or X-SQL for short) super-standard,
+            but so far did not advance far enough by himself to make any 
+            significant progress in this area.
+        </para>
+    </section>
+    <section id="mdda">
+        <title>Meta-Data Database Access</title>
+        <para>
+            We recommend all users who work with database routinely to use
+            Meta-Data Database Access Concepts. Shlomi Fish can tell from his 
+            own experience.
+        </para>
+        <para>
+            The first time he worked with an SQL database, at his first serios 
+            workplace as a programmer, he queried the data by hard-coding the 
+            fields across all queries. The code was eventually dumped due to
+            the fact that the project heads realized that working with an 
+            SQL database was too slow for the real-time constraints 
+            of the application that it involved.
+        </para>
+        <para>
+            Nevertheless, Shlomi became interested in RDBMSes and thought
+            about it. Somewhat later, Shlomi decided to design the basis for
+            a Perl-based Rapid-Application Development Tool. (assuming Perl 
+            is not already so). To do so, he designed a database editing
+            tool that could edit any table specified by an MDDA Spec, and
+            using a command line or Perl/Tk user-interface. He realized that
+            was compulsary as far as a RAD is concerned and from that 
+            concluded that it was a good idea for many times working with
+            a table is involved.
+        </para>
+        <para>
+            In 1999, Shlomi became involved in maintaining the web site
+            of the Israeli Group of Linux Users. One of the tasks involved
+            was writing a web-based front-end to query a list of available
+            Linux-related positions in Israel. Using MDDA, Shlomi Fish 
+            implemented the database using a series of Perl scripts, and a 
+            common table-wide specification file.
+        </para>
+        <para>
+            Somewhat later it became apparent that a similar list of 
+            consultants is also needed. However, Shlomi became busy with
+            his studies at the time, and the job of converting the interface
+            was taken by another administrator. She was able to completely
+            convert the scripts by changing the specification and various
+            strings spread throughout the files alone. (Later on, the 
+            functionality of both copies was abstracted as a common module)
+        </para>
+        <para>
+            She congratulated Shlomi for his "modular code" and later
+            integrated MDDA into three projects she did for her workplace. 
+            (it should be noted that she was a relatively inexperienced 
+            programmer at the time).
+        </para>
+        <para>
+            The lesson here is that the majority of beginning or even
+            moderately experienced programmers who work with databases
+            still aren't instructed to use MDDA. Shlomi does not claim
+            to invent MDDA, as he is sure other people stumbled across 
+            this technique earlier. Nevertheless, he believes it 
+            encompasses an important paradigm, that should be conveyed
+            to everyone who begins to work with it.
+        </para>
+        <para>
+            We believe dynamically-typed languages such as Perl, Python,
+            PHP, Ruby and to lesser extent Java give way much more easily
+            to MDDA methods. We confess that our implementation of the 
+            MDDA was not modular as it could be, mainly for lack of time for
+            designing a front-end for multi-tables queries.
+        </para>
+    </section>
+</chapter>
+
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:4
+sgml-indent-data:t
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+sgml-parent-document: "zavitan.xml"
+End:
+-->
+
