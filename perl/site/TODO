@@ -1,0 +1,3 @@
+* Make sure /search (without the trailing /) forwards to /search/
+
+

@@ -5,10 +5,14 @@ use strict;
 use CGI;
 
 use Technion::Seminars::Layout;
+use Technion::Seminars::SlashUrl;
 
 use Gamla::TextStream::Out::File;
 
 my $q = CGI->new();
+
+# Make sure our URL ends with a slash.
+&slash_url($q);
 
 print $q->header();
 
