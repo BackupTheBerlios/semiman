@@ -23,7 +23,7 @@ CREATE TABLE associations (
 #
 
 CREATE TABLE clubs (
-  Club_ID int(11) NOT NULL default '0',
+  Club_ID int(11) NOT NULL auto_increment,
   Clubname varchar(30) default NULL,
   Name varchar(255) default NULL,
   Homepage varchar(255) default NULL,
@@ -34,7 +34,6 @@ CREATE TABLE clubs (
 #
 # Dumping data for table 'clubs'
 #
-
 
 #
 # Table structure for table 'permissions'
