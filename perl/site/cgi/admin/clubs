@@ -354,7 +354,14 @@ my $edit_seminars = sub {
                     $mdda->render_add_form($o);
                 }
             }
-
+            else
+            {
+                my $script = shift(@url_components);
+                if ($script eq "add.cgi")
+                {
+                    $mdda->perform_add_operation($q, $o, "The Seminar was Added");
+                }
+            }
         }
     }
 };

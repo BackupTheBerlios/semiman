@@ -1,13 +1,15 @@
 Pressing:
 ---------
 
-* Add an url types.
+* Add a url type.
 
 * Add the associated seminars to the seminars display.
 
 * Implement the choice of subject in the add new seminar as a combo box.
 
 * Make sure an association is implicitly added when a seminar is added.
+
+* Make sure the date is found in the future.
 
 
 Non-pressing:

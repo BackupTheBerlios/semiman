@@ -208,7 +208,7 @@ sub perform_add_operation
             }
 
             # Push the field name
-            push @query_fields, $field->{'name'};                    
+            push @query_fields, $field->{'name'};
 
             push @query_values, $value;
 

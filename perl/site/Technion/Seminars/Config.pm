@@ -230,7 +230,7 @@ BEGIN {
                                 'input' => 
                                 { 
                                     'type' => "auto", 
-                                    'method' => "new-id", 
+                                    'method' => "get-new-id", 
                                     "primary_key" => 1
                                 },
                                 'display' => { 'type' => "hidden" },
@@ -298,6 +298,13 @@ BEGIN {
                                 },
                             },
                         ],
+                        'triggers' =>
+                        {
+                            'add' =>
+                            [
+                                "INSERT INTO associations (Subject_ID, Seminar_ID) VALUES (\$F{Subject_ID}, \$F{Seminar_ID})",
+                            ],
+                        },
                     },
                 },
             },
