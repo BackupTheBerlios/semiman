@@ -17,6 +17,9 @@ use Arad::Types::Abstract::Bounded;
 
 use Arad::Types::Special::EmailConstraint;
 use Arad::Types::Special::Email;
+use Arad::Types::Special::UrlConstraint;
+use Arad::Types::Special::Url;
+
 
 sub get_type_man
 {
@@ -36,6 +39,8 @@ sub get_type_man
 
     $typeman->register_type(Arad::Types::Special::EmailConstraint::get_type_params());
     $typeman->register_type(Arad::Types::Special::Email::get_type_params());
+    $typeman->register_type(Arad::Types::Special::UrlConstraint::get_type_params());
+    $typeman->register_type(Arad::Types::Special::Url::get_type_params());
 
     return $typeman;
 }
