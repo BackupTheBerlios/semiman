@@ -10,6 +10,7 @@ use CGI;
 use Technion::Seminars::Config;
 use Technion::Seminars::Layout;
 use Technion::Seminars::SlashUrl;
+use Technion::Seminars::Utils qw(@week_days_abbrevs);
 
 use Gamla::TextStream::Out::File;
 
@@ -20,6 +21,8 @@ use Date::DayOfWeek;
 
 my $q = CGI->new();
 
+my ($year, $month);
+
 sub check_url
 {
     my $url = shift;
@@ -27,6 +30,9 @@ sub check_url
     my ($y,$m,$d);
 
     my $verdict = ($url =~ /^month\/(\d{4})\/(0[1-9]|1[0-2])\/$/) ? 1 : 0;
+
+    $year = $1;
+    $month = $2;
 
     return ($verdict, strftime("month/%Y/%m/", localtime(time())));
 }
@@ -53,6 +59,15 @@ my $draw_page = sub {
     $o->print("<h1>$title</h1>\n");
 
     $o->print("This would be the monthly calendar.");
+
+    $o->print("<table border=\"1\" width=\"100%\">\n<tr>\n");
+    $o->print("<td width=\"1%\"></td>");
+    for(my $i=0;$i<7;$i++)
+    {
+        $o->print("<td width=\"14%\">" . $week_days_abbrevs[$i] . "</td>\n");
+    }
+    $o->print("</tr>\n");
+    $o->print("</table>\n");
 };
 
 $layout->render($o, $draw_page);

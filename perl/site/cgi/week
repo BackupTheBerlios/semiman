@@ -7,18 +7,20 @@ use strict;
 
 use CGI;
 
+use POSIX qw(strftime);
+
+use Time::DaysInMonth;
+use Date::DayOfWeek;
+
+use Gamla::TextStream::Out::File;
+
 use Technion::Seminars::Config;
 use Technion::Seminars::Layout;
 use Technion::Seminars::SlashUrl;
 use Technion::Seminars::TypeMan;
 use Technion::Seminars::DBI;
 
-use Gamla::TextStream::Out::File;
-
-use POSIX qw(strftime);
-
-use Time::DaysInMonth;
-use Date::DayOfWeek;
+use Technion::Seminars::Utils qw(@week_days_abbrevs);
 
 my $q = CGI->new();
 
@@ -235,8 +237,6 @@ my $draw_page = sub {
         }
     }
     
-    my @week_days = (qw(Sun Mon Tue Wed Thu Fri Sat));
-
     $o->print("<table border=\"1\" width=\"100%\">\n");
     
 
@@ -245,7 +245,7 @@ my $draw_page = sub {
     $o->print("<td valign=\"top\" $set_width></td>\n");
     for(my $d=0;$d<7;$d++)
     {
-        $o->print("<td valign=\"top\" $set_width><a href=\"" . $layout->linkto(["day", @{$day_dates[$d]} ]) . "\">" . $week_days[$d] . "</a></td>\n");
+        $o->print("<td valign=\"top\" $set_width><a href=\"" . $layout->linkto(["day", @{$day_dates[$d]} ]) . "\">" . $week_days_abbrevs[$d] . "</a></td>\n");
     }
     $o->print("</tr>\n");
 
