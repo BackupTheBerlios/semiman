@@ -41,9 +41,6 @@ if (%cookie = $q->cookie('seminars_auth'))
     ($admin_level, $user_id) = $user_man->get_admin_level($user, $password);
 }
 
-### TO BE REMOVED
-$admin_level = "site";
-
 print $q->header();
 
 my $title = "Administrator Login";

@@ -48,9 +48,6 @@ if (%cookie = $q->cookie('seminars_auth'))
     ($admin_level, $user_id) = $user_man->get_admin_level($user, $password);
 }
 
-# TO BE REMOVED
-$admin_level = "site";
-
 print $q->header();
 
 my $title = "Club Management";
@@ -605,12 +602,11 @@ my $draw_page = sub {
                 
                 my @club_permissions;
 
-                # TO BE REMOVED
-                @club_permissions = (1,1);
-                #@club_permissions = $user_man->can_edit_club(
-                    #            $user_id, 
-                    #        $club_id
-                    #        ) ; 
+                @club_permissions = 
+                    $user_man->can_edit_club(
+                        $user_id, 
+                        $club_id
+                        ); 
 
                 {
                     my $can_edit_subjects = (($admin_level eq "site") || $club_permissions[1]);
