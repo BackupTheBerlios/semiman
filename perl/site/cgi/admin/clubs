@@ -46,7 +46,7 @@ if (%cookie = $q->cookie('seminars_auth'))
     $user = $cookie{'user'};
     $password = $cookie{'password'};
 
-    $admin_level = $user_man->get_admin_level($user, $password);
+    ($admin_level, $user_id) = $user_man->get_admin_level($user, $password);
 }
 
 print $q->header();
@@ -149,9 +149,23 @@ my $draw_page = sub {
         }
         else
         {
-            if (scalar(@url_components) == 0)
+            my $dbh = Technion::Seminars::DBI->new();
+            my $sth = $dbh->prepare("SELECT Club_ID FROM Clubs WHERE Clubname = '$clubname'");
+            my $rv = $sth->execute();
+            
+            my $row = $sth->fetchrow_arrayref();
+            if ($row)
             {
-                $mdda->render_edit_form($o, "Clubname", $clubname);
+                my $club_id = $row->[0];
+                if (($admin_level eq "site") || 
+                    ($user_man->can_edit_club($user_id, $club_id)))
+                if (scalar(@url_components) == 0)
+                {
+                    $mdda->render_edit_form($o, "Club_ID", $club_id);
+                }                
+            }
+            else
+            {
             }
         }
     }
