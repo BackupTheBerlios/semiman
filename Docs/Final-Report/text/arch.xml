@@ -274,7 +274,7 @@ sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
                 contents.
             </para>
         </section>
-        <section="month">
+        <section id="month">
             <title>month</title>
             <para>
                 This is a monthly view of the seminars, organized by weeks
@@ -343,7 +343,7 @@ sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
             </para>
             <para>
                 Each field in the search form corresponds to a clause, which
-                are merged using <keyword>AND</keyword> keywords. The 
+                are merged using AND keywords. The 
                 Keywords and Lecturer clauses are handled using MySQL's 
                 internal full text search. (which is a MySQL extension to SQL).
             </para>
@@ -353,7 +353,7 @@ sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
                 that were selected. Secondly, if the "All" option had been 
                 specified, then the clause is discarded entirely. Afterwards,
                 the subjects and the clubs are listed and detected using
-                the SQL keyword <keyword>IN</keyword>.
+                the SQL keyword IN.
             </para>
         </section>
     </section>
