@@ -18,6 +18,7 @@
         - Technion::Seminars::Layout
         - Technion::Seminars::UserMAn
         - Technion::Seminars::Config
+        - Technion::Seminars::MDDA::OneTable
     - Scripts:
         - admin/clubs
         - day
@@ -27,6 +28,11 @@
         - search/results.cgi
         - admin/users
 
+5. Conclusions
+    - Full-Text Search in MySQL
+    - MDDA
+    - CPAN
+    - DocBook
+    - Wishlist
 
 
-    
