@@ -115,7 +115,7 @@ my $draw_page = sub {
 
     my $dbh = Technion::Seminars::DBI->new();
 
-    my $sth = $dbh->prepare("SELECT Club_ID, Name FROM clubs ORDER BY Name");
+    my $sth = $dbh->prepare("SELECT Club_ID, Name FROM clubs ORDER BY Name"); # INDEXED
 
     my $rv = $sth->execute();
 
@@ -125,7 +125,7 @@ my $draw_page = sub {
         $o->print("<option value=\"club-$club_id\">" . CGI::escapeHTML("All $name" . "'s Subjects") . "</option>\n");
     }
 
-    $sth = $dbh->prepare("SELECT clubs.Club_ID, clubs.Name, subjects.Subject_ID, subjects.Name FROM clubs, subjects WHERE subjects.Club_ID = clubs.Club_ID ORDER BY clubs.Name, subjects.Name");
+    $sth = $dbh->prepare("SELECT clubs.Club_ID, clubs.Name, subjects.Subject_ID, subjects.Name FROM clubs, subjects WHERE subjects.Club_ID = clubs.Club_ID ORDER BY clubs.Name, subjects.Name"); # INDEXED
 
     $rv = $sth->execute();
 
