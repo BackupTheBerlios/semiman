@@ -60,6 +60,9 @@ sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
                     MIME::Base64
                 </para></listitem>
                 <listitem><para>
+                    Net::SMTP
+                </para></listitem>
+                <listitem><para>
                     Time::DaysInMonth
                 </para></listitem>
             </itemizedlist>
