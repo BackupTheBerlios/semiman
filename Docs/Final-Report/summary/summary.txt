@@ -5,4 +5,28 @@
     - scope
     - platform and tools
 
+3. User Manual/HOWTO
+    - Installation
+    - Basic operation concepts
+    - Site Workflows
 
+4. Architecture
+    - Meta-Data Database Access
+    - Classes:
+        - Arad::Types
+        - Gamla::TextStream::Out and friends
+        - Technion::Seminars::Layout
+        - Technion::Seminars::UserMAn
+        - Technion::Seminars::Config
+    - Scripts:
+        - admin/clubs
+        - day
+        - week
+        - month
+        - search/index.cgi
+        - search/results.cgi
+        - admin/users
+
+
+
+    
