@@ -47,6 +47,9 @@ my $draw_page = sub {
     my $o = shift;
     
     my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time());   
+    
+    my $selected = " selected=\"selected\" ";
+
     $year += 1900;
 
     $o->print("<h1>$title</h1>\n");
@@ -63,13 +66,13 @@ my $draw_page = sub {
 
         $o->print("<td align=\"left\"><select name=\"$which" . "_mday\">");
 
-        $o->print(join("\n", map { "<option value=\"$_\" " . (($mday == $_) ? "selected=\"1\"" : ""). ">$_</option>" } (1 .. 31) ));
+        $o->print(join("\n", map { "<option value=\"$_\" " . (($mday == $_) ? $selected : ""). ">$_</option>" } (1 .. 31) ));
 
         $o->print("</select></td>\n");
 
         $o->print("<td align=\"left\"><select name=\"$which" . "_month\">");
 
-        $o->print(join("\n", map { "<option value=\"$_\" " . (($mon+1 == $_) ? "selected=\"1\"" : ""). ">" . $monthes_names[$_-1] .  "</option>" } (1 .. 12) ));
+        $o->print(join("\n", map { "<option value=\"$_\" " . (($mon+1 == $_) ? $selected : ""). ">" . $monthes_names[$_-1] .  "</option>" } (1 .. 12) ));
         $o->print("</select></td>\n");
 
         $o->print("<td align=\"left\"><select name=\"$which" . "_year\">\n");
@@ -79,7 +82,7 @@ my $draw_page = sub {
         {
             if ($y == $year)
             {
-                $o->print("<option value=\"none\" selected=\"1\">--SELECT YEAR--</option>\n");
+                $o->print("<option value=\"none\" $selected>--SELECT YEAR--</option>\n");
             }
             $o->print("<option value=\"$y\">$y</option>\n");
         }
@@ -108,9 +111,9 @@ my $draw_page = sub {
 
     $o->print("<td valign=\"top\"><b>Subjects:</b></td>");
 
-    $o->print("<td colspan=\"4\" valign=\"top\"><select name=\"subjects\" multiple=\"1\">");
+    $o->print("<td colspan=\"4\" valign=\"top\"><select name=\"subjects\" multiple=\"multiple\">");
     
-    $o->print("<option value=\"all\" selected=\"1\">All</option>\n");
+    $o->print("<option value=\"all\" $selected>All</option>\n");
 
     my $dbh = Technion::Seminars::DBI->new();
 
@@ -141,7 +144,7 @@ my $draw_page = sub {
 
     $o->print("</table>\n");
 
-    $o->print("<input type=\"submit\" value=\"Search\" />\n");
+    $o->print("<p><input type=\"submit\" value=\"Search\" /></p>\n");
     $o->print("</form>\n");
 };
 

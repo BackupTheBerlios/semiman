@@ -102,7 +102,8 @@ sub render
 
     my $contents = shift;
 
-    my $browser_compat = $config{'browser_compatibility'};
+    #my $browser_compat = $config{'browser_compatibility'};
+    my $browser_compat = 0;
 
     my @path = @{$self->{'path'}};
 
@@ -123,9 +124,7 @@ sub render
     $o->print("<table summary=\"Layout Table: The first cell contains a navigation bar, the second the main page\" border=\"0\" width=\"99%\">\n");
     $o->print("<tbody>\n");
     $o->print("<tr>\n");
-    $o->print("<td valign=\"top\" class=\"navbar\"" . 
-        ($browser_compat ? " width=\"20%\"" : "") .
-        ">\n");
+    $o->print("<td valign=\"top\" class=\"navbar\" style=\"width:20%\">\n");
 
     $o->print("<ul class=\"navbarmain\">\n");
 
@@ -162,7 +161,7 @@ sub render
     $separator->();
     if ($admin_level eq "readonly")
     {
-        $o->print("<a href=\"". ($config{'https_url'}->{'url'} . "admin/") . "\">Admin</a><br />\n");
+        $o->print("<li><a href=\"". ($config{'https_url'}->{'url'} . "admin/") . "\">Admin</a></li>\n");
     }
     else
     {
