@@ -274,7 +274,88 @@ sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
                 contents.
             </para>
         </section>
+        <section="month">
+            <title>month</title>
+            <para>
+                This is a monthly view of the seminars, organized by weeks
+                and week-days. It is possible to access each week by a small
+                URL to its left, and to access each day by a URL. Within
+                the day, the seminars are presented by a number alone, to save
+                space. (this is due to the fact the seminars titles may be
+                quite long)
+            </para>
+            <para>
+                On top of the page there is a navigation bar that allows moving
+                to the next and previous monthes.
+            </para>
+            <para>
+                This time, the cells were rendered one at a time, while the 
+                seminars inside each cell were peaked from the query. Whenever
+                we encountered a seminar that belonged to a given day, we 
+                fetched the next record too to see if it also occurs on the
+                same date. And so forth, until the end of the query or the time
+                we reached seminar of a further date.
+            </para>
+        </section>
+        <section id="search_index_cgi">
+            <title>search/index.cgi</title>
+            <para>
+                This script displays a form that can be used to search the
+                database for seminars. The interesting dynamic logic here
+                are the start date and end date (which are ignored by default,
+                but are close to the same year), and the subjects list.
+            </para>
 
+            <para>
+                In the subjects list, it is possible to select any subset from
+                the following categories:
+            </para>
+            <para>
+                <orderedlist>
+                    <listitem>
+                        <para>
+                            All subjects (the selected default)    
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            All subjects of a specific club
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            Specific subjects from all the specific clubs.
+                        </para>
+                    </listitem>
+                </orderedlist>
+            </para>
+            <para>
+                By default, the search is set to find all seminars.
+            </para>
+        </section>
+        <section id="search_results_cgi">
+            <title>search/results.cgi</title>
+            <para>
+                This script receives the search paraemeters that were
+                received from the user, constructs a query, passes it
+                to the database back-end and displays the results. (while
+                making some sanity checks or constraints)
+            </para>
+            <para>
+                Each field in the search form corresponds to a clause, which
+                are merged using <keyword>AND</keyword> keywords. The 
+                Keywords and Lecturer clauses are handled using MySQL's 
+                internal full text search. (which is a MySQL extension to SQL).
+            </para>
+            <para>
+                The subjects are processed in the following manner: first, 
+                the subject IDs that were selected are merged into club IDs
+                that were selected. Secondly, if the "All" option had been 
+                specified, then the clause is discarded entirely. Afterwards,
+                the subjects and the clubs are listed and detected using
+                the SQL keyword <keyword>IN</keyword>.
+            </para>
+        </section>
     </section>
 </chapter>
 

@@ -68,7 +68,9 @@ sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
             After that, unpack the distribution. You need to make sure 
             $DIST/perl/site is in the mod_perl include path. Next create
             an alias for $DIST/perl/site/cgi, and make sure all files except
-            for those ending with .css are handled by mod_perl.
+            for those ending with .css are handled by mod_perl. Then, make sure
+            that Apache serves index.cgi files as the default handler for
+            their directories for Zavitan's sub-tree.
         </para>
         <section id="Config_pm">
             <title>Configuring Config.pm</title>

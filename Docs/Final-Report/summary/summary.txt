@@ -16,7 +16,7 @@
         - Arad::Types
         - Gamla::TextStream::Out and friends
         - Technion::Seminars::Layout
-        - Technion::Seminars::UserMAn
+        - Technion::Seminars::UserMan
         - Technion::Seminars::Config
         - Technion::Seminars::MDDA::OneTable
     - Scripts:
@@ -34,6 +34,9 @@
     - CPAN
     - DocBook
     - Wishlist
+    - WebCal
+    - Why we wrote our own thing (vs. using OpenACP)
+    - I18N, L16N and BiDi
 
 6. Thanks
 
