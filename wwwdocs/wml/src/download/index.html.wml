@@ -1,0 +1,12 @@
+#include '../template.wml'
+
+<subject "Project Downloads" />
+
+<p>
+The project is still under development, and while the operation
+is stable, it's still pretty useless. A current snapshot of 
+the code can always be checked out of the 
+<a href="http://developer.berlios.de/cvs/?group_id=382">BerliOS CVS 
+Repository</a>.
+</p>
+

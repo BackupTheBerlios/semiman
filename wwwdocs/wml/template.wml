@@ -60,7 +60,7 @@
 
 <table summary="Layout Table: The first cell contains a navigation bar, the second the main page" border="0" width="99%">
 <tr>
-<td valign="top" class="navbar" style="width:20%"> <!-- width="20%"> -->
+<td valign="top" class="navbar" style="width:20%">
 <a href="$(ROOT)/">Main</a><br />
 <a href="$(ROOT)/docs/">Documents</a><br />
 <a href="$(ROOT)/download/">Downloads</a><br />
@@ -103,9 +103,6 @@
 </td>
 </tr>
 </table>
-<p>
-<a href="http://t2.technion.ac.il/~shlomif/"><img src="$(BERLIOS:*.)./images/bk2hp.gif" alt="Back to my Homepage" style="border:0" /></a>
-</p>
 
 </body>
 </html>

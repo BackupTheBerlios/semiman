@@ -1,0 +1,11 @@
+#include '../template.wml'
+
+<subject "BerliOS Information" />
+
+<p>
+Our <a href="http://developer.berlios.de/cvs/?group_id=382">CVS Repository
+</a> is hosted in <a href="http://developer.berlios.de/">BerliOS</a>. It
+also offers other services, but we have not decided whether we want to
+make use of them.
+</p>
+
