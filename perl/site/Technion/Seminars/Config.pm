@@ -38,7 +38,7 @@ BEGIN {
     
     %config = 
     (
-        'crypt_file' => ,
+        'crypt_file' => $crypt_file,
         # The URL of the HTTP Read-only Tree
         'http_url' => 
             {

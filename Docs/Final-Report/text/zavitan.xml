@@ -7,6 +7,7 @@
 <!ENTITY projecttitle "&projectname; - a Web-based Interface for Managing Seminars">
 <!ENTITY usermanchapter SYSTEM "userman.xml">
 <!ENTITY archchapter SYSTEM "arch.xml">
+<!ENTITY conclusion SYSTEM "conclusion.xml">
 ]>
 
 <book id="index">
@@ -102,6 +103,7 @@
     </chapter>
     &usermanchapter;
     &archchapter;
+    &conclusion;
     
 </book>
 <!-- Keep this comment at the end of the file

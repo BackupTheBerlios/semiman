@@ -34,7 +34,7 @@ sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
             significant progress in this area.
         </para>
     </section>
-    <section id="mdda">
+    <section id="conclusions_mdda">
         <title>Meta-Data Database Access</title>
         <para>
             We recommend all users who work with database routinely to use
@@ -94,7 +94,7 @@ sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
         </para>
         <para>
             We believe dynamically-typed languages such as Perl, Python,
-            PHP, Ruby and to lesser extent Java give way much more easily
+            PHP, Ruby and to a lesser extent Java give way much more easily
             to MDDA methods. We confess that our implementation of the 
             MDDA was not modular as it could be, mainly for lack of time for
             designing a front-end for multi-tables queries.
