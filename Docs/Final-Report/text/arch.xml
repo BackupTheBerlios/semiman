@@ -92,6 +92,30 @@ sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
                 and the callback to render the contents of the site.
             </para>
         </section>
+        <section id="userman">
+            <title>Technion::Seminars::UserMan</title>
+            <para>
+                This class manages the users of the site and determines their
+                permissions. Zavitan encodes the username and password inside
+                a cookie, while keeping the password encyrypted there. This
+                class analyzes the cookie and determines the username and 
+                password. Afterwards, it queries the database for what the
+                user is allowed to do.
+            </para>
+            <para>
+                The function <function>get_admin_level</function> returns
+                the administrator level of the user based on his username
+                and password. It verifies that the password that was given to 
+                it is the correct one, and then checks the super admin flag
+                to determine if the user is a site admin. It returns the
+                level of the user and his user ID.
+            </para>
+            <para>
+                The function <function>can_edit_club</function> determines 
+                whether a given user can edit a club. It queries the 
+                database for the seminars and subjects flag of this user.
+            </para>
+        </section>
         
     </section>
 </chapter>
