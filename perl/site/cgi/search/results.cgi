@@ -19,9 +19,6 @@ use Gamla::TextStream::Out::File;
 
 my $q = CGI->new();
 
-my @monthes_names = ("January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December");
-
 sub check_url
 {
     my $url = shift; 

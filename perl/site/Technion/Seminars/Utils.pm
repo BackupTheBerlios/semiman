@@ -9,7 +9,7 @@ use vars qw(@ISA);
 @ISA=qw(Exporter);
 
 @EXPORT=qw(time_remove_secs);
-@EXPORT_OK=qw(@week_days_abbrevs format_date get_future_day get_next_day);
+@EXPORT_OK=qw(@week_days_abbrevs format_date get_future_day get_next_day @monthes_names);
 
 use Time::DaysInMonth;
 
@@ -21,10 +21,12 @@ sub time_remove_secs
     return "$1:$2";
 }
 
-use vars qw(@week_day_abbrevs);
+use vars qw(@week_day_abbrevs @monthes_names);
 
 BEGIN {
     @week_days_abbrevs= (qw(Sun Mon Tue Wed Thu Fri Sat));
+    @monthes_names = ("January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December");
 }
 
 sub format_date

@@ -6,4 +6,5 @@ h3.navbar { font-size: medium ; font-weight : bold }
 b.before { color : green }
 b.after { color : red }
 p.onebuttonform { margin-top: 0em }
+td.inactive { background-color : lightgreen }
 

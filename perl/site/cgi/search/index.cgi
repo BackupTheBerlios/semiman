@@ -14,13 +14,11 @@ use Technion::Seminars::Config;
 use Technion::Seminars::Layout;
 use Technion::Seminars::SlashUrl;
 use Technion::Seminars::DBI;
+use Technion::Seminars::Utils qw(@monthes_names);
 
 use Gamla::TextStream::Out::File;
 
 my $q = CGI->new();
-
-my @monthes_names = ("January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December");
 
 sub check_url
 {

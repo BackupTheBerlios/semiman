@@ -10,7 +10,8 @@ use CGI;
 use Technion::Seminars::Config;
 use Technion::Seminars::Layout;
 use Technion::Seminars::SlashUrl;
-use Technion::Seminars::Utils qw(@week_days_abbrevs format_date get_future_day get_next_day);
+use Technion::Seminars::Utils qw(@week_days_abbrevs format_date get_future_day get_next_day @monthes_names);
+use Technion::Seminars::DBI;
 
 use Gamla::TextStream::Out::File;
 
@@ -42,7 +43,7 @@ my $base_url = &normalize_url($q, \&check_url);
 
 print $q->header();
 
-my $title = "Monthly Calendar";
+my $title = "Monthly Calendar for " . $monthes_names[$month] . ", $year";
 
 my $layout = 
     Technion::Seminars::Layout->new(
@@ -52,12 +53,50 @@ my $layout =
 
 my $o = Gamla::TextStream::Out::File->new(\*STDOUT);
 
+my $ym_format_date = sub {
+    my @a = format_date(@_,1);
+    return @a[0 .. 1];
+};
+
+my $get_prev_month = sub {
+    my ($y, $m) = @_;
+    return $ym_format_date->($y - ($m == 1), ($m == 1)?12:($m-1));
+};
+
+my $get_next_month = sub {
+    my ($y, $m) = @_;
+    return $ym_format_date->($y + ($m == 12), ($m == 12)?1:($m+1));
+};
+
 my $draw_page = sub {
     
     my $o = shift;
 
     $o->print("<h1>$title</h1>\n");
 
+    my $navigation_bar = 
+        "<table border=\"1\">\n" .
+        "<tr>\n" .
+        "<td><a href=\"" . $layout->linkto(["month", $get_prev_month->($year, $month) ]). "\">Previous Month</a></td>\n" .
+        "<td><a href=\"" . $layout->linkto(["month", $get_next_month->($year, $month) ]) . "\">Next Month</a></td>\n" .
+        "</tr>\n" .
+        "</table>\n";
+
+    $o->print($navigation_bar);
+
+    my $dbh = Technion::Seminars::DBI->new();
+
+    my $sth = $dbh->prepare("SELECT seminars.Seminar_ID, seminars.Title, seminars.Date, seminars.Time" . 
+    " FROM seminars, associations" . 
+    " WHERE seminars.Date >= " . $dbh->quote(sprintf("%.4i-%.2i-%.2i", $year,$month,1)) . 
+    " AND seminars.Date <= " . $dbh->quote(sprintf("%.4i-%.2i-%.2i", $year,$month,days_in($year,$month))) . 
+    " AND seminars.Seminar_ID = associations.Seminar_ID GROUP BY seminars.Seminar_ID ORDER BY seminars.Date, seminars.Time");
+
+    my $rv = $sth->execute();
+
+    my $record = $sth->fetchrow_arrayref();
+    my $record_idx = 1;
+        
     $o->print("<table border=\"1\" width=\"100%\">\n<tr>\n");
     $o->print("<td width=\"1%\"></td>");
 
@@ -72,7 +111,7 @@ my $draw_page = sub {
     my @start_day = ($year,$month,"1");
     if ($start_day_of_week > 0)
     {
-        @start_day = ($year - ($month == 1), ($month == 1)?12:($month-1));
+        @start_day = $get_prev_month->($year, $month);
         push @start_day, (days_in(@start_day) - ($start_day_of_week-1));
     }
 
@@ -97,14 +136,25 @@ my $draw_page = sub {
                 $bgcolor = "";
                 my $d = $current_day[2];
                 $d =~ s/^0+//;
-                $link_to_day = "<a href=\"" . $layout->linkto(["day", @current_day]) . "\">$d</a>\n";
+                $link_to_day = "<a href=\"" . $layout->linkto(["day", @current_day]) . "\">$d</a>\n<br />\n";
             }
             else
             {
-                $bgcolor = "bgcolor=\"lightgreen\"";
+                $bgcolor = "class=\"inactive\"";
                 $link_to_day = "";
             }
-            $o->print("<td width=\"14%\" $bgcolor valign=\"top\">$link_to_day</td>\n");
+            $o->print("<td width=\"14%\" height=\"100\" $bgcolor valign=\"top\">$link_to_day\n");
+            if (defined($record) && ($record->[2] eq join("-", @current_day)))
+            {
+                $o->print("Seminars: ");
+                while (defined($record) && ($record->[2] eq join("-", @current_day)))
+                {                    
+                    $o->print("<a href=\"" . $layout->linkto(["seminar", $record->[0]]) . "\">$record_idx</a>\n");
+                    $record = $sth->fetchrow_arrayref();
+                    $record_idx++;
+                }
+            }
+            $o->print("</td>\n");
             @current_day = get_next_day(@current_day);
         }
         $o->print("</tr>\n");
