@@ -64,6 +64,64 @@ my $layout =
 
 my $o = Gamla::TextStream::Out::File->new(\*STDOUT);
 
+my $draw_permissions_form = sub {
+    my $o = shift;
+    my $dbh = shift;
+    my $club_id = shift;
+    my $clubname = shift;
+
+    $o->print("\n\n<h2>Editing $clubname" . "'s permissions</h2>\n\n");
+
+    $o->print("<form method=\"post\" action=\"modify_permissions.cgi\">\n");
+    $o->print("<table border=\"1\">\n");
+    $o->print("<tr><td>User</td><td>None</td><td>Seminars Only</td><td>Subjects</td></tr>\n");
+
+    my $sth = $dbh->prepare(
+        "SELECT permissions.User_ID, users.Username, " . 
+        "users.Name, permissions.Seminars, permissions.Subjects " . 
+        "FROM users, permissions " . 
+        "WHERE permissions.Club_ID = $club_id AND " . 
+        "permissions.User_ID = users.User_ID AND users.Super_Admin = 0"
+    );
+
+    my $rv = $sth->execute();
+
+    while (my $row = $sth->fetchrow_arrayref())
+    {
+        my ($user_id, $username, $name, $can_edit_seminars, $can_edit_subjects) = @$row;
+
+        $o->print("<tr>\n");
+        
+        $o->print("<td><b>$name ($username)</b></td>\n");
+        my @values = (0,0,0);
+        if ($can_edit_seminars)
+        {
+            if ($can_edit_subjects)
+            {
+                $values[2] = 1;
+            }
+            else
+            {
+                $values[1] = 1;
+            }
+        }
+        else
+        {
+            $values[0] = 1;
+        }
+        for my $i (0 .. 2)
+        {
+            $o->print("<td><input type=\"radio\" name=\"$user_id\" value=\"$i\" " . ($values[$i] ? "checked=\"1\"" : "") . " /></td>\n");
+        }
+        $o->print("</tr>\n");        
+    }
+    $o->print("</table>\n");
+
+    $o->print("<br />\n<input type=\"submit\" value=\"Submit\" />\n");
+    $o->print("</form>\n");
+
+};
+
 
 my $draw_page = sub {
     my $o = shift;
@@ -177,6 +235,17 @@ my $draw_page = sub {
                             $club_id,
                             'field-title' => $clubname,
                         );
+
+                        if ($admin_level eq "site")
+                        {
+
+                        $draw_permissions_form->(
+                            $o,
+                            $dbh,
+                            $club_id,
+                            $clubname,
+                        );
+                        }
                     }
                     else
                     {
