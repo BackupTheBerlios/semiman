@@ -20,22 +20,32 @@ sub normalize_url
     # This is a callback to check and normalize the URL
     my $normalize_url_callback = shift;
 
+    # Get the complete URL from the CGI query handle
     my $my_url = $q->self_url();
 
+    # Get the base directory for the site
     my $site_url = $config{'http_url'}->{'url'};
+    # Strip the base directory of the current URL.
     $my_url =~ s!^$site_url!!;
+    # Split into two parts:
+    # $base - what comes before the question mark
+    # $rest - what comes afterwards
     $my_url =~ m/^([^\?]*)((\?.*)?)$/;
     my $base = $1;
     my $rest = $2;
     
+    # Call the callback to find out if the URL is OK.
     my ($is_ok, $new_base) = $normalize_url_callback->($base);
+    # If it's not - 
     if (! $is_ok)
     {
+        # Redirect to the new URL
         print $q->redirect($site_url . $new_base . $rest);
         exit;
     }
     else
     {
+        # Return the base directory for reference
         return $base;
     }
 }
