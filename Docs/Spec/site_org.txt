@@ -1,0 +1,13 @@
+Read-Only:
+----------
+
+/calendar
+    /month/[year]/[month]
+    /week/[year]/[month]/[start day]
+    /day/[year]/[month]/[day]
+
+/search -> Form
+
+/club/[club id]
+
+
