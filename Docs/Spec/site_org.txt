@@ -16,7 +16,7 @@ Club-Admin:
 /admin/clubs/[club id]
     /subjects          -> Subjects List
         /[subject id] -> A specific subject
-    /seminars/           -> 
+    /seminars/           ->
         [seminar name]      -> Edit Seminar
         /new               -> New Seminar
 

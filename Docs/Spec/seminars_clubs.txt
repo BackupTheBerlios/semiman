@@ -1,0 +1,18 @@
+Every seminar is owned by a certain subject. (and evidently a club). A club
+owner may choose to associate it with other subjects, not necessarily of
+the same club. The seminar may also be disassociated from such subjects.
+
+Nevertheless, only the owner club may edit the seminar.
+
+Display:
+--------
+
+In each club we will display first the owned seminars, then the associated
+ones. For each seminar, there will be a link to a separate page that
+edits the associated subjects within a club.
+
+A non-club owner may view a different club and there decide to associate
+a seminar with a subject of his own clubs. 
+
+In the "New Seminar" form, there will be a choice of the primary subject of
+the seminar, from within the subjects of the club in the URL. 

@@ -19,7 +19,7 @@
     etc.)
 
 * Filtering system
-    - Several Cartesian, interoperatble constraints.
+    - Several Cartesian, interoperable constraints.
 
 * Form Management
     - Preview/Submit. (first one always preview)
