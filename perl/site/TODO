@@ -1,10 +1,9 @@
 Pressing:
 ---------
 
-* Make sure rows are added to permissions when a new user or club is added
-(or removed when it is deleted).
+* Add an url types.
 
-* Add an email and url types.
+* Add the associated seminars to the seminars display.
 
 Non-pressing:
 -------------
