@@ -144,28 +144,28 @@ my $edit_subjects = sub {
             "SELECT Subject_ID, Name FROM subjects WHERE Club_ID = $club_id ORDER BY Name"
         );
         my $rv = $sth->execute();
+
+        my $start_td = "<td style=\"width : 50%\" align=\"left\">";
         
-        $o->print("<table>\n");
         while (my $row = $sth->fetchrow_arrayref())
         {
-            $o->print("<form method=\"post\" action=\"modify_subject.cgi\">\n");
-            $o->print("<tr><td><input name=\"name\" value=\"" . 
+            $o->print("<form method=\"post\" action=\"modify_subject.cgi\">\n" .
+                "<table width=\"80%\">\n<tr>\n" .
+                "$start_td<input name=\"name\" value=\"" . 
                 CGI::escapeHTML($row->[1]) . 
                 "\" /><input type=\"hidden\" name=\"id\" value=\"" . 
                 $row->[0] . 
-                "\" /></td><td><input type=\"submit\" value=\"Update\" /></tr>\n"
+                "\" /></td>\n" . 
+                "$start_td<input type=\"submit\" value=\"Update\" /></td>\n</tr></table></form>\n"
                 );
-            $o->print("</form>\n");
         }
 
-        $o->print("<tr><td colspan=\"2\"><h2>Add New Subject<h2></td></tr>");
+        $o->print("<h2>Add New Subject</h2>");
         $o->print("<form method=\"post\" action=\"add_subject.cgi\">\n");
-        $o->print("<tr><td><input name=\"name\" value=\"\" />" .
-            "</td><td><input type=\"submit\" value=\"Add\"></td></tr>\n"
+        $o->print("<table width=\"80%\">\n<tr>$start_td<input name=\"name\" value=\"\" />" .
+            "</td>$start_td<input type=\"submit\" value=\"Add\" /></td></tr>\n</table>\n"
             );
         $o->print("</form>\n");
-
-        $o->print("</table>\n");
 
     }
     else

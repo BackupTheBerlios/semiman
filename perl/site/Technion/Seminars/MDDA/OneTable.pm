@@ -175,15 +175,18 @@ sub render_add_form
     # Output a form with which one can add a new record.
 
     $o->print("<form method=\"post\" action=\"add.cgi\">\n");
+    $o->print("<table>\n");
     # Loop over all the fields and output an edit box for each 
     # relevant one.
     foreach my $field (@{$table_spec->{'fields'}})
     {
-        # If it's an auto field than it is not filled by the user.        
+        $o->print("<tr>\n");
+        # If it's an auto field then it is not filled by the user.
         my $input = $field->{'input'} || {};
         my $input_type = $input->{'type'} || "";
         if ($input_type eq "auto")
         {
+            $o->print("<td colspan=\"2\"></td>\n");
             next;
         }
         
@@ -199,15 +202,15 @@ sub render_add_form
         
         if ($widget_type eq "textarea")
         {
-            $o->print($heading . "<br />\n" .
+            $o->print("<td colspan=\"2\">$heading</td></tr><tr><td colspan=\"2\">\n" .
                 "<textarea name=\"" . $field->{'name'} . "\" rows=\"" . $widget_params->{'height'} .
                 "\" cols=\"" . $widget_params->{'width'} . "\">\n" .
-                "</textarea><br />\n\n"
+                "</textarea></td>\n\n"
             );
         }
         elsif ($widget_type eq "combobox")
         {
-            $o->print($heading . "<select name=\"" . $field->{'name'} . "\">\n");
+            $o->print("<td>$heading</td><td><select name=\"" . $field->{'name'} . "\">\n");
             if ($input_type eq "dep-get")
             {
                 if ($input->{'method'} eq "choose-from-query")
@@ -221,7 +224,7 @@ sub render_add_form
                     {
                         $o->print("<option value=\"" . CGI::escapeHTML($row->[0]) . "\">" . CGI::escapeHTML($row->[1]) . "</option>\n");
                     }
-                    $o->print("\n</select>\n<br />\n");
+                    $o->print("\n</select>\n</td>\n");
                 }
                 else
                 {
@@ -238,7 +241,7 @@ sub render_add_form
             my $field_display_type = exists($field->{'display'}->{'type'}) ?
                 $field->{'display'}->{'type'} : "";
                 
-            $o->print($heading . 
+            $o->print("<td>$heading</td><td>" . 
                 "<input type=\"" .
                 (($field_display_type eq "password") ? 
                     "password" : 
@@ -246,11 +249,17 @@ sub render_add_form
                 ) . 
                 "\" name=\"" . 
                 $field->{'name'} . 
-                "\" /><br />\n"
+                "\" /></td>\n"
                 );
         }
     }
-    $o->print("\n\n<input type=\"submit\" value=\"Add\" />\n\n");
+    # I looove perl...
+    continue
+    {
+        $o->print("</tr>\n");
+    }
+    $o->print("\n\n<tr><td colspan=\"2\"><input type=\"submit\" value=\"Add\" /></td>\n</tr>\n");
+    $o->print("</table>\n");
     $o->print("</form>\n");
 }
 
