@@ -103,7 +103,7 @@ my $draw_page = sub {
         }
         elsif ($base_url eq "admin/users/new/add.cgi")
         {
-            $mdda->perform_add_operation($o, "The user was added");
+            $mdda->perform_add_operation($o, $q, "The user was added");
         }
         elsif ($base_url =~ m/^admin\/users\/(\w+)\/$/)
         {

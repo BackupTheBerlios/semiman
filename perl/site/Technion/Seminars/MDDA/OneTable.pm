@@ -72,7 +72,11 @@ sub render_add_form
 sub perform_add_operation
 {
     my $self = shift;
+    # The CGI query handle
+    my $q = shift;
+    # The output stream
     my $o = shift;
+    # The optional OK message
     my $ok_message = shift || "Database was updated succesfully.";
 
     my $table_spec = $self->{'table_spec'};

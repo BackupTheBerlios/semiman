@@ -137,11 +137,12 @@ my $draw_page = sub {
                 {
                     $o->print("<h1>Add a New Club</h1>\n\n");
                 
-                    $mdda->render_add_form($o, "The club was added");
+                    $mdda->render_add_form($o);
                 }
                 else
                 {
                     # Let's process the form request.
+                    $mdda->perform_add_operation($o, $q, "The club was added");
                     
                 }
             }
