@@ -10,6 +10,8 @@ use CGI;
 use Technion::Seminars::Config;
 use Technion::Seminars::Layout;
 use Technion::Seminars::SlashUrl;
+use Technion::Seminars::TypeMan;
+use Technion::Seminars::DBI;
 
 use Gamla::TextStream::Out::File;
 
@@ -19,6 +21,8 @@ use Time::DaysInMonth;
 use Date::DayOfWeek;
 
 my $q = CGI->new();
+
+my ($year, $month, $day);
 
 sub normalize_weekday
 {
@@ -75,18 +79,54 @@ sub check_url
         ($y,$m,$d) = &normalize_weekday($time_vars[5]+1900, $time_vars[4]+1, $time_vars[3]);        
     }
 
-    
-    
+    ($year,$month,$day) = ($y,$m,$d);    
     
     return ($verdict, sprintf("week/%04i/%02i/%02i/", $y, $m, $d));
 }
+
+my $get_end_of_week = sub {
+    my ($y, $m, $d) = @_;
+
+    $d += 6;
+    if ($d > days_in($y,$m))
+    {
+        $d -= days_in($y,$m);
+        $m++;
+        if ($m > 12)
+        {
+            $m = 1;
+            $y++;
+        }
+    }
+    return ($y,$m,$d);
+};
+
+my $get_next_day = sub {
+    my ($new_year, $new_month, $new_day) = @_;
+    if ($new_day == days_in($year, $month))
+    {
+        $new_day = 1;
+        $new_month++;
+        if ($new_month == 13)
+        {
+            $new_month = 1;
+            $new_year++;
+        }
+    }
+    else
+    {
+        $new_day++;
+    }
+    return ($new_year,$new_month,$new_day);
+};
+
 
 # Make sure our URL ends with a slash.
 my $base_url = &normalize_url($q, \&check_url);
 
 print $q->header();
 
-my $title = "Weekly Calendar";
+my $title = "Weekly Calendar for Week of " . sprintf("%.2d/%.2d/%.4d", $day, $month, $year);
 
 my $layout = 
     Technion::Seminars::Layout->new(
@@ -94,7 +134,9 @@ my $layout =
         'title' => $title,
     );
 
+    
 my $o = Gamla::TextStream::Out::File->new(\*STDOUT);
+
 
 my $draw_page = sub {
     
@@ -102,7 +144,99 @@ my $draw_page = sub {
 
     $o->print("<h1>$title</h1>\n");
 
-    $o->print("This would be the daily calendar.");
+    my @week_calendar = (map { [ map { [] } (1 .. 5) ] } (1..7));
+
+    my @time_breaks = qw(0:00 8:30 12:30 16:30 20:30 24:00);
+
+    my ($record, $time_coord, $day_coord);
+
+    my $dbh = Technion::Seminars::DBI->new();
+
+    my $type_man = Technion::Seminars::TypeMan::get_type_man();
+
+    my $sth = $dbh->prepare("SELECT seminars.Seminar_ID, seminars.Title, seminars.Date, seminars.Time" . 
+    " FROM seminars, associations" . 
+    " WHERE seminars.Date >= " . $dbh->quote(sprintf("%.4i-%.2i-%.2i", $year,$month,$day)) . 
+    " AND seminars.Date <= " . $dbh->quote(sprintf("%.4i-%.2i-%.2i", $get_end_of_week->($year,$month,$day))) . 
+    " AND seminars.Seminar_ID = associations.Seminar_ID GROUP BY seminars.Seminar_ID ORDER BY seminars.Date, seminars.Time");
+
+    my $rv = $sth->execute();
+
+    my $record = $sth->fetchrow_arrayref();
+
+    my @day_dates = ([$year, $month, $day]);
+
+    for(my $a=1;$a<7;$a++)
+    {
+        push @day_dates, [ $get_next_day->(@{$day_dates[$#day_dates]}) ];
+    }
+    
+    my @row = @$record;
+    
+    if (defined($record))
+    {
+        LOOP:               
+        for($day_coord=0;$day_coord<7;$day_coord++)
+        {
+            for($time_coord=0;$time_coord<5;$time_coord++)
+            {
+                while (($row[2] eq sprintf("%.4i-%.2i-%.2i", @{$day_dates[$day_coord]})) && 
+                       ($type_man->compare_values("time", {}, $row[3], $time_breaks[$time_coord+1]) < 0))
+                {
+                    push @{$week_calendar[$day_coord]->[$time_coord]}, [ @row];
+                    $record = $sth->fetchrow_arrayref();
+                    if (!defined($record))
+                    {
+                        last LOOP;
+                    }
+                    @row = @$record;
+                }
+            }
+        }
+    }
+    
+    my @week_days = (qw(Sun Mon Tue Wed Thu Fri Sat));
+
+    $o->print("<table border=\"1\" width=\"100%\">\n");
+    
+
+    $o->print("<tr>\n");
+    $o->print("<td valign=\"top\" width=\"12.5%\"></td>\n");
+    for(my $d=0;$d<7;$d++)
+    {
+        $o->print("<td valign=\"top\" width=\"12.5%\"><a href=\"" . $layout->linkto(["day", @{$day_dates[$d]} ]) . "\">" . $week_days[$d] . "</a></td>\n");
+    }
+    $o->print("</tr>\n");
+
+    for($time_coord=0;$time_coord<5;$time_coord++)
+    {
+        $o->print("<tr>\n");
+        $o->print("<td>". $time_breaks[$time_coord] . "-".$time_breaks[$time_coord+1]."</td>\n");
+        for($day_coord=0;$day_coord<7;$day_coord++)
+        {
+            $o->print("<td valign=\"top\" width=\"12.5%\">\n");
+            $o->print(
+                join(
+                    "\n<br />\n", 
+                    (map 
+                        {  
+                            my ($id, $title, $date, $time) = @$_;
+                            "<a href=\"" . $layout->linkto(["seminar", $id]) . "\">" . CGI::escapeHTML($title) . "</a>";
+                        } 
+                        @{$week_calendar[$day_coord]->[$time_coord]}
+                    )
+                )
+            );
+
+            $o->print("</td>\n");
+        }
+        $o->print("</tr>\n");
+    }
+    
+    $o->print("</table>\n");
+
+    
+
 };
 
 
