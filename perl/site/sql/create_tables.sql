@@ -11,7 +11,7 @@
 CREATE TABLE associations (
   Subject_ID int(11) NOT NULL default '0',
   Seminar_ID int(11) NOT NULL default '0',
-  PRIMARY KEY (Subject_ID, Seminar_ID)
+  PRIMARY KEY  (Subject_ID,Seminar_ID)
 ) TYPE=MyISAM;
 
 #
@@ -72,7 +72,7 @@ INSERT INTO permissions VALUES (5,8,0,0);
 #
 
 CREATE TABLE seminars (
-  Seminar_ID int(11) NOT NULL default '0',
+  Seminar_ID int(11) NOT NULL auto_increment,
   Subject_ID int(11) default NULL,
   Title varchar(255) default NULL,
   Description mediumblob,
@@ -104,6 +104,10 @@ CREATE TABLE subjects (
 # Dumping data for table 'subjects'
 #
 
+INSERT INTO subjects VALUES (1,8,'Internet');
+INSERT INTO subjects VALUES (2,8,'ATM Works');
+INSERT INTO subjects VALUES (3,8,'Ethernet');
+INSERT INTO subjects VALUES (4,1,'Networking');
 
 #
 # Table structure for table 'users'
