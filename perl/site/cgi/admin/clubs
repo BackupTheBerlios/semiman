@@ -212,22 +212,51 @@ my $edit_seminars = sub {
     {
         $o->print("<h1>Editing the Seminars of $clubname</h1>\n\n");
 
+        $o->print("<h2>Owned Seminars</h2>\n");
+
+        my $select_clause = "SELECT seminars.Seminar_ID, seminars.Title, seminars.Date ";
+
+        my $order_by_clause = "ORDER BY seminars.Date, seminars.Time ";
+
         my $sth = $dbh->prepare(
-            "SELECT seminars.Seminar_ID, seminars.Title " .
+            $select_clause .
             "FROM seminars, subjects " .
             "WHERE seminars.Subject_ID = subjects.Subject_ID AND " .
                 "subjects.Club_ID = $club_id " .
-            "ORDER BY seminars.Date, seminars.Time"
+            $order_by_clause
             );
 
-        my $rv = $sth->execute();
+        my $print_seminars = sub {
+            my $type = shift;
+            
+            $o->print("<ul>\n");
+            while (my $row = $sth->fetchrow_arrayref())
+            {
+                my ($id, $title, $date) = @$row;
+                $o->print("<li><a href=\"./$type/$id\">$date - $title</a></li>");
+            }
+            $o->print("</ul>\n");
+        };
 
-        $o->print("<ul>\n");
-        while (my $row = $sth->fetchrow_arrayref())
-        {
-            $o->print(sprintf("<li><a href=\"./%i\">%s</a></li>", @$row));
-        }
-        $o->print("</ul>\n");
+        my $rv = $sth->execute();
+        
+        $print_seminars->("owned");
+
+        $o->print("<h2>Associated Seminars</h2>\n");
+
+        $sth = 
+            $dbh->prepare(
+                $select_clause .
+                "FROM seminars, subjects, associations " . 
+                "WHERE associations.Subject_ID = subjects.Subject_ID AND " . 
+                "subjects.Club_ID = $club_id AND " . 
+                "associations.Seminar_ID = seminars.Seminar_ID " .
+                $order_by_clause 
+            );
+
+        $rv = $sth->execute();
+
+        $print_seminars->("assoc");
     }
     else
     {
