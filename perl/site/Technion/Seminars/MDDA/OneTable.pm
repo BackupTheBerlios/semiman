@@ -67,7 +67,7 @@ sub render_add_form
         if ($widget_type eq "textarea")
         {
             $o->print($heading . "<br />\n" .
-                "<textarea rows=\"" . $widget_params->{'height'} .
+                "<textarea name=\"" . $field->{'name'} . "\"rows=\"" . $widget_params->{'height'} .
                 "\" cols=\"" . $widget_params->{'width'} . "\">\n" .
                 "</textarea><br />\n\n"
             );
