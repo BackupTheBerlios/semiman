@@ -207,16 +207,20 @@ my $edit_seminars = sub {
     my $club_id = shift;
     my $clubname = shift;
 
+    my $club_permissions = shift;
+
+    my $select_clause = "SELECT seminars.Seminar_ID, seminars.Title, seminars.Date ";
+
+    my $order_by_clause = "ORDER BY seminars.Date, seminars.Time ";
+
+    
+
 
     if (scalar(@url_components) == 0)
     {
         $o->print("<h1>Editing the Seminars of $clubname</h1>\n\n");
 
         $o->print("<h2>Owned Seminars</h2>\n");
-
-        my $select_clause = "SELECT seminars.Seminar_ID, seminars.Title, seminars.Date ";
-
-        my $order_by_clause = "ORDER BY seminars.Date, seminars.Time ";
 
         my $sth = $dbh->prepare(
             $select_clause .
@@ -242,6 +246,11 @@ my $edit_seminars = sub {
         
         $print_seminars->("owned");
 
+        if ($club_permissions->[0])
+        {
+            $o->print("<h3><a href=\"./new/\">New Seminar</a></h3>\n");
+        }
+
         $o->print("<h2>Associated Seminars</h2>\n");
 
         $sth = 
@@ -260,6 +269,49 @@ my $edit_seminars = sub {
     }
     else
     {
+        my $type = shift(@url_components);
+        if ($type eq "owned")
+        {
+            if (scalar(@url_components) == 0)
+            {
+            }
+            else
+            {
+                my $seminar_id = shift(@url_components);
+
+                my $sth = $dbh->prepare(
+                    $select_clause .
+                    "FROM seminars, subjects " .
+                    "WHERE seminars.Subject_ID = subjects.Subject_ID AND " .
+                        "subjects.Club_ID = $club_id AND " .
+                        "seminars.Seminar_ID = $seminar_id " .
+                    $order_by_clause
+               );
+                
+               my $rv = $sth->execute();
+
+               my ($row);
+               
+               $row = $sth->fetchrow_arrayref();
+               if (!defined($row))
+               {
+                   $o->print("<h1>Error</h1>\n\n");
+                   $o->print(
+                       "<p>This seminar is not owned by this club or is " .
+                        "non-existent.</p>\n"
+                    );
+                   
+                   return;
+               }
+
+               $o->print("<h1>Editing Seminar $seminar_id</h1>\n\n");
+
+
+
+
+                
+            }
+        }
     }
 };
 
@@ -300,20 +352,8 @@ my $draw_page = sub {
 
         my ($query);
 
-        if ($admin_level eq "site")
-        {
-            $query = "SELECT Clubname, Name FROM clubs ORDER BY clubs.Name";
-        }
-        else
-        {
-            $sth = $dbh->prepare("SELECT User_ID FROM users WHERE Username = " . $dbh->quote($user));
-            $rv = $sth->execute();
-            $data = $sth->fetchrow_arrayref();
-            
-            my $user_id = $data->[0];
-            
-            $query = "SELECT Clubs.Clubname, Clubs.Name FROM clubs, permissions WHERE ((clubs.Club_ID = permissions.Club_ID) AND (permissions.User_ID = $user_id)) ORDER BY clubs.Name";
-        }
+        $query = "SELECT Clubname, Name FROM clubs ORDER BY clubs.Name";
+        
         $sth = $dbh->prepare($query);
         $rv = $sth->execute();
         while ($data = $sth->fetchrow_arrayref())
@@ -356,21 +396,20 @@ my $draw_page = sub {
                 my $club_id = $row->[0];
                 
                 my @club_permissions;
-                
-                if (($admin_level eq "site") || 
-                    (eval { 
-                        @club_permissions = $user_man->can_edit_club(
+
+                @club_permissions = $user_man->can_edit_club(
                             $user_id, 
                             $club_id
                             ) ; 
-                        $club_permissions[0] 
-                        }
-                    ))
+
                 {
                     my $can_edit_subjects = (($admin_level eq "site") || $club_permissions[1]);
                     
                     if (scalar(@url_components) == 0)
                     {
+
+                        $o->print("<h1>Editing $clubname</h1>\n");
+
                         if ($can_edit_subjects)
                         {
                             $mdda->render_edit_form(
@@ -378,6 +417,7 @@ my $draw_page = sub {
                                 "Club_ID", 
                                 $club_id,
                                 'field-title' => $clubname,
+                                'ok-title' => "none",
                             );
 
                             {
@@ -403,13 +443,16 @@ my $draw_page = sub {
 
                         if ($script eq "edit.cgi")
                         {
-                            $mdda->perform_edit_operation(
-                                $q, $o,
-                                "Club_ID",
-                                'record-title' => "club",
-                                'id-field-title' => "club ID",
-                                'dependent-tables' => [ "permissions" ],
-                            );
+                            if ($can_edit_subjects)
+                            {
+                                $mdda->perform_edit_operation(
+                                    $q, $o,
+                                    "Club_ID",
+                                    'record-title' => "club",
+                                    'id-field-title' => "club ID",
+                                    'dependent-tables' => [ "permissions" ],
+                                );
+                            }
                         }
                         elsif ($script eq "modify_permissions.cgi")
                         {
@@ -467,6 +510,7 @@ my $draw_page = sub {
                                 $dbh,
                                 \@url_components,
                                 $club_id, $clubname,
+                                \@club_permissions,
                             );
                         }
                     }

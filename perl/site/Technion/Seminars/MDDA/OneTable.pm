@@ -291,8 +291,11 @@ sub render_edit_form
     
     if ($data = $sth->fetchrow_hashref())
     {
+        if ($ok_title ne "none")
+        {
+            $o->print("<h1>$ok_title</h1>\n\n");
+        }
         # We have a valid username
-        $o->print("<h1>$ok_title</h1>\n\n");
 
         $o->print("<form method=\"post\" action=\"edit.cgi\">\n");
         foreach my $field (@{$table_spec->{'fields'}})
