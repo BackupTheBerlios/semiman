@@ -18,6 +18,7 @@ use Gamla::TextStream::Out::File;
 use POSIX qw(strftime);
 
 use Time::DaysInMonth;
+use Date::DayOfWeek;
 
 my $q = CGI->new();
 
@@ -59,11 +60,92 @@ my $layout =
 
 my $o = Gamla::TextStream::Out::File->new(\*STDOUT);
 
+my $get_prev_day = sub {
+    my $new_month = $month;
+    my $new_year = $year;
+    my $new_day = $day;
+    if ($day == 1)
+    {
+        $new_month--;
+        if ($new_month == 0)
+        {
+            $new_month = 12;
+            $new_year--;
+        }
+        $new_day = days_in($new_year, $new_month);
+    }
+    else
+    {   
+        $new_day--;
+    }
+    return $layout->linkto(["day", $new_year, sprintf("%.2i", $new_month), sprintf("%.2i", $new_day)]);
+};
+
+my $get_next_day = sub {
+    my $new_month = $month;
+    my $new_year = $year;
+    my $new_day = $day;
+    if ($new_day == days_in($year, $month))
+    {
+        $new_day = 1;
+        $new_month++;
+        if ($new_month == 13)
+        {
+            $new_month = 1;
+            $new_year++;
+        }
+    }
+    else
+    {
+        $new_day++;
+    }
+    return $layout->linkto(["day", $new_year, sprintf("%.2i", $new_month), sprintf("%.2i", $new_day)]);
+};
+
+sub normalize_weekday
+{
+    my ($y,$m,$d) = @_;
+    
+    my $dow = dayofweek($d,$m,$y);
+
+    # 0 is sunday.
+    if ($d - $dow >= 1)
+    {
+        return ($y,$m,$d-$dow);
+    }
+    
+    if ($m > 1)
+    {
+        return ($y, $m-1, days_in($y, $m-1) + $d - $dow);
+    }
+    else
+    {
+        return ($y-1, 12, days_in($y-1,12) + $d - $dow);
+    }
+}
+
+my $get_this_week = sub {
+    my ($y,$m,$d) = normalize_weekday($year, $month, $day);
+    return $layout->linkto(["week", $y, $m, $d]);    
+};
+
+
 sub draw_page
 {
     my $o = shift;
 
     $o->print("<h1>$title</h1>\n");
+
+    my $navigation_bar = 
+        "<table border=\"1\">\n" .
+        "<tr>\n" .
+        "<td><a href=\"" . $get_prev_day->() . "\">Previous Day</a></td>\n" .
+        "<td><a href=\"" . $get_next_day->() . "\">Next Day</a></td>\n" .
+        "<td><a href=\"" . $get_this_week->() . "\">This Week</a></td>\n" .
+        "<td><a href=\"" . $layout->linkto(["month", $year, $month]) . "\">This Month</a></td>\n" .
+        "</tr>\n</table>\n";
+
+    $o->print($navigation_bar);
 
     my $dbh = Technion::Seminars::DBI->new();
 
@@ -73,13 +155,20 @@ sub draw_page
 
     my $this_time = strftime("%k:%M:%S", localtime(time()));
 
+    my $this_date = strftime("%F", localtime(time()));
+
+    my $date = "$year-$month-$day";
+
     my $type_man = Technion::Seminars::TypeMan::get_type_man();
+
+    my $before_date = $type_man->compare_values("date", "", $date, $this_date);
+    
 
     while (my $row = $sth->fetchrow_arrayref())
     {
         my ($seminar_id, $title, $time) = @$row;
 
-        my $before = $type_man->compare_values("time", "", $time, $this_time);
+        my $before = $before_date || $type_man->compare_values("time", "", $time, $this_time);
 
         my $class = ($before < 0) ? "after" : "before";
 
