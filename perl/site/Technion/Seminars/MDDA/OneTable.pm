@@ -1,4 +1,5 @@
 #
+
 # This module is responsible for the Meta-Data Database Access routines
 # of the seminars package.
 #
@@ -66,8 +67,8 @@ sub render_add_form
     }
     $o->print("\n\n<input type=\"submit\" value=\"Add\" />\n\n");
     $o->print("</form>\n");
-
 }
+
 
 sub perform_add_operation
 {
@@ -206,6 +207,81 @@ sub perform_add_operation
         $o->print("<h1>Error in Input!</h1>\n\n");
         $o->print("<p>" . $@ . "</p>");
     }
+}
+
+sub render_edit_form
+{
+    my $self = shift;
+
+    my $o = shift;
+
+    my $key_field = shift;
+    my $username = shift;
+
+    my %options = (@_);
+
+    my $ok_title = $options{'ok-title'} || "Editing \$V";
+
+    
+
+    my $error_title = $options{'error-title'} || "Unknown \$F - \$V";
+
+    foreach my $title ($ok_title, $error_title)
+    {
+        $title =~ s/\$V/$username/g;
+        $title =~ s/\$F/$key_field/g;
+    }
+    
+
+    my $table_name = $self->{'table_name'};
+    my $table_spec = $self->{'table_spec'};
+
+    my $dbh = Technion::Seminars::DBI->new();
+    my $sth = $dbh->prepare("SELECT * FROM $table_name WHERE $key_field = '$username'");
+    my $rv = $sth->execute();
+    my $data;
+    
+    if ($data = $sth->fetchrow_hashref())
+    {
+        # We have a valid username
+        $o->print("<h1>$ok_title</h1>\n\n");
+
+        $o->print("<form method=\"post\" action=\"edit.cgi\">\n");
+        foreach my $field (@{$table_spec->{'fields'}})
+        {
+            my $display_type = $field->{'display'}->{'type'};
+            my $field_name = $field->{'name'};
+            if ($display_type eq "hidden")
+            {
+                $o->print("<input type=\"hidden\" name=\"" . $field->{'name'} . "\" value=\"" . CGI::escapeHTML($data->{$field_name}) . "\" />\n");
+            }
+            elsif ($display_type eq "constant")
+            {
+                $o->print("<b>$field_name</b>: " . 
+                    CGI::escapeHTML($data->{$field_name}) . 
+                    "<br />\n");
+            }
+            else
+            {
+                $o->print("<b>$field_name</b>: " .
+                    "<input name=\"$field_name\" " . 
+                    (($display_type eq "password") ? "type=\"password\"" : "") .
+                    " value=\"" . 
+                    CGI::escapeHTML($data->{$field_name}) . 
+                    "\" /><br />\n");
+            }
+        }
+        $o->print("\n\n<input type=\"submit\" name=\"action\" value=\"Update\" />\n");
+        $o->print("\n\n<input type=\"submit\" name=\"action\" value=\"Delete\" />\n");
+        $o->print("\n\n</form>\n");
+    }
+    else
+    {
+        $o->print("<h1>$error_title</h1>");
+    }
+    
+
+    return 0;
 }
 
 

@@ -147,6 +147,13 @@ my $draw_page = sub {
                 }
             }
         }
+        else
+        {
+            if (scalar(@url_components) == 0)
+            {
+                $mdda->render_edit_form($o, "Clubname", $clubname);
+            }
+        }
     }
 
     
