@@ -96,6 +96,17 @@ BEGIN {
                             },
                         ],
                         'derived-tables' => [ "permissions" ],
+                        'triggers' => 
+                        {
+                            'add' =>
+                            [
+                                "INSERT INTO permissions (User_ID, Club_ID, Seminars, Subjects) SELECT \$F{User_ID}, clubs.Club_ID, 0, 0 FROM clubs",
+                            ],
+                            'delete' =>
+                            [
+                                "DELETE FROM permissions WHERE User_ID = \$F{User_ID}",
+                            ],
+                        },
                     },
                     'clubs' =>
                     {
@@ -151,6 +162,17 @@ BEGIN {
                             },
                         ],
                         'derived_tables' => [ 'permissions' ],
+                        'triggers' => 
+                        {
+                            'add' =>
+                            [
+                                "INSERT INTO permissions (User_ID, Club_ID, Seminars, Subjects) SELECT users.User_ID, $F{Club_ID}, 0, 0 FROM users",
+                            ],
+                            'delete' =>
+                            [
+                                "DELETE FROM permissions WHERE Club_ID = \$F{Club_ID}",
+                            ],
+                        },                        
                     },
                     'permissions' =>
                     {
