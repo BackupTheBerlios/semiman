@@ -115,14 +115,15 @@ my $draw_page = sub {
                 my $dbh = DBI->connect(@{$config{'database'}}{'dsn', 'user', 'password'});
                     
                 my (@query_fields, @query_values);
-                my $type_man = Technion::Seminars::TypeMan->new();
+                my $type_man = Technion::Seminars::TypeMan::get_type_man();
+
              
                 foreach my $field (@{$config{'database'}->{'tables'}->{'users'}->{'fields'}})
                 {
                     push @query_fields, $field->{'name'};
                     my $value = "";
                     my $input = $field->{'input'} || { 'type' => "normal", };
-
+                    
                     if ($input->{'type'} eq "auto")
                     {
                         if ($input->{'method'} eq "by-value")
@@ -138,8 +139,9 @@ my $draw_page = sub {
                     else
                     {
                         $value = $q->param($field->{'name'});
+                        print $value, " \n";
                         my ($status, $error_string) = ($type_man->check_value($field->{'type'}, $field->{'type_params'}, $value));
-                        if (! $status)
+                        if ($status)
                         {
                             die ($field->{'name'} . " could not be accepted: $error_string");
                         }
@@ -158,7 +160,12 @@ my $draw_page = sub {
                     push @query_values, $value;
                 }
 
-                my $sth = $dbh->prepare("INSERT INTO users (" . join(",", @query_fields) . ") VALUES (" . join(",", map { $dbh->quote($_) } @query_values) . ")");
+                my $sql_insert_query = "INSERT INTO users (" . join(",", @query_fields) . ") VALUES (" . join(",", map { $dbh->quote($_) } @query_values) . ")";
+
+                print $sql_insert_query, "\n";
+                
+                my $sth = $dbh->prepare($sql_insert_query);
+                
                 my $rv = $sth->execute();
 
                 $o->print("<h1>OK</h1>\n");
