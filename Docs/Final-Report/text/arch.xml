@@ -134,38 +134,38 @@ sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
             </para>
             <para>
                 <orderedlist>
-                    <listitem>
+                    <listitem><para>
                         <parameter>name</parameter> - the field's SQL name.
-                    </listitem>
-                    <listitem>
+                    </para></listitem>
+                    <listitem><para>
                         <parameter>title</parameter> (optional) - the title
                         as it appears to the user.
-                    </listitem>
-                    <listitem>
+                    </para></listitem>
+                    <listitem><para>
                         <parameter>type</parameter> - the field's 
                         <classname>Arad::Types</classname> type-ID.
-                    </listitem>
-                    <listitem>
+                    </para></listitem>
+                    <listitem><para>
                         <parameter>type_params</parameter> - the field's
                         type paramters
-                    </listitem>
-                    <listitem>
+                    </para></listitem>
+                    <listitem><para>
                         <parameter>input</parameter> (optional) - the way this field is
                         being input.
-                    </listitem>
-                    <listitem>
+                    </para></listitem>
+                    <listitem><para>
                         <parameter>input_params</parameter> (optional) - constraints on
                         the field
-                    </listitem>
-                    <listitem>
+                    </para></listitem>
+                    <listitem><para>
                         <parameter>display</parameter> (optional) - the manner 
                         the field is displayed on the form. Can be constant (in
                         which case it is not editable), password, or hidden.
-                    </listitem>
-                    <listitem>
+                    </para></listitem>
+                    <listitem><para>
                         <parameter>widget_params</parameter> - specifies the
                         control used for editing the type.
-                    </listitem>
+                    </para></listitem>
                 </orderedlist>
             </para>
         </section>
@@ -176,20 +176,20 @@ sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
             </para>
             <para>
                 <orderedlist>
-                    <listitem>
+                    <listitem><para>
                         Renders a form for adding a record to a table.
-                    </listitem>
-                    <listitem>
+                    </para></listitem>
+                    <listitem><para>
                         Processes a form for adding a record to a table.
-                    </listitem>
-                    <listitem>
+                    </para></listitem>
+                    <listitem><para>
                         Renders a form for editing an existing record in
                         a table.
-                    </listitem>
-                    <listitem>
+                    </para></listitem>
+                    <listitem><para>
                         Processes an edit form (that can optionally delete
                         the record.
-                    </listitem>
+                    </para></listitem>
                 </orderedlist>
             </para>
             <para>
@@ -223,7 +223,7 @@ sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
                 appropriate code is invoked to handle it.
             </para>
         </section>
-        <section id="admin/users">
+        <section id="admin_users">
             <title>admin/users</title>
             <para>
                 This script is used to edit the users, and is only available

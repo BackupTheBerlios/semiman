@@ -13,18 +13,18 @@ sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
         </para>
         <para>
             <itemizedlist>
-                <listitem>
-                    Perl 5.6.1 or Greater
-                </listitem>
-                <listitem>
+                <listitem><para>
+                        Perl 5.6.1 or Greater
+                </para></listitem>
+                <listitem><para>
                     Apache 1.3.23 or Greater
-                </listitem>
-                <listitem>
+                </para></listitem>
+                <listitem><para>
                     mod_perl configured for Apache.
-                </listitem>
-                <listitem>
+                </para></listitem>
+                <listitem><para>
                     MySQL 3.23.47 or Greater
-                </listitem>
+                </para></listitem>
             </itemizedlist>
         </para>
         <para>
@@ -32,36 +32,36 @@ sis-open.org/docbook/xml/4.1.2/docbookx.dtd"[]> -->
         </para>
         <para>
             <itemizedlist>
-                <listitem>
+                <listitem><para>
                     CGI
-                </listitem>
-                <listitem>
+                </para></listitem>
+                <listitem><para>
                     Crypt::Blowfish
-                </listitem>
-                <listitem>
+                </para></listitem>
+                <listitem><para>
                     Data::Dumper
-                </listitem>
-                <listitem>
+                </para></listitem>
+                <listitem><para>
                     Date::DayOfWeek
-                </listitem>
-                <listitem>
+                </para></listitem>
+                <listitem><para>
                     Data::Parse
-                </listitem>
-                <listitem>
+                </para></listitem>
+                <listitem><para>
                     DBI
-                </listitem>
-                <listitem>
+                </para></listitem>
+                <listitem><para>
                     DBD-Mysql
-                </listitem>
-                <listitem>
+                </para></listitem>
+                <listitem><para>
                     Math::BigInt
-                </listitem>
-                <listitem>
+                </para></listitem>
+                <listitem><para>
                     MIME::Base64
-                </listitem>
-                <listitem>
+                </para></listitem>
+                <listitem><para>
                     Time::DaysInMonth
-                </listitem>
+                </para></listitem>
             </itemizedlist>
         </para>
         <para>
