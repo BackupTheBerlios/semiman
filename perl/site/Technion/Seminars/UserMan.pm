@@ -86,7 +86,7 @@ sub can_edit_club
 
     my $dbh = Technion::Seminars::DBI->new();
 
-    my $sth = $dbh->prepare("SELECT count(*), Subjects FROM permissions WHERE User_ID = $user_id AND Club_ID = $club_id");
+    my $sth = $dbh->prepare("SELECT Seminars, Subjects FROM permissions WHERE User_ID = $user_id AND Club_ID = $club_id");
     my $rv = $sth->execute();
     my $row = $sth->fetchrow_arrayref();
     return (@$row);

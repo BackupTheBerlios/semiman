@@ -9,8 +9,9 @@
 #
 
 CREATE TABLE associations (
-  Subject_ID int(11) default NULL,
-  Seminar_ID int(11) default NULL
+  Subject_ID int(11) NOT NULL default '0',
+  Seminar_ID int(11) NOT NULL default '0',
+  PRIMARY KEY (Subject_ID, Seminar_ID)
 ) TYPE=MyISAM;
 
 #
@@ -93,7 +94,7 @@ CREATE TABLE seminars (
 #
 
 CREATE TABLE subjects (
-  Subject_ID int(11) NOT NULL default '0',
+  Subject_ID int(11) NOT NULL auto_increment,
   Club_ID int(11) default NULL,
   Name varchar(255) default NULL,
   PRIMARY KEY  (Subject_ID)

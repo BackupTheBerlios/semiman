@@ -122,6 +122,61 @@ my $draw_permissions_form = sub {
 
 };
 
+my $edit_subjects = sub {
+    my $o = shift;
+    my $dbh = shift;
+
+    my $uc = shift;
+    my @url_components = @$uc;
+
+    my $club_id = shift;
+    my $clubname = shift;
+
+    if (scalar(@url_components) == 0)
+    {
+
+        $o->print("\n<h1>Editing Subjects</h1>\n");
+
+        my $sth = $dbh->prepare(
+            "SELECT Subject_ID, Name FROM subjects WHERE Club_ID = $club_id ORDER BY Name"
+        );
+        my $rv = $sth->execute();
+        
+        $o->print("<table>\n");
+        while (my $row = $sth->fetchrow_arrayref())
+        {
+            $o->print("<form method=\"post\" action=\"modify_subject.cgi\">\n");
+            $o->print("<tr><td><input name=\"name\" value=\"" . 
+                CGI::escapeHTML($row->[1]) . 
+                "\"><input type=\"hidden\" name=\"id\" value=\"" . 
+                $row->[0] . 
+                "\"></td><td><input type=\"submit\" value=\"Update\"></tr>\n"
+                );
+            $o->print("</form>\n");
+        }
+        $o->print("</table>\n");
+
+    }
+    else
+    {
+        my $script = shift(@url_components);
+
+        if ($script = "modify_subject.cgi")
+        {
+            my $subject_id = $q->param("id");
+            my $name = $q->param("name");
+
+            my $sth = $dbh->prepare("UPDATE subjects SET Name=" . $dbh->quote($name) . " WHERE SubjecT_ID = $subject_id AND Club_ID = $club_id");
+
+            my $rv = $sth->execute();
+
+            $o->print("<h1>OK</h1>\n\n");
+
+            $o->print("<p>The name was changed.</p>\n");            
+        }
+    }    
+};
+
 
 my $draw_page = sub {
     my $o = shift;
@@ -227,14 +282,23 @@ my $draw_page = sub {
                         }
                     ))
                 {
+                    my $can_edit_subjects = (($admin_level eq "site") || $club_permissions[1]);
+                    
                     if (scalar(@url_components) == 0)
                     {
-                        $mdda->render_edit_form(
-                            $o, 
-                            "Club_ID", 
-                            $club_id,
-                            'field-title' => $clubname,
-                        );
+                        if ($can_edit_subjects)
+                        {
+                            $mdda->render_edit_form(
+                                $o, 
+                                "Club_ID", 
+                                $club_id,
+                                'field-title' => $clubname,
+                            );
+
+                            {
+                                $o->print("\n\n<h2><a href=\"./subjects/\">Edit Subjects</a></h2>\n\n");
+                            }
+                        }
 
                         if ($admin_level eq "site")
                         {
@@ -295,6 +359,18 @@ my $draw_page = sub {
                                 }
 
                                 $o->print("\n\n<h1>OK - The Permissions Were Edited</h1>\n");
+                            }
+                        }
+                        elsif ($script eq "subjects")
+                        {
+                            if ($can_edit_subjects)
+                            {
+                                $edit_subjects->(
+                                    $o,
+                                    $dbh,
+                                    \@url_components,
+                                    $club_id, $clubname,
+                                );
                             }
                         }
                     }
